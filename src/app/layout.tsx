@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import GoogleAnalytics from "@/components/GoogleAnalytics";
 
 export const metadata: Metadata = {
   title: "Jonny Ai | The Architect's Console",
@@ -14,6 +15,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
+        <GoogleAnalytics measurementId="G-K44SB55BCD" />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700&family=Outfit:wght@500;800&display=swap" rel="stylesheet" />

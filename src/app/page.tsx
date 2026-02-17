@@ -261,10 +261,10 @@ export default function Home() {
                 desc: "High-conviction financial intelligence. Built a statistical signal engine that decodes market volatility patterns with agentic precision."
               },
               {
-                title: "DEBENHAMS LOGISTICS",
-                tag: "LOGISTICS / DJ WASTE",
-                img: "/backdrop-spinnaker.png",
-                desc: "Optimized operational drag for major retail sites. Integrated AgOS 2.0 to automate logistics and evidence collection for multi-site waste contracts."
+                title: "DJ WASTE INDUSTRIAL UI",
+                tag: "AESTHETIC PIVOT / LOGISTICS",
+                img: "/backdrop-lab.png",
+                desc: "Complete aesthetic overhaul to 'Premium Industrial'. Engineered a high-conviction UI for Portsmouth's leading waste specialists, integrating Checkatrade signal verification and God-tier animations."
               }
             ].map((caseStudy, i) => (
               <div key={i} className="group cursor-pointer">
