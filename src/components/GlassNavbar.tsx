@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { supabase } from '@/lib/supabase';
@@ -42,8 +43,8 @@ export default function GlassNavbar() {
       <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
 
         {/* Logo */}
-        <Link href="/" className="flex items-center gap-2.5 shrink-0">
-          <span className="font-outfit font-extrabold text-xl text-white tracking-tight">JonnyAi</span>
+        <Link href="/" className="flex items-center gap-3 shrink-0">
+          <Image src="/jai_logo_v2.png" alt="JonnyAi" width={38} height={38} className="rounded-sm" />
           <span className="hidden sm:block text-[9px] font-mono uppercase tracking-[0.2em] text-citrus border border-citrus/30 px-1.5 py-0.5 rounded-sm">
             AI Product Engine
           </span>
