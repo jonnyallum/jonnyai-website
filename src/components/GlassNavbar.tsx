@@ -3,6 +3,8 @@
 import Link from 'next/link';
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { supabase } from '@/lib/supabase';
+import type { User } from '@supabase/supabase-js';
 
 const navLinks = [
   { label: 'The Build', href: '#build' },
@@ -14,12 +16,26 @@ const navLinks = [
 export default function GlassNavbar() {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [user, setUser] = useState<User | null>(null);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20);
     window.addEventListener('scroll', onScroll);
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
+
+  useEffect(() => {
+    supabase.auth.getUser().then(({ data }) => setUser(data.user));
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user ?? null);
+    });
+    return () => subscription.unsubscribe();
+  }, []);
+
+  const handleSignOut = async () => {
+    await supabase.auth.signOut();
+    setMenuOpen(false);
+  };
 
   return (
     <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${scrolled ? 'bg-void/90 backdrop-blur-xl border-b border-white/8' : 'bg-transparent'}`}>
@@ -44,12 +60,25 @@ export default function GlassNavbar() {
 
         {/* Desktop CTAs */}
         <div className="hidden md:flex items-center gap-3">
-          <Link href="/brief" className="btn-citrus py-2 px-5 text-xs">
-            Brief The Conductor
-          </Link>
-          <Link href="/dashboard" className="btn-ghost py-2 px-5 text-xs">
-            Client Login
-          </Link>
+          {user ? (
+            <>
+              <Link href="/dashboard" className="btn-ghost py-2 px-5 text-xs">
+                My Glass Box
+              </Link>
+              <button onClick={handleSignOut} className="text-xs text-white/30 hover:text-white/60 transition-colors">
+                Sign Out
+              </button>
+            </>
+          ) : (
+            <>
+              <Link href="/brief" className="btn-citrus py-2 px-5 text-xs">
+                Brief The Conductor
+              </Link>
+              <Link href="/login" className="btn-ghost py-2 px-5 text-xs">
+                Client Login
+              </Link>
+            </>
+          )}
         </div>
 
         {/* Mobile toggle */}
@@ -80,12 +109,25 @@ export default function GlassNavbar() {
                 </a>
               ))}
               <div className="flex flex-col gap-2 pt-3 border-t border-white/8">
-                <Link href="/brief" className="btn-citrus text-xs text-center py-2.5" onClick={() => setMenuOpen(false)}>
-                  Brief The Conductor
-                </Link>
-                <Link href="/dashboard" className="btn-ghost text-xs text-center py-2.5" onClick={() => setMenuOpen(false)}>
-                  Client Login
-                </Link>
+                {user ? (
+                  <>
+                    <Link href="/dashboard" className="btn-ghost text-xs text-center py-2.5" onClick={() => setMenuOpen(false)}>
+                      My Glass Box
+                    </Link>
+                    <button onClick={handleSignOut} className="text-xs text-white/30 text-center py-2">
+                      Sign Out
+                    </button>
+                  </>
+                ) : (
+                  <>
+                    <Link href="/brief" className="btn-citrus text-xs text-center py-2.5" onClick={() => setMenuOpen(false)}>
+                      Brief The Conductor
+                    </Link>
+                    <Link href="/login" className="btn-ghost text-xs text-center py-2.5" onClick={() => setMenuOpen(false)}>
+                      Client Login
+                    </Link>
+                  </>
+                )}
               </div>
             </div>
           </motion.div>
