@@ -44,7 +44,7 @@ export default function GlassNavbar() {
 
         {/* Logo */}
         <Link href="/" className="flex items-center gap-3 shrink-0">
-          <Image src="/jai_logo_v2.png" alt="JonnyAi" width={38} height={38} className="rounded-sm" />
+          <Image src="/jai_logo_clean.png" alt="JonnyAi" width={120} height={38} className="object-contain" />
           <span className="hidden sm:block text-[9px] font-mono uppercase tracking-[0.2em] text-citrus border border-citrus/30 px-1.5 py-0.5 rounded-sm">
             AI Product Engine
           </span>
