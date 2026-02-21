@@ -1,37 +1,51 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
+  --background: #050508;
 }
 
 @theme {
   --font-inter: "Inter", sans-serif;
   --font-outfit: "Outfit", sans-serif;
-  
-  --color-titanium: #ffffff;
-  --color-ghost: #f8f9fa;
+
+  /* Core Palette */
+  --color-void: #050508;
+  --color-surface: #0d0d12;
+  --color-panel: #12121a;
   --color-citrus: #d97757;
-  --color-void: #0a0a0a;
-  --color-steel: #333333;
+  --color-signal: #22c55e;
+  --color-alert: #ef4444;
+  --color-titanium: #ffffff;
 }
 
 @layer base {
   body {
-    @apply bg-titanium text-void font-inter antialiased;
-    background-image: radial-gradient(circle at 50% 50%, rgba(217, 119, 87, 0.05) 0%, transparent 100%);
+    @apply bg-void text-titanium font-inter antialiased;
   }
 }
 
 @layer components {
   .btn-citrus {
-    @apply bg-citrus text-white font-bold py-3 px-8 rounded-sm transition-all duration-300 hover:shadow-[0_0_20px_rgba(217,119,87,0.4)] hover:scale-105 active:scale-95 uppercase tracking-widest;
+    @apply inline-flex items-center justify-center bg-citrus text-white font-bold py-3 px-8 transition-all duration-300 hover:shadow-[0_0_30px_rgba(217,119,87,0.45)] hover:scale-105 active:scale-95 uppercase tracking-widest text-sm rounded-sm;
   }
-  
+
+  .btn-ghost {
+    @apply inline-flex items-center justify-center border border-white/20 text-white font-bold py-3 px-8 transition-all duration-300 hover:border-white/40 hover:bg-white/5 active:scale-95 uppercase tracking-widest text-sm rounded-sm;
+  }
+
   .glass-card {
-    @apply bg-white/80 backdrop-blur-xl border border-ghost shadow-[0_10px_30px_rgba(0,0,0,0.05)] rounded-sm p-6;
+    @apply bg-surface border border-white/8 rounded-sm p-6;
   }
-  
+
+  .glass-panel {
+    @apply bg-panel border border-white/8 rounded-sm;
+  }
+
   .futuristic-title {
-    @apply font-outfit font-extrabold uppercase tracking-[0.2em] text-void;
+    @apply font-outfit font-extrabold uppercase tracking-tight text-titanium;
+  }
+
+  .section-label {
+    @apply text-xs font-mono uppercase tracking-[0.3em] text-citrus;
   }
 }
