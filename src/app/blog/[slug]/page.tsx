@@ -64,6 +64,7 @@ const categoryColours: Record<string, string> = {
   'Product': 'text-citrus border-citrus/30 bg-citrus/5',
   'Case Study': 'text-blue-400 border-blue-400/30 bg-blue-400/5',
   'Insight': 'text-purple-400 border-purple-400/30 bg-purple-400/5',
+  'Weekly Intel': 'text-yellow-400 border-yellow-400/30 bg-yellow-400/5',
 };
 
 export default async function BlogPostPage({ params }: Props) {

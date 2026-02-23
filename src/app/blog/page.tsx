@@ -22,6 +22,7 @@ const categoryColours: Record<string, string> = {
   'Product': 'text-citrus border-citrus/30 bg-citrus/5',
   'Case Study': 'text-blue-400 border-blue-400/30 bg-blue-400/5',
   'Insight': 'text-purple-400 border-purple-400/30 bg-purple-400/5',
+  'Weekly Intel': 'text-yellow-400 border-yellow-400/30 bg-yellow-400/5',
 };
 
 function CategoryBadge({ category }: { category: string }) {
@@ -35,7 +36,8 @@ function CategoryBadge({ category }: { category: string }) {
 export default function BlogPage() {
   const sorted = [...blogPosts].sort((a, b) => b.date.localeCompare(a.date));
   const featured = sorted.find(p => p.featured) ?? sorted[0];
-  const rest = sorted.filter(p => p.slug !== featured.slug);
+  const weeklyPosts = sorted.filter(p => p.category === 'Weekly Intel');
+  const rest = sorted.filter(p => p.slug !== featured.slug && p.category !== 'Weekly Intel');
 
   return (
     <main className="min-h-screen bg-void">
@@ -89,6 +91,38 @@ export default function BlogPage() {
           </Link>
         </div>
       </section>
+
+      {/* ── WEEK IN AI ─────────────────────────────────────────────────── */}
+      {weeklyPosts.length > 0 && (
+        <section className="py-16 px-6 border-b border-white/5">
+          <div className="max-w-5xl mx-auto">
+            <div className="flex items-center gap-4 mb-8">
+              <p className="text-xs font-mono uppercase tracking-[0.3em] text-yellow-400">— Week in AI</p>
+              <span className="text-[9px] font-mono text-white/20 border border-white/8 px-2 py-0.5 rounded-sm">Every Monday</span>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+              {weeklyPosts.map(post => (
+                <Link
+                  key={post.slug}
+                  href={`/blog/${post.slug}`}
+                  className="group block bg-surface border border-yellow-400/10 rounded-sm p-5 hover:border-yellow-400/30 transition-all duration-300"
+                >
+                  <span className="text-[9px] font-mono text-yellow-400/60 border border-yellow-400/20 bg-yellow-400/5 px-2 py-0.5 rounded-sm mb-3 inline-block">
+                    Week in AI
+                  </span>
+                  <h3 className="font-outfit font-bold text-base text-white group-hover:text-yellow-400 transition-colors leading-tight mb-2">
+                    {post.title}
+                  </h3>
+                  <p className="text-white/30 text-xs leading-relaxed line-clamp-2">{post.excerpt}</p>
+                  <div className="mt-4 text-[9px] font-mono uppercase tracking-[0.2em] text-yellow-400/50 group-hover:text-yellow-400 transition-colors">
+                    Read Intel →
+                  </div>
+                </Link>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* ── ARTICLE GRID ───────────────────────────────────────────────── */}
       <section className="py-16 px-6 border-b border-white/5">
