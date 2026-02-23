@@ -4,6 +4,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
 import { useEffect, useRef } from 'react';
+import NewsBar from '@/components/NewsBar';
 
 function NeuralCanvas() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -167,6 +168,8 @@ function PricingCard({ item }: { item: PricingItem }) {
 export default function HomePage() {
   return (
     <main>
+      <NewsBar />
+
       {/* ── HERO ─────────────────────────────────────────────────────────── */}
       <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
         {/* Neural node canvas */}
@@ -236,7 +239,7 @@ export default function HomePage() {
             animate={{ opacity: 1 }}
             transition={{ duration: 0.8, delay: 0.5 }}
           >
-            {[['48h', 'Delivery'], ['40+', 'Specialists'], ['100%', 'Transparent']].map(([val, label]) => (
+            {[['48h', 'Delivery'], ['65+', 'Specialists'], ['100%', 'Transparent']].map(([val, label]) => (
               <div key={label} className="text-center">
                 <div className="text-3xl md:text-4xl font-outfit font-extrabold text-white">{val}</div>
                 <div className="text-xs text-white/30 uppercase tracking-widest mt-1 font-mono">{label}</div>
@@ -300,7 +303,7 @@ export default function HomePage() {
                   '48-hour delivery on your first milestone',
                   'Crystal clear pricing — zero surprises',
                   'Real-time Glass Box dashboard — watch it live',
-                  '40+ specialist agents on your project now',
+                  '65+ specialist agents on your project now',
                   'Every commit, every decision — fully visible',
                   'Pay per milestone. Cancel if we miss.',
                 ].map(item => (
@@ -415,7 +418,7 @@ export default function HomePage() {
               Not a ChatGPT Wrapper.<br />An Orchestra.
             </h2>
             <p className="text-white/35 mt-4 text-sm max-w-md mx-auto">
-              40+ specialist agents. Hired, trained, and deployed by Jonny. On your project in 48 hours.
+              65+ specialist agents. Hired, trained, and deployed by Jonny. On your project in 48 hours.
             </p>
           </motion.div>
 
@@ -565,6 +568,7 @@ export default function HomePage() {
             <nav className="flex flex-wrap gap-x-8 gap-y-2 text-xs text-white/30">
               <a href="#" className="hover:text-white/60 transition-colors">Privacy Policy</a>
               <a href="#" className="hover:text-white/60 transition-colors">Terms of Service</a>
+              <a href="/blog" className="hover:text-white/60 transition-colors">Blog</a>
               <a href="/status" className="hover:text-white/60 transition-colors">System Status</a>
               <a href="#" className="hover:text-white/60 transition-colors">AI Documentation</a>
               <a href="mailto:support@jonnyai.co.uk" className="hover:text-white/60 transition-colors">support@jonnyai.co.uk</a>

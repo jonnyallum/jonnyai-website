@@ -12,6 +12,7 @@ const navLinks = [
   { label: 'The Traffic', href: '#traffic' },
   { label: 'The Workforce', href: '#workforce' },
   { label: 'Our Work', href: '#work' },
+  { label: 'Blog', href: '/blog' },
 ];
 
 export default function GlassNavbar() {
