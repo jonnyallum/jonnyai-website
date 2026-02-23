@@ -1,6 +1,10 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { blogPosts, timeline } from '@/lib/data/blog-posts';
+import { blogPosts as staticPosts, timeline } from '@/lib/data/blog-posts';
+import { fetchPublishedPosts } from '@/lib/supabase-blog';
+
+// Revalidate every 30 minutes — new posts from Supabase appear within 30 min
+export const revalidate = 1800;
 
 export const metadata: Metadata = {
   title: 'Insights & Updates | JonnyAi — AI Product Engine UK',
@@ -33,7 +37,10 @@ function CategoryBadge({ category }: { category: string }) {
   );
 }
 
-export default function BlogPage() {
+export default async function BlogPage() {
+  // Prefer live Supabase data; fall back to static if DB unavailable
+  const livePosts = await fetchPublishedPosts();
+  const blogPosts = livePosts.length ? livePosts : staticPosts;
   const sorted = [...blogPosts].sort((a, b) => b.date.localeCompare(a.date));
   const featured = sorted.find(p => p.featured) ?? sorted[0];
   const weeklyPosts = sorted.filter(p => p.category === 'Weekly Intel');

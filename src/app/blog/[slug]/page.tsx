@@ -1,19 +1,25 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import { blogPosts } from '@/lib/data/blog-posts';
+import { blogPosts as staticPosts } from '@/lib/data/blog-posts';
+import { fetchPublishedPosts, fetchPostBySlug } from '@/lib/supabase-blog';
+
+// New posts from Supabase appear within 30 min
+export const revalidate = 1800;
 
 interface Props {
   params: Promise<{ slug: string }>;
 }
 
 export async function generateStaticParams() {
-  return blogPosts.map(post => ({ slug: post.slug }));
+  const livePosts = await fetchPublishedPosts();
+  const posts = livePosts.length ? livePosts : staticPosts;
+  return posts.map(post => ({ slug: post.slug }));
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
-  const post = blogPosts.find(p => p.slug === slug);
+  const post = (await fetchPostBySlug(slug)) ?? staticPosts.find(p => p.slug === slug);
   if (!post) return {};
   return {
     title: `${post.title} | JonnyAi`,
@@ -69,10 +75,14 @@ const categoryColours: Record<string, string> = {
 
 export default async function BlogPostPage({ params }: Props) {
   const { slug } = await params;
-  const post = blogPosts.find(p => p.slug === slug);
+
+  // Live Supabase first, static fallback
+  const livePosts = await fetchPublishedPosts();
+  const allPosts = livePosts.length ? livePosts : staticPosts;
+  const post = (await fetchPostBySlug(slug)) ?? allPosts.find(p => p.slug === slug);
   if (!post) notFound();
 
-  const related = blogPosts
+  const related = allPosts
     .filter(p => p.slug !== slug)
     .slice(0, 3);
 
