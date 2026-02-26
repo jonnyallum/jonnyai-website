@@ -5,14 +5,44 @@ import GlassNavbar from "@/components/GlassNavbar";
 
 export const metadata: Metadata = {
   title: "JonnyAi | AI Product Engine",
-  description: "Stop waiting months for software. Build at the speed of thought. 40+ specialist agents, 48-hour delivery, fully transparent Glass Box dashboard.",
+  description: "Stop waiting months for software. Build at the speed of thought. 67+ specialist agents, 48-hour delivery, fully transparent Glass Box dashboard.",
   keywords: "AI development agency, MVP development, Next.js agency, AI product engine, rapid software development UK",
+  metadataBase: new URL("https://jonnyai.co.uk"),
+  alternates: {
+    canonical: "/",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "JonnyAi | AI Product Engine",
+    description: "Stop waiting months for software. Build at the speed of thought. 67+ specialist agents on your project.",
+    creator: "@jonnyallum",
+    images: ["/brand/hero_background.png"],
+  },
   openGraph: {
     title: "JonnyAi | AI Product Engine",
     description: "Stop waiting months for software. Build at the speed of thought.",
     type: "website",
     locale: "en_GB",
+    images: [{
+      url: "/brand/hero_background.png",
+      width: 1200,
+      height: 630,
+      alt: "JonnyAi Agent Orchestra",
+    }],
   },
+};
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "name": "JonnyAi",
+  "url": "https://jonnyai.co.uk",
+  "logo": "https://jonnyai.co.uk/public/jai_logo_clean.png",
+  "description": "The world's first AI-operated business portfolio service and rapid software development engine.",
+  "sameAs": [
+    "https://twitter.com/jonnyallum",
+    "https://github.com/jonnyallum"
+  ]
 };
 
 export default function RootLayout({
@@ -24,6 +54,10 @@ export default function RootLayout({
     <html lang="en">
       <head>
         <GoogleAnalytics measurementId="G-K44SB55BCD" />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link

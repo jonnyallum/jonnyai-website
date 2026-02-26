@@ -95,22 +95,27 @@ const demoRoster = [
 const coreAgents = [
   {
     handle: '@Marcus', name: 'Marcus Cole', role: 'The Conductor', initials: 'MC', tier: 'Command',
+    portrait: '/agents/portraits/marcus_cole.png',
     quote: '"I don\'t write code. I orchestrate the machines that do."',
   },
   {
     handle: '@Priya', name: 'Priya Sharma', role: 'The Perfectionist', initials: 'PS', tier: 'Design',
+    portrait: '/agents/portraits/priya_sharma.png',
     quote: '"Every pixel has a purpose. Every animation earns its render."',
   },
   {
     handle: '@Sebastian', name: 'Sebastian Cross', role: 'The Architect', initials: 'SC', tier: 'Dev',
+    portrait: '/agents/portraits/sebastian_cross.png',
     quote: '"Type-safety isn\'t optional. It\'s the foundation of speed."',
   },
   {
     handle: '@Sam', name: 'Sam Blackwood', role: 'The Gatekeeper', initials: 'SB', tier: 'QA',
+    portrait: '/agents/portraits/sam_blackwood.png',
     quote: '"Security built in from day one. Never bolted on after."',
   },
   {
     handle: '@Derek', name: 'Derek O\'Brien', role: 'The Engine', initials: 'DO', tier: 'Infra',
+    portrait: '/agents/portraits/derek_obrien.png',
     quote: '"Zero-downtime isn\'t a goal. It\'s non-negotiable."',
   },
 ];
@@ -431,8 +436,17 @@ export default function HomePage() {
                 className="glass-card hover:border-white/16 transition-all duration-300"
               >
                 <div className="flex items-center gap-3 mb-4">
-                  <div className="w-10 h-10 rounded-full bg-citrus/10 border border-citrus/20 flex items-center justify-center text-sm font-bold text-citrus shrink-0">
-                    {agent.initials}
+                  <div className="w-10 h-10 rounded-full bg-citrus/10 border border-citrus/20 flex items-center justify-center text-sm font-bold text-citrus shrink-0 overflow-hidden relative">
+                    {agent.portrait ? (
+                      <Image
+                        src={agent.portrait}
+                        alt={agent.name}
+                        fill
+                        className="object-cover"
+                      />
+                    ) : (
+                      agent.initials
+                    )}
                   </div>
                   <div className="min-w-0">
                     <div className="text-white font-medium text-sm truncate">{agent.name}</div>
@@ -619,10 +633,10 @@ export default function HomePage() {
               <div className="text-xs text-white/15 mt-2">Jonny Allum Innovations Ltd · United Kingdom</div>
             </div>
             <nav className="flex flex-wrap gap-x-8 gap-y-2 text-xs text-white/30">
-              <a href="#" className="hover:text-white/60 transition-colors">Privacy Policy</a>
-              <a href="#" className="hover:text-white/60 transition-colors">Terms of Service</a>
-              <a href="/blog" className="hover:text-white/60 transition-colors">Blog</a>
-              <a href="/status" className="hover:text-white/60 transition-colors">System Status</a>
+              <Link href="/privacy" className="hover:text-white/60 transition-colors">Privacy Policy</Link>
+              <Link href="/terms" className="hover:text-white/60 transition-colors">Terms of Service</Link>
+              <Link href="/blog" className="hover:text-white/60 transition-colors">Blog</Link>
+              <Link href="/status" className="hover:text-white/60 transition-colors">System Status</Link>
               <a href="#" className="hover:text-white/60 transition-colors">AI Documentation</a>
               <a href="mailto:support@jonnyai.co.uk" className="hover:text-white/60 transition-colors">support@jonnyai.co.uk</a>
             </nav>
