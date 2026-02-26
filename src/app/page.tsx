@@ -239,7 +239,7 @@ export default function HomePage() {
             animate={{ opacity: 1 }}
             transition={{ duration: 0.8, delay: 0.5 }}
           >
-            {[['48h', 'Delivery'], ['65+', 'Specialists'], ['100%', 'Transparent']].map(([val, label]) => (
+            {[['48h', 'Delivery'], ['67+', 'Specialists'], ['100%', 'Transparent']].map(([val, label]) => (
               <div key={label} className="text-center">
                 <div className="text-3xl md:text-4xl font-outfit font-extrabold text-white">{val}</div>
                 <div className="text-xs text-white/30 uppercase tracking-widest mt-1 font-mono">{label}</div>
@@ -303,7 +303,7 @@ export default function HomePage() {
                   '48-hour delivery on your first milestone',
                   'Crystal clear pricing — zero surprises',
                   'Real-time Glass Box dashboard — watch it live',
-                  '65+ specialist agents on your project now',
+                  '67+ specialist agents on your project now',
                   'Every commit, every decision — fully visible',
                   'Pay per milestone. Cancel if we miss.',
                 ].map(item => (
@@ -418,7 +418,7 @@ export default function HomePage() {
               Not a ChatGPT Wrapper.<br />An Orchestra.
             </h2>
             <p className="text-white/35 mt-4 text-sm max-w-md mx-auto">
-              65+ specialist agents. Hired, trained, and deployed by Jonny. On your project in 48 hours.
+              67+ specialist agents. Hired, trained, and deployed by Jonny. On your project in 48 hours.
             </p>
           </motion.div>
 
@@ -528,6 +528,59 @@ export default function HomePage() {
                 </div>
               </motion.div>
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── EMPIRE OS TEASER ─────────────────────────────────────────────── */}
+      <section className="py-24 px-6 border-t border-white/5 relative overflow-hidden">
+        <div
+          className="absolute inset-0 pointer-events-none"
+          style={{ background: 'radial-gradient(ellipse at 100% 50%, rgba(217,119,87,0.07) 0%, transparent 60%)' }}
+        />
+        <div className="max-w-5xl mx-auto relative z-10">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+            <motion.div {...fadeUp}>
+              <span className="section-label block mb-4">NEW — Empire OS</span>
+              <h2 className="futuristic-title text-4xl md:text-5xl leading-tight mb-5">
+                We Don&apos;t Just<br />Build It.<br />
+                <span className="text-citrus">We Run It.</span>
+              </h2>
+              <p className="text-white/40 text-sm leading-relaxed mb-6 max-w-sm">
+                The world&apos;s first AI-operated business portfolio service. You bring the idea.
+                67 agents build, launch, and operate it. You own everything.
+              </p>
+              <div className="flex flex-col sm:flex-row gap-3">
+                <Link href="/empire" className="btn-citrus text-xs py-2.5 px-6">
+                  Explore Empire OS →
+                </Link>
+              </div>
+            </motion.div>
+
+            <motion.div {...fadeUp} transition={{ delay: 0.15 }} className="glass-panel p-6">
+              <div className="text-[10px] font-mono uppercase tracking-widest text-white/20 mb-4">Empire OS — Founding Cohort</div>
+              <div className="space-y-3 mb-5">
+                {[
+                  { tier: 'Starter', price: '£1,997/mo', desc: '1 business, 8 agents', spots: '1 left' },
+                  { tier: 'Growth', price: '£4,997/mo', desc: '3 businesses, 22 agents', spots: '2 left', featured: true },
+                  { tier: 'Empire Full', price: '£19,997/mo', desc: '10 businesses + equity', spots: '1 left' },
+                ].map(item => (
+                  <div key={item.tier} className={`flex items-center justify-between p-3 rounded-sm ${item.featured ? 'bg-citrus/8 border border-citrus/20' : 'bg-white/2 border border-white/5'}`}>
+                    <div>
+                      <div className={`text-xs font-medium ${item.featured ? 'text-citrus' : 'text-white/70'}`}>{item.tier}</div>
+                      <div className="text-[10px] text-white/30 font-mono">{item.desc}</div>
+                    </div>
+                    <div className="text-right">
+                      <div className={`text-sm font-outfit font-bold ${item.featured ? 'text-citrus' : 'text-white/60'}`}>{item.price}</div>
+                      <div className="text-[10px] text-signal font-mono">{item.spots}</div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+              <Link href="/empire" className="btn-ghost w-full text-xs py-2.5">
+                View Full Details →
+              </Link>
+            </motion.div>
           </div>
         </div>
       </section>

@@ -910,7 +910,8 @@ export const timeline: TimelineEvent[] = [
 ];
 
 export const newsItems = [
-  'NEW: 65 specialist agents — Jai.OS 4.0 fully operational',
+  '🆕 Empire OS LIVE — AI-operated business portfolio service — apply now',
+  'NEW: 67 specialist agents — Jai.OS 4.0 fully operational',
   '@delegator online — complex missions now auto-routed across the Orchestra',
   '135 skills catalogued — every domain covered, every SOP documented',
   'Gold Standard: autonomous AI audit agency — £149/audit, zero human intervention',
