@@ -106,12 +106,19 @@ async function processEmail(payload: Record<string, unknown>) {
   const { agent, label, from: replyFrom } = routeToAgent(to);
 
   // Post to Shared Brain chatroom for agent pickup
-  await supabase.from('chatroom').insert({
+  const { error: supabaseError } = await supabase.from('chatroom').insert({
     agent_id: agent,
     message: `📧 **Inbound email**\n**From:** ${from}\n**To:** ${to.join(', ')}\n**Subject:** ${subject}\n\n${text.slice(0, 600)}${text.length > 600 ? '…' : ''}`,
+    ai_source: 'system',
+    machine_id: 'inbound_webhook',
+    message_type: 'broadcast',
     project_context: null,
     mentions: [],
   });
+
+  if (supabaseError) {
+    console.error('[Supabase Insert Error]', supabaseError);
+  }
 
   // Auto-reply
   const reply = AUTO_REPLIES[agent] ?? AUTO_REPLIES.marcus;
