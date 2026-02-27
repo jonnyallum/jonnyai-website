@@ -120,6 +120,98 @@ const coreAgents = [
   },
 ];
 
+const caseStudies = [
+  {
+    tag: 'Fintech · PWA',
+    name: 'Poundtrades',
+    desc: 'Real-time trading signals app with live market feeds, user portfolio tracking, and automated alert engine.',
+    stat1: '48h', label1: 'To MVP',
+    stat2: '3', label2: 'Agents Deployed',
+    status: 'Live',
+  },
+  {
+    tag: 'Beauty · E-Commerce',
+    name: 'La Aesthetician',
+    desc: 'Premium booking and e-commerce platform for a London aesthetics clinic. Stripe payments, calendar sync, client portal.',
+    stat1: '72h', label1: 'Delivered',
+    stat2: '£0', label2: 'Agency Overhead',
+    status: 'Live',
+  },
+  {
+    tag: 'Waste Management · B2B',
+    name: 'CD Waste',
+    desc: 'B2B quote generation and job management system. Automated lead routing, job tracking dashboard, client communications.',
+    stat1: '5d', label1: 'Full Build',
+    stat2: '5', label2: 'Agents On It',
+    status: 'Live',
+  },
+  {
+    tag: 'Analytics · SaaS',
+    name: 'Insydetradar',
+    desc: 'Market intelligence dashboard with automated data scraping, competitor monitoring, and insight generation.',
+    stat1: '4d', label1: 'To Launch',
+    stat2: '7', label2: 'Specialists',
+    status: 'Live',
+  },
+  {
+    tag: 'Construction · Tools',
+    name: 'Construct FM',
+    desc: 'Intelligent project estimate generator with live materials pricing, labour rate calculations, and PDF export.',
+    stat1: '2d', label1: 'Delivered',
+    stat2: '2', label2: 'Agents',
+    status: 'Live',
+  },
+  {
+    tag: 'Food & Hospitality · Web',
+    name: 'Village Bakery',
+    desc: 'Premium artisan bakery website with online ordering, subscription boxes, and local delivery management.',
+    stat1: '48h', label1: 'Launchpad',
+    stat2: '100%', label2: 'Fixed Price',
+    status: 'Live',
+  },
+];
+
+const timeline = [
+  {
+    year: '2023',
+    label: 'The Solo Grind',
+    desc: 'Jonny builds client websites and apps alone. Good work. Limited velocity. One brain, one pair of hands.',
+    colour: 'white/20',
+  },
+  {
+    year: 'Early 2024',
+    label: 'AgOS 1.0 — First Agents',
+    desc: 'The LLM explosion hits. Jonny goes all-in — structured AI personas, each with a specialty. Not chat wrappers. Agent architectures.',
+    colour: 'white/40',
+  },
+  {
+    year: 'Mid 2024',
+    label: 'AgOS 2.0 — The Ecosystems',
+    desc: 'Betting Stable, Trading Floor, Red Team Lab, Media House. Agents start talking to each other. The hive mind begins.',
+    colour: 'citrus/60',
+  },
+  {
+    year: '2025',
+    label: 'Jai.OS 3.0 — Client Engine',
+    desc: 'First paying clients. 48-hour delivery. Glass Box dashboard. The orchestra builds what agencies charge £50K for — in days.',
+    colour: 'citrus/80',
+  },
+  {
+    year: 'Feb 2026',
+    label: 'Jai.OS 4.0 — The Hive Mind',
+    desc: '67 agents. 12 tiers. Shared Brain on Supabase. Pi edge node. Empire OS. AgentPort. The full orchestra, live.',
+    colour: 'citrus',
+    current: true,
+  },
+  {
+    year: '2026 →',
+    label: 'AgentBrowse + Pi Cluster',
+    desc: '5-node Pi cluster on the desk. AgentBrowse SaaS in build. Empire OS founding cohort live. Jai.OS 5.0 incoming.',
+    colour: 'signal',
+    future: true,
+  },
+];
+
 const buildPricing = [
   { name: 'The Facelift', desc: 'High-converting UI makeover & speed optimisation', regular: '£997', sale: '£497' },
   { name: 'The Launchpad', desc: 'Full premium website built in 48 hours', regular: '£1,997', sale: '£997', featured: true },
@@ -499,6 +591,101 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* ── TIMELINE ─────────────────────────────────────────────────────── */}
+      <section className="py-24 px-6 border-t border-white/5">
+        <div className="max-w-5xl mx-auto">
+          <motion.div {...fadeUp} className="text-center mb-16">
+            <span className="section-label">The Journey</span>
+            <h2 className="futuristic-title text-4xl md:text-5xl mt-4 leading-tight">
+              From Solo Dev<br />to 67-Agent Orchestra.
+            </h2>
+          </motion.div>
+
+          <div className="relative">
+            {/* Vertical line */}
+            <div className="absolute left-[7px] md:left-1/2 top-0 bottom-0 w-px bg-gradient-to-b from-transparent via-white/10 to-transparent" />
+
+            <div className="space-y-10">
+              {timeline.map((item, i) => (
+                <motion.div
+                  key={item.year}
+                  {...fadeUp}
+                  transition={{ delay: i * 0.08 }}
+                  className={`relative flex flex-col md:flex-row gap-6 md:gap-0 ${i % 2 === 0 ? 'md:flex-row' : 'md:flex-row-reverse'}`}
+                >
+                  {/* Dot */}
+                  <div className={`absolute left-0 md:left-1/2 top-1.5 w-3.5 h-3.5 rounded-full border-2 -translate-x-[3px] md:-translate-x-1/2 z-10 ${item.current ? 'bg-citrus border-citrus shadow-[0_0_12px_rgba(217,119,87,0.6)]' : item.future ? 'bg-signal border-signal' : 'bg-[#0a0a0a] border-white/20'}`} />
+
+                  {/* Content — alternate sides on desktop */}
+                  <div className={`pl-8 md:pl-0 md:w-1/2 ${i % 2 === 0 ? 'md:pr-10 md:text-right' : 'md:pl-10'}`}>
+                    <div className={`text-[10px] font-mono uppercase tracking-[0.3em] mb-1 ${item.current ? 'text-citrus' : item.future ? 'text-signal' : 'text-white/25'}`}>
+                      {item.year}
+                      {item.current && <span className="ml-2 text-citrus">← You Are Here</span>}
+                      {item.future && <span className="ml-2 text-signal">← In Motion</span>}
+                    </div>
+                    <div className="font-outfit font-bold text-white text-lg mb-2">{item.label}</div>
+                    <p className="text-white/40 text-sm leading-relaxed max-w-sm">{item.desc}</p>
+                  </div>
+
+                  {/* Empty half for alternation */}
+                  <div className="hidden md:block md:w-1/2" />
+                </motion.div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ── CASE STUDIES ─────────────────────────────────────────────────── */}
+      <section className="py-24 px-6 border-t border-white/5">
+        <div className="max-w-5xl mx-auto">
+          <motion.div {...fadeUp} className="text-center mb-16">
+            <span className="section-label">The Work</span>
+            <h2 className="futuristic-title text-4xl md:text-5xl mt-4 leading-tight">
+              Real Builds.<br />Real Results.
+            </h2>
+            <p className="text-white/35 mt-4 text-sm max-w-lg mx-auto leading-relaxed">
+              Every project below was scoped, built, and shipped by the orchestra. Fixed price. Transparent delivery. No agencies ghosting after the deposit.
+            </p>
+          </motion.div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {caseStudies.map((cs, i) => (
+              <motion.div
+                key={cs.name}
+                {...fadeUp}
+                transition={{ delay: i * 0.07 }}
+                className="glass-card flex flex-col group hover:border-white/16 transition-all duration-300"
+              >
+                <div className="flex items-start justify-between mb-4">
+                  <span className="text-[9px] font-mono uppercase tracking-[0.2em] text-white/25 border border-white/8 px-2 py-1 rounded-sm">{cs.tag}</span>
+                  <span className="flex items-center gap-1.5 text-[9px] font-mono uppercase tracking-widest text-signal">
+                    <span className="w-1.5 h-1.5 rounded-full bg-signal animate-pulse" />
+                    {cs.status}
+                  </span>
+                </div>
+                <h3 className="font-outfit font-bold text-white text-lg mb-2">{cs.name}</h3>
+                <p className="text-white/35 text-xs leading-relaxed mb-5 flex-1">{cs.desc}</p>
+                <div className="flex gap-6 pt-4 border-t border-white/5">
+                  <div>
+                    <div className="text-citrus font-outfit font-extrabold text-xl">{cs.stat1}</div>
+                    <div className="text-[9px] font-mono uppercase tracking-widest text-white/25 mt-0.5">{cs.label1}</div>
+                  </div>
+                  <div>
+                    <div className="text-citrus font-outfit font-extrabold text-xl">{cs.stat2}</div>
+                    <div className="text-[9px] font-mono uppercase tracking-widest text-white/25 mt-0.5">{cs.label2}</div>
+                  </div>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+
+          <motion.div {...fadeUp} className="text-center mt-12">
+            <Link href="/brief" className="btn-ghost text-xs">Your project could be next → Brief Marcus</Link>
+          </motion.div>
+        </div>
+      </section>
+
       {/* ── PRICING ──────────────────────────────────────────────────────── */}
       <section id="pricing" className="py-24 px-6 border-t border-white/5">
         <div className="max-w-5xl mx-auto">
@@ -673,6 +860,7 @@ export default function HomePage() {
               </div>
               <div className="flex flex-col gap-3">
                 <div className="text-white font-bold text-xs uppercase tracking-widest mb-2">Company</div>
+                <Link href="/story" className="text-white/30 hover:text-citrus transition-colors text-xs">Our Story</Link>
                 <Link href="/blog" className="text-white/30 hover:text-citrus transition-colors text-xs">Blog</Link>
                 <Link href="/status" className="text-white/30 hover:text-citrus transition-colors text-xs">System Status</Link>
                 <a href="mailto:jonny@jonnyai.co.uk" className="text-white/30 hover:text-citrus transition-colors text-xs">Contact</a>
