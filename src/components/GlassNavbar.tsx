@@ -152,7 +152,7 @@ export default function GlassNavbar() {
 
         {/* Mobile toggle */}
         <button
-          className="md:hidden flex flex-col gap-1.5 w-6 py-1"
+          className="lg:hidden flex flex-col gap-1.5 w-6 py-1"
           onClick={() => setMenuOpen(!menuOpen)}
           aria-label="Toggle menu"
         >
@@ -169,7 +169,7 @@ export default function GlassNavbar() {
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
-            className="md:hidden bg-surface/95 backdrop-blur-xl border-b border-white/8 overflow-hidden"
+            className="lg:hidden bg-surface/95 backdrop-blur-xl border-b border-white/8 overflow-hidden"
           >
             <div className="px-6 py-5 space-y-4">
               {navLinks.map(({ label, href }) => (

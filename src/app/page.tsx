@@ -595,7 +595,7 @@ export default function HomePage() {
                   className={`relative flex flex-col md:flex-row gap-6 md:gap-0 ${i % 2 === 0 ? 'md:flex-row' : 'md:flex-row-reverse'}`}
                 >
                   {/* Dot */}
-                  <div className={`absolute left-0 md:left-1/2 top-1.5 w-3.5 h-3.5 rounded-full border-2 -translate-x-[3px] md:-translate-x-1/2 z-10 ${item.current ? 'bg-citrus border-citrus shadow-[0_0_12px_rgba(217,119,87,0.6)]' : item.future ? 'bg-signal border-signal' : 'bg-[#0a0a0a] border-white/20'}`} />
+                  <div className={`absolute left-[7px] md:left-1/2 top-1.5 w-3.5 h-3.5 rounded-full border-2 -translate-x-1/2 z-10 ${item.current ? 'bg-citrus border-citrus shadow-[0_0_12px_rgba(217,119,87,0.6)]' : item.future ? 'bg-signal border-signal' : 'bg-[#0a0a0a] border-white/20'}`} />
 
                   {/* Content — alternate sides on desktop */}
                   <div className={`pl-8 md:pl-0 md:w-1/2 ${i % 2 === 0 ? 'md:pr-10 md:text-right' : 'md:pl-10'}`}>
