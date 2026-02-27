@@ -11,6 +11,7 @@ const navLinks = [
   { label: 'The Build', href: '#build' },
   { label: 'The Traffic', href: '#traffic' },
   { label: 'The Workforce', href: '#workforce' },
+  { label: 'AgentPort', href: '/agentport' },
   { label: 'Empire OS', href: '/empire' },
   { label: 'Blog', href: '/blog' },
 ];
