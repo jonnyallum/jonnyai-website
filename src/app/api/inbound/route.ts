@@ -2,11 +2,11 @@ import { NextRequest, NextResponse } from 'next/server';
 import { Resend } from 'resend';
 import { createClient } from '@supabase/supabase-js';
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+const resend = new Resend(process.env.RESEND_API_KEY || 'temp');
 
 const supabase = createClient(
-  process.env.NEXT_PUBLIC_SHARED_BRAIN_URL!,
-  process.env.SHARED_BRAIN_SERVICE_ROLE_KEY!
+  process.env.NEXT_PUBLIC_SHARED_BRAIN_URL || 'https://placeholder.supabase.co',
+  process.env.SHARED_BRAIN_SERVICE_ROLE_KEY || 'placeholder'
 );
 
 function routeToAgent(toAddresses: string[]): { agent: string; label: string; from: string } {
