@@ -37,7 +37,7 @@ const jsonLd = {
   "@type": "Organization",
   "name": "JonnyAi",
   "url": "https://jonnyai.co.uk",
-  "logo": "https://jonnyai.co.uk/public/jai_logo_clean.png",
+  "logo": "https://jonnyai.co.uk/jai_logo_clean.png",
   "description": "The world's first AI-operated business portfolio service and rapid software development engine.",
   "sameAs": [
     "https://twitter.com/jonnyallum",

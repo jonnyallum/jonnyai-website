@@ -52,12 +52,11 @@ export default function GlassNavbar() {
           </span>
         </Link>
 
-        {/* Desktop nav */}
         <div className="hidden md:flex items-center gap-8">
           {navLinks.map(({ label, href }) => (
-            <a key={label} href={href} className="text-sm text-white/50 hover:text-white transition-colors duration-200 font-medium">
+            <Link key={label} href={href} className="text-sm text-white/50 hover:text-white transition-colors duration-200 font-medium whitespace-nowrap">
               {label}
-            </a>
+            </Link>
           ))}
         </div>
 
@@ -107,9 +106,9 @@ export default function GlassNavbar() {
           >
             <div className="px-6 py-5 space-y-4">
               {navLinks.map(({ label, href }) => (
-                <a key={label} href={href} className="block text-sm text-white/60 hover:text-white py-1" onClick={() => setMenuOpen(false)}>
+                <Link key={label} href={href} className="block text-sm text-white/60 hover:text-white py-1" onClick={() => setMenuOpen(false)}>
                   {label}
-                </a>
+                </Link>
               ))}
               <div className="flex flex-col gap-2 pt-3 border-t border-white/8">
                 {user ? (

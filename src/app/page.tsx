@@ -179,19 +179,30 @@ export default function HomePage() {
       <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
         {/* Neural node canvas */}
         <NeuralCanvas />
+        {/* High-Impact Hero Visual */}
+        <div className="absolute inset-0 z-0">
+          <Image 
+            src="/brand/hero_background.png" 
+            alt="AI Orchestra Hub" 
+            fill 
+            priority
+            className="object-cover opacity-20 filter grayscale contrast-125"
+          />
+          <div className="absolute inset-0 bg-gradient-to-b from-void via-transparent to-void" />
+        </div>
         {/* Subtle grid */}
         <div
-          className="absolute inset-0"
+          className="absolute inset-0 opacity-30"
           style={{
             backgroundImage:
               'linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px)',
-            backgroundSize: '60px 60px',
+            backgroundSize: '80px 80px',
           }}
         />
         {/* Citrus glow */}
         <div
-          className="absolute inset-0"
-          style={{ background: 'radial-gradient(ellipse at 50% 0%, rgba(217,119,87,0.13) 0%, transparent 65%)' }}
+          className="absolute inset-x-0 top-0 h-[50vh]"
+          style={{ background: 'radial-gradient(ellipse at 50% 0%, rgba(217,119,87,0.15) 0%, transparent 70%)' }}
         />
         {/* Scanning line */}
         <motion.div
@@ -235,7 +246,7 @@ export default function HomePage() {
             transition={{ duration: 0.7, delay: 0.3 }}
           >
             <Link href="/brief" className="btn-citrus">Brief The Conductor</Link>
-            <a href="#pricing" className="btn-ghost">View 50% Off Menu ↓</a>
+            <Link href="#pricing" className="btn-ghost">View 50% Off Menu ↓</Link>
           </motion.div>
 
           <motion.div
@@ -417,15 +428,29 @@ export default function HomePage() {
       {/* ── AGENT ROSTER ─────────────────────────────────────────────────── */}
       <section id="workforce" className="py-24 px-6 border-t border-white/5">
         <div className="max-w-5xl mx-auto">
-          <motion.div {...fadeUp} className="text-center mb-16">
+          <motion.div {...fadeUp} className="text-center mb-16 relative z-10">
             <span className="section-label">The Workforce</span>
-            <h2 className="futuristic-title text-4xl md:text-5xl mt-4 leading-tight">
-              Not a ChatGPT Wrapper.<br />An Orchestra.
+            <h2 className="futuristic-title text-4xl md:text-6xl mt-4 leading-tight">
+              Not a Wrapper.<br />An Orchestra.
             </h2>
-            <p className="text-white/35 mt-4 text-sm max-w-md mx-auto">
+            <p className="text-white/35 mt-6 text-base max-w-xl mx-auto leading-relaxed">
               67+ specialist agents. Hired, trained, and deployed by Jonny. On your project in 48 hours.
             </p>
           </motion.div>
+
+          <div className="relative mb-20 rounded-2xl border border-white/5 overflow-hidden aspect-[21/9] bg-zinc-900">
+             <Image 
+               src="/brand/orchestra_visual.png" 
+               alt="The Orchestra in action" 
+               fill 
+               className="object-cover opacity-60 hover:opacity-100 transition-opacity duration-1000"
+             />
+             <div className="absolute inset-0 bg-gradient-to-t from-void via-transparent to-transparent" />
+             <div className="absolute bottom-6 left-6 flex items-center gap-3">
+                <div className="w-2 h-2 rounded-full bg-signal animate-pulse" />
+                <span className="text-[10px] font-mono uppercase tracking-[0.3em] text-white/40">Hive Mind Core Status: Online</span>
+             </div>
+          </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {coreAgents.map((agent, i) => (
@@ -624,26 +649,49 @@ export default function HomePage() {
       </section>
 
       {/* ── FOOTER ───────────────────────────────────────────────────────── */}
-      <footer className="border-t border-white/8 px-6 py-12">
+      <footer className="border-t border-white/8 px-6 py-16 bg-[#050505]">
         <div className="max-w-5xl mx-auto">
-          <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-8 mb-8">
-            <div>
-              <div className="font-outfit font-extrabold text-xl text-white mb-1">JonnyAi</div>
-              <div className="text-xs text-white/25 font-mono uppercase tracking-widest">AI Product Engine</div>
-              <div className="text-xs text-white/15 mt-2">Jonny Allum Innovations Ltd · United Kingdom</div>
+          <div className="flex flex-col md:flex-row justify-between gap-12 mb-16">
+            <div className="max-w-xs">
+              <div className="font-outfit font-extrabold text-2xl text-white mb-3">JonnyAi</div>
+              <p className="text-white/20 text-xs leading-relaxed mb-6">
+                Industrial-grade software engineering for high-velocity founders. 
+                Built, broken, and scaled by the Antigravity Orchestra.
+              </p>
+              <div className="flex items-center gap-3">
+                 <div className="w-2 h-2 rounded-full bg-signal animate-pulse" />
+                 <span className="text-[10px] font-mono uppercase tracking-[0.2em] text-white/40">Shared Brain: Online</span>
+              </div>
             </div>
-            <nav className="flex flex-wrap gap-x-8 gap-y-2 text-xs text-white/30">
-              <Link href="/privacy" className="hover:text-white/60 transition-colors">Privacy Policy</Link>
-              <Link href="/terms" className="hover:text-white/60 transition-colors">Terms of Service</Link>
-              <Link href="/blog" className="hover:text-white/60 transition-colors">Blog</Link>
-              <Link href="/status" className="hover:text-white/60 transition-colors">System Status</Link>
-              <a href="#" className="hover:text-white/60 transition-colors">AI Documentation</a>
-              <a href="mailto:support@jonnyai.co.uk" className="hover:text-white/60 transition-colors">support@jonnyai.co.uk</a>
-            </nav>
+            
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-12">
+              <div className="flex flex-col gap-3">
+                <div className="text-white font-bold text-xs uppercase tracking-widest mb-2">Platform</div>
+                <Link href="#build" className="text-white/30 hover:text-citrus transition-colors text-xs">The Build</Link>
+                <Link href="/empire" className="text-white/30 hover:text-citrus transition-colors text-xs">Empire OS</Link>
+                <Link href="/agentport" className="text-white/30 hover:text-citrus transition-colors text-xs">AgentPort</Link>
+              </div>
+              <div className="flex flex-col gap-3">
+                <div className="text-white font-bold text-xs uppercase tracking-widest mb-2">Company</div>
+                <Link href="/blog" className="text-white/30 hover:text-citrus transition-colors text-xs">Blog</Link>
+                <Link href="/status" className="text-white/30 hover:text-citrus transition-colors text-xs">System Status</Link>
+                <a href="mailto:jonny@jonnyai.co.uk" className="text-white/30 hover:text-citrus transition-colors text-xs">Contact</a>
+              </div>
+              <div className="flex flex-col gap-3">
+                <div className="text-white font-bold text-xs uppercase tracking-widest mb-2">Legal</div>
+                <Link href="/privacy" className="text-white/30 hover:text-citrus transition-colors text-xs">Privacy</Link>
+                <Link href="/terms" className="text-white/30 hover:text-citrus transition-colors text-xs">Terms</Link>
+              </div>
+            </div>
           </div>
-          <div className="pt-6 border-t border-white/5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
-            <div className="text-xs text-white/15 font-mono">Powered by Jai.OS 4.0 · Shared Brain: ONLINE</div>
-            <div className="text-xs text-white/15 font-mono">© 2026 Jonny Allum Innovations Ltd</div>
+          
+          <div className="pt-8 border-t border-white/5 flex flex-col md:flex-row items-center justify-between gap-4 text-center md:text-left">
+            <div className="text-[10px] font-mono text-white/10 uppercase tracking-[0.4em]">
+              © 2026 Jonny Allum Innovations Ltd · United Kingdom
+            </div>
+            <div className="text-[10px] font-mono text-white/10 uppercase tracking-[0.4em]">
+              Jai.OS 4.0 — Collective Velocity Enabled
+            </div>
           </div>
         </div>
       </footer>
