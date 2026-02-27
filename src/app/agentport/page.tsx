@@ -19,8 +19,8 @@ export default function AgentPortPage() {
 
       {/* ── HERO SECTION ─────────────────────────────────────────────────── */}
       <section className="relative pt-40 pb-32 px-6 overflow-hidden">
-        <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
-          <div>
+        <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center">
+          <div className="relative z-10">
             <motion.div 
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
@@ -34,11 +34,11 @@ export default function AgentPortPage() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.1 }}
-              className="font-outfit font-extrabold text-5xl sm:text-7xl md:text-8xl lg:text-9xl leading-[0.85] tracking-tighter mb-8 bg-clip-text text-transparent bg-gradient-to-b from-white to-white/30"
+              className="font-outfit font-extrabold text-5xl sm:text-6xl md:text-7xl lg:text-8xl leading-[0.85] tracking-tighter mb-8 bg-clip-text text-transparent bg-gradient-to-b from-white to-white/40"
             >
               Dock Your<br />
               <span className="text-orange-500">Autonomous</span><br />
-              <span className="italic uppercase tracking-tight">Frontier.</span>
+              <span className="italic uppercase tracking-tight text-white/90">Frontier.</span>
             </motion.h1>
 
             <motion.p 
@@ -67,8 +67,8 @@ export default function AgentPortPage() {
           </div>
 
           <motion.div 
-            initial={{ opacity: 0, scale: 0.9, rotateY: 10 }}
-            animate={{ opacity: 1, scale: 1, rotateY: 0 }}
+            initial={{ opacity: 0, scale: 0.9, x: 20 }}
+            animate={{ opacity: 1, scale: 1, x: 0 }}
             transition={{ duration: 1, ease: "easeOut" }}
             className="relative aspect-square rounded-2xl border border-white/10 bg-zinc-900/50 backdrop-blur-3xl overflow-hidden group shadow-2xl"
           >
@@ -77,9 +77,9 @@ export default function AgentPortPage() {
               alt="AgentPort Docking Bay" 
               fill 
               priority
-              className="object-cover opacity-60 group-hover:opacity-80 transition-opacity duration-700"
+              className="object-cover opacity-40 group-hover:opacity-60 transition-opacity duration-700"
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-[#070708] via-transparent to-transparent" />
+            <div className="absolute inset-0 bg-gradient-to-tr from-[#070708] via-transparent to-[#070708]/40" />
             
             {/* HUD Elements */}
             <div className="absolute top-8 left-8 flex flex-col gap-2">
