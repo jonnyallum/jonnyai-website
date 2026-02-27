@@ -5,6 +5,8 @@ import Image from 'next/image';
 import { motion } from 'framer-motion';
 import { useEffect, useRef } from 'react';
 import NewsBar from '@/components/NewsBar';
+import { useMode } from '@/context/ModeContext';
+import { pageCopy } from '@/lib/pageCopy';
 
 function NeuralCanvas() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -231,20 +233,6 @@ const workforcePricing = [
   { name: 'The Growth Retainer', desc: 'Uptime monitoring, backups & web updates', regular: '£497/mo', sale: '£247/mo' },
 ];
 
-const steps = [
-  {
-    num: '01', icon: '💬', title: 'Chat with Marcus',
-    desc: 'Free 15-minute scope session. Marcus maps your idea into a 3-phase technical roadmap — fixed price, no fluff.',
-  },
-  {
-    num: '02', icon: '📋', title: 'Review Milestones',
-    desc: 'Approve your roadmap. Crystal clear deliverables, timeline, and fixed price per phase. Zero scope creep.',
-  },
-  {
-    num: '03', icon: '🚀', title: 'Fund & Watch',
-    desc: 'Pay per milestone. Watch your product being built live in the Glass Box dashboard. Ship when it\'s done.',
-  },
-];
 
 type PricingItem = { name: string; desc: string; regular: string; sale: string; featured?: boolean };
 
@@ -263,6 +251,9 @@ function PricingCard({ item }: { item: PricingItem }) {
 }
 
 export default function HomePage() {
+  const { mode } = useMode();
+  const c = pageCopy(mode);
+
   return (
     <main>
       <NewsBar />
@@ -308,7 +299,7 @@ export default function HomePage() {
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
             <span className="inline-flex items-center gap-2 text-xs font-mono uppercase tracking-[0.3em] text-citrus mb-10">
               <span className="w-2 h-2 rounded-full bg-signal animate-pulse" />
-              AI Product Engine — Now Live
+              {c.heroBadge}
             </span>
           </motion.div>
 
@@ -318,8 +309,8 @@ export default function HomePage() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, delay: 0.1 }}
           >
-            Stop Waiting Months<br />
-            <span className="text-citrus">for Software.</span>
+            {c.heroLine1}<br />
+            <span className="text-citrus">{c.heroLine2}</span>
           </motion.h1>
 
           <motion.p
@@ -328,7 +319,7 @@ export default function HomePage() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, delay: 0.2 }}
           >
-            Build at the Speed of Thought.
+            {c.heroSub}
           </motion.p>
 
           <motion.div
@@ -337,8 +328,8 @@ export default function HomePage() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, delay: 0.3 }}
           >
-            <Link href="/brief" className="btn-citrus">Brief The Conductor</Link>
-            <Link href="#pricing" className="btn-ghost">View 50% Off Menu ↓</Link>
+            <Link href="/brief" className="btn-citrus">{c.heroCta1}</Link>
+            <Link href="#pricing" className="btn-ghost">{c.heroCta2}</Link>
           </motion.div>
 
           <motion.div
@@ -369,24 +360,19 @@ export default function HomePage() {
       <section className="py-24 px-6 border-t border-white/5">
         <div className="max-w-5xl mx-auto">
           <motion.div {...fadeUp} className="text-center mb-16">
-            <span className="section-label">The Problem</span>
+            <span className="section-label">{c.problemLabel}</span>
             <h2 className="futuristic-title text-4xl md:text-5xl mt-4 leading-tight">
-              Traditional Dev<br />is Broken.
+              {c.problemHeading.split('\n').map((line, i) => (
+                <span key={i}>{line}{i === 0 && <br />}</span>
+              ))}
             </h2>
           </motion.div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <motion.div {...fadeUp} className="glass-panel p-8" style={{ borderColor: 'rgba(239,68,68,0.15)' }}>
-              <h3 className="text-red-400/80 font-mono uppercase tracking-widest text-xs mb-6">✕  The Old Way</h3>
+              <h3 className="text-red-400/80 font-mono uppercase tracking-widest text-xs mb-6">{c.problemOldTitle}</h3>
               <ul className="space-y-4">
-                {[
-                  '3–6 months to launch anything',
-                  '£50,000+ for a basic MVP',
-                  'Endless scope creep and change requests',
-                  'Agencies that ghost after the deposit',
-                  'Zero visibility into what\'s being built',
-                  'Broken promises and missed deadlines',
-                ].map(item => (
+                {c.problemOld.map(item => (
                   <li key={item} className="flex items-start gap-3 text-white/35 text-sm">
                     <span className="text-red-400/50 mt-0.5 shrink-0">✕</span>
                     {item}
@@ -405,16 +391,9 @@ export default function HomePage() {
                 className="absolute inset-0"
                 style={{ background: 'radial-gradient(ellipse at 50% 0%, rgba(34,197,94,0.06) 0%, transparent 70%)' }}
               />
-              <h3 className="text-signal font-mono uppercase tracking-widest text-xs mb-6 relative">✓  The AI Product Engine</h3>
+              <h3 className="text-signal font-mono uppercase tracking-widest text-xs mb-6 relative">{c.problemNewTitle}</h3>
               <ul className="space-y-4 relative">
-                {[
-                  '48-hour delivery on your first milestone',
-                  'Crystal clear pricing — zero surprises',
-                  'Real-time Glass Box dashboard — watch it live',
-                  '67+ specialist agents on your project now',
-                  'Every commit, every decision — fully visible',
-                  'Pay per milestone. Cancel if we miss.',
-                ].map(item => (
+                {c.problemNew.map(item => (
                   <li key={item} className="flex items-start gap-3 text-white/80 text-sm">
                     <span className="text-signal mt-0.5 shrink-0">✓</span>
                     {item}
@@ -521,12 +500,14 @@ export default function HomePage() {
       <section id="workforce" className="py-24 px-6 border-t border-white/5">
         <div className="max-w-5xl mx-auto">
           <motion.div {...fadeUp} className="text-center mb-16 relative z-10">
-            <span className="section-label">The Workforce</span>
+            <span className="section-label">{c.agentsLabel}</span>
             <h2 className="futuristic-title text-4xl md:text-6xl mt-4 leading-tight">
-              Not a Wrapper.<br />An Orchestra.
+              {c.agentsHeading.split('\n').map((line, i) => (
+                <span key={i}>{line}{i === 0 && <br />}</span>
+              ))}
             </h2>
             <p className="text-white/35 mt-6 text-base max-w-xl mx-auto leading-relaxed">
-              67+ specialist agents. Hired, trained, and deployed by Jonny. On your project in 48 hours.
+              {c.agentsSub}
             </p>
           </motion.div>
 
@@ -734,16 +715,18 @@ export default function HomePage() {
       <section className="py-24 px-6 border-t border-white/5">
         <div className="max-w-5xl mx-auto">
           <motion.div {...fadeUp} className="text-center mb-16">
-            <span className="section-label">How It Works</span>
+            <span className="section-label">{c.howLabel}</span>
             <h2 className="futuristic-title text-4xl md:text-5xl mt-4 leading-tight">
-              From Idea to Live<br />in 3 Steps.
+              {c.howHeading.split('\n').map((line, i) => (
+                <span key={i}>{line}{i === 0 && <br />}</span>
+              ))}
             </h2>
           </motion.div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-10 md:gap-8">
-            {steps.map((step, i) => (
+            {c.howSteps.map((step, i) => (
               <motion.div key={step.num} {...fadeUp} transition={{ delay: i * 0.1 }} className="relative">
-                {i < steps.length - 1 && (
+                {i < c.howSteps.length - 1 && (
                   <div className="hidden md:block absolute top-6 left-full w-full h-px bg-gradient-to-r from-white/10 to-transparent z-0" />
                 )}
                 <div className="relative z-10">
@@ -818,16 +801,16 @@ export default function HomePage() {
           style={{ background: 'radial-gradient(ellipse at 50% 50%, rgba(217,119,87,0.09) 0%, transparent 70%)' }}
         />
         <motion.div {...fadeUp} className="relative z-10 max-w-3xl mx-auto text-center">
-          <span className="section-label block mb-6">The Decision</span>
+          <span className="section-label block mb-6">{c.ctaLabel}</span>
           <h2 className="font-outfit font-extrabold text-5xl md:text-7xl leading-none tracking-tight mb-6">
-            Stop Burning Time.<br />
-            <span className="text-citrus">Start Shipping.</span>
+            {c.ctaLine1}<br />
+            <span className="text-citrus">{c.ctaLine2}</span>
           </h2>
           <p className="text-white/35 mb-10 text-sm max-w-md mx-auto leading-relaxed">
-            Free scope session. No commitment. Marcus maps your project in 15 minutes and gives you a fixed-price roadmap on the spot.
+            {c.ctaSub}
           </p>
           <Link href="/brief" className="btn-citrus text-base py-4 px-12">
-            Start Your Free Project Scope Now
+            {c.ctaButton}
           </Link>
           <p className="text-white/20 text-xs mt-5 font-mono uppercase tracking-widest">
             No commitment · Free consultation · 48h kickoff

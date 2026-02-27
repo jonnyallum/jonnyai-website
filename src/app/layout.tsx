@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import GoogleAnalytics from "@/components/GoogleAnalytics";
 import GlassNavbar from "@/components/GlassNavbar";
+import { ModeProvider } from "@/context/ModeContext";
 
 export const metadata: Metadata = {
   title: "JonnyAi | AI Product Engine",
@@ -66,8 +67,10 @@ export default function RootLayout({
         />
       </head>
       <body className="antialiased">
-        <GlassNavbar />
-        {children}
+        <ModeProvider>
+          <GlassNavbar />
+          {children}
+        </ModeProvider>
       </body>
     </html>
   );
