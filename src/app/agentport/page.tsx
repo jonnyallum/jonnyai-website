@@ -19,7 +19,7 @@ export default function AgentPortPage() {
 
       {/* ── HERO SECTION ─────────────────────────────────────────────────── */}
       <section className="relative pt-40 pb-32 px-6 overflow-hidden">
-        <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center">
+        <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-[1.2fr_0.8fr] gap-12 lg:gap-20 items-center">
           <div className="relative z-10">
             <motion.div 
               initial={{ opacity: 0, x: -20 }}
@@ -34,7 +34,7 @@ export default function AgentPortPage() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.1 }}
-              className="font-outfit font-extrabold text-5xl sm:text-6xl md:text-7xl lg:text-8xl leading-[0.85] tracking-tighter mb-8 bg-clip-text text-transparent bg-gradient-to-b from-white to-white/40"
+              className="font-outfit font-extrabold text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl leading-[0.9] tracking-tighter mb-8 bg-clip-text text-transparent bg-gradient-to-b from-white to-white/40"
             >
               Dock Your<br />
               <span className="text-orange-500">Autonomous</span><br />
@@ -77,9 +77,11 @@ export default function AgentPortPage() {
               alt="AgentPort Docking Bay" 
               fill 
               priority
-              className="object-cover opacity-40 group-hover:opacity-60 transition-opacity duration-700"
+              className="object-cover opacity-30 group-hover:opacity-50 transition-opacity duration-700"
             />
-            <div className="absolute inset-0 bg-gradient-to-tr from-[#070708] via-transparent to-[#070708]/40" />
+            {/* Edge mask to prevent clash with text on smaller screens/scaling */}
+            <div className="absolute inset-0 bg-gradient-to-r from-[#070708] via-transparent to-[#070708]/40" />
+            <div className="absolute inset-0 bg-gradient-to-t from-[#070708] via-transparent to-transparent" />
             
             {/* HUD Elements */}
             <div className="absolute top-8 left-8 flex flex-col gap-2">
