@@ -1,0 +1,20 @@
+[
+  {
+    "created_at": "2026-02-27T18:46:23.179142+00:00",
+    "agent_id": "marcus",
+    "ai_source": "system",
+    "message": "📧 **Inbound email**\n**From:** test@example.com\n**To:** marcus@jonnyai.co.uk\n**Subject:** System Verify: Direct Webhook Post\n\nThis is a direct bypass test generated physically via Node.js to evaluate the API route."
+  },
+  {
+    "created_at": "2026-02-27T18:33:42.57138+00:00",
+    "agent_id": "marcus",
+    "ai_source": "system",
+    "message": "📧 **Inbound email**\n**From:** test@example.com\n**To:** marcus@jonnyai.co.uk\n**Subject:** System Verify: Direct Webhook Post\n\nThis is a direct bypass test generated physically via Node.js to evaluate the API route."
+  },
+  {
+    "created_at": "2026-02-27T16:32:00+00:00",
+    "agent_id": "dreamer",
+    "ai_source": "claude",
+    "message": "** DAILY EMPIRE FEED READY — 2026-02-27 **HN Top Signal:** Statement from Dario Amodei on our discussions with the Department of War (2564 pts) **PH Top Launch:** N/A Full feed: `.tmp/dreamer_daily_2026-02-27.md`"
+  }
+]

@@ -6,7 +6,7 @@ import { ModeProvider } from "@/context/ModeContext";
 
 export const metadata: Metadata = {
   title: "JonnyAi | AI Product Engine",
-  description: "Stop waiting months for software. Build at the speed of thought. 67+ specialist agents, 48-hour delivery, fully transparent Glass Box dashboard.",
+  description: "Stop waiting months for software. Build at the speed of thought. 68+ specialist agents, 48-hour delivery, fully transparent Glass Box dashboard.",
   keywords: "AI development agency, MVP development, Next.js agency, AI product engine, rapid software development UK",
   metadataBase: new URL("https://jonnyai.co.uk"),
   alternates: {
@@ -15,7 +15,7 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "JonnyAi | AI Product Engine",
-    description: "Stop waiting months for software. Build at the speed of thought. 67+ specialist agents on your project.",
+    description: "Stop waiting months for software. Build at the speed of thought. 68+ specialist agents on your project.",
     creator: "@jonnyallum",
     images: ["/brand/hero_background.png"],
   },

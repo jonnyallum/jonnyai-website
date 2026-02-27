@@ -9,13 +9,14 @@
   --font-outfit: "Outfit", sans-serif;
 
   /* Core Palette */
-  --color-void: #050508;
-  --color-surface: #0d0d12;
-  --color-panel: #12121a;
-  --color-citrus: #d97757;
-  --color-signal: #22c55e;
-  --color-alert: #ef4444;
-  --color-titanium: #ffffff;
+  --color-void: #020205;       /* Deeper Space */
+  --color-surface: #0a0a0f;    /* Dark Slate */
+  --color-panel: #0d0d12;      /* Midnight */
+  --color-citrus: #ff4d00;     /* Safety Orange (God-Tier accent) */
+  --color-signal: #00ffca;     /* Neon Cyan (The Signal) */
+  --color-alert: #ff003c;      /* High-Vis Crimson */
+  --color-titanium: #f8f8ff;   /* Ghost White Steel */
+  --color-carbon: rgba(255, 255, 255, 0.03);
 }
 
 @layer base {

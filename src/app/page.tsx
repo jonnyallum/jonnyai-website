@@ -46,7 +46,7 @@ function NeuralCanvas() {
           const dist = Math.sqrt(dx * dx + dy * dy);
           if (dist < 140) {
             ctx.beginPath();
-            ctx.strokeStyle = `rgba(217,119,87,${0.12 * (1 - dist / 140)})`;
+            ctx.strokeStyle = `rgba(255,77,0,${0.18 * (1 - dist / 140)})`;
             ctx.lineWidth = 0.5;
             ctx.moveTo(nodes[i].x, nodes[i].y);
             ctx.lineTo(nodes[j].x, nodes[j].y);
@@ -58,7 +58,7 @@ function NeuralCanvas() {
       nodes.forEach(n => {
         ctx.beginPath();
         ctx.arc(n.x, n.y, n.r, 0, Math.PI * 2);
-        ctx.fillStyle = 'rgba(217,119,87,0.5)';
+        ctx.fillStyle = 'rgba(255,77,0,0.6)';
         ctx.fill();
       });
       animId = requestAnimationFrame(draw);
@@ -201,7 +201,7 @@ const timeline = [
   {
     year: 'Feb 2026',
     label: 'Jai.OS 4.0 — The Hive Mind',
-    desc: '67 agents. 12 tiers. Shared Brain on Supabase. Pi edge node. Empire OS. AgentPort. The full orchestra, live.',
+    desc: '68 agents. 12 tiers. Shared Brain on Supabase. Pi edge node. Empire OS. AgentPort. The full orchestra, live.',
     colour: 'citrus',
     current: true,
   },
@@ -215,34 +215,44 @@ const timeline = [
 ];
 
 const buildPricing = [
-  { name: 'The Facelift', desc: 'High-converting UI makeover & speed optimisation', regular: '£997', sale: '£497' },
-  { name: 'The Launchpad', desc: 'Full premium website built in 48 hours', regular: '£1,997', sale: '£997', featured: true },
-  { name: 'The App Prototype', desc: 'Clickable mobile PWA shell', regular: '£1,997', sale: '£997' },
-  { name: 'The MVP App', desc: 'Fully functional web application', regular: '£9,997', sale: '£4,997' },
+  { name: 'The Facelift', desc: 'High-converting UI makeover & speed optimisation', regular: '£997', sale: '£497', features: ['Mobile-first responsive rebuild', 'Lighthouse 95+ audit', 'Core Web Vitals fix', 'New component library', '48-hour delivery'] },
+  { name: 'The Launchpad', desc: 'Full premium website built in 48 hours', regular: '£1,997', sale: '£997', featured: true, features: ['Next.js 15 + Tailwind v4', 'CMS & blog setup', 'SEO foundation + schema', 'Vercel deployment', 'Domain + DNS config'] },
+  { name: 'The App Prototype', desc: 'Clickable mobile PWA shell', regular: '£1,997', sale: '£997', features: ['5–6 core screens', 'Auth + onboarding flow', 'Mobile-ready PWA', 'Supabase integration', 'Design system handoff'] },
+  { name: 'The MVP App', desc: 'Fully functional web application', regular: '£9,997', sale: '£4,997', features: ['Full-stack Next.js app', 'Auth + multi-tenant DB', 'Stripe payments', 'Admin dashboard', 'Production deployment'] },
 ];
 
 const trafficPricing = [
-  { name: 'The Ranking Engine', desc: 'AI-driven SEO, weekly blogs & backlinks', regular: '£997/mo', sale: '£497/mo' },
-  { name: 'The Conversion Engine', desc: 'Google Ads & PPC campaign management', regular: '£997/mo', sale: '£497/mo', featured: true },
-  { name: 'The Social Engine', desc: 'Automated content repurposing & posting', regular: '£497/mo', sale: '£247/mo' },
+  { name: 'The Ranking Engine', desc: 'AI-driven SEO, weekly blogs & backlinks', regular: '£997/mo', sale: '£497/mo', features: ['4 AI-written blog posts/mo', 'Technical SEO audit', 'Backlink outreach', 'Schema markup', 'Monthly rank report'] },
+  { name: 'The Conversion Engine', desc: 'Google Ads & PPC campaign management', regular: '£997/mo', sale: '£497/mo', featured: true, features: ['Google Ads management', 'A/B landing page tests', 'Conversion tracking setup', 'Budget optimisation', 'Weekly performance report'] },
+  { name: 'The Social Engine', desc: 'Automated content repurposing & posting', regular: '£497/mo', sale: '£247/mo', features: ['5 platforms covered', 'Blog → social repurposing', 'Auto scheduling', 'Engagement monitoring', '20 posts per month'] },
 ];
 
 const workforcePricing = [
-  { name: 'Hire an AI SDR', desc: '24/7 lead generation and cold outreach', regular: '£2,000/mo', sale: '£1,000/mo', featured: true },
-  { name: 'Hire an AI Support Rep', desc: 'Autonomous customer service agent', regular: '£2,000/mo', sale: '£1,000/mo' },
-  { name: 'The Growth Retainer', desc: 'Uptime monitoring, backups & web updates', regular: '£497/mo', sale: '£247/mo' },
+  { name: 'Hire an AI SDR', desc: '24/7 lead generation and cold outreach', regular: '£2,000/mo', sale: '£1,000/mo', featured: true, features: ['24/7 lead prospecting', 'Personalised outreach copy', 'CRM integration', 'Weekly lead reports', 'Managed handoff to sales'] },
+  { name: 'Hire an AI Support Rep', desc: 'Autonomous customer service agent', regular: '£2,000/mo', sale: '£1,000/mo', features: ['24/7 query handling', 'Ticket routing + triage', 'Knowledge base management', 'Escalation alerts', 'Monthly CX report'] },
+  { name: 'The Growth Retainer', desc: 'Uptime monitoring, backups & web updates', regular: '£497/mo', sale: '£247/mo', features: ['Daily uptime monitoring', 'Weekly automated backups', 'Bug fixes included', 'Performance monitoring', 'Security patch alerts'] },
 ];
 
 
-type PricingItem = { name: string; desc: string; regular: string; sale: string; featured?: boolean };
+type PricingItem = { name: string; desc: string; regular: string; sale: string; featured?: boolean; features?: string[] };
 
 function PricingCard({ item }: { item: PricingItem }) {
   return (
     <div className={`glass-card relative flex flex-col ${item.featured ? 'border-citrus/30' : ''}`}>
       {item.featured && <div className="absolute top-0 left-4 right-4 h-px bg-citrus" />}
       <div className="text-white font-medium text-sm mb-1">{item.name}</div>
-      <div className="text-white/40 text-xs leading-relaxed mb-4 flex-1">{item.desc}</div>
-      <div>
+      <div className="text-white/40 text-xs leading-relaxed mb-3">{item.desc}</div>
+      {item.features && (
+        <ul className="space-y-1.5 mb-4 flex-1">
+          {item.features.map(f => (
+            <li key={f} className="flex items-start gap-2 text-xs text-white/50">
+              <span className="text-signal mt-0.5 shrink-0">✓</span>
+              {f}
+            </li>
+          ))}
+        </ul>
+      )}
+      <div className="mt-auto">
         <div className="text-white/25 text-xs line-through mb-0.5">{item.regular}</div>
         <div className="text-citrus font-outfit font-extrabold text-2xl">{item.sale}</div>
       </div>
@@ -284,13 +294,13 @@ export default function HomePage() {
         />
         {/* Citrus glow */}
         <div
-          className="absolute inset-x-0 top-0 h-[50vh]"
-          style={{ background: 'radial-gradient(ellipse at 50% 0%, rgba(217,119,87,0.15) 0%, transparent 70%)' }}
+          className="absolute inset-x-0 top-0 h-[60vh]"
+          style={{ background: 'radial-gradient(ellipse at 50% 0%, rgba(255,77,0,0.12) 0%, transparent 80%)' }}
         />
         {/* Scanning line */}
         <motion.div
           className="absolute left-0 right-0 h-px pointer-events-none"
-          style={{ background: 'linear-gradient(90deg, transparent, rgba(217,119,87,0.25), transparent)' }}
+          style={{ background: 'linear-gradient(90deg, transparent, rgba(255,77,0,0.4), transparent)' }}
           animate={{ top: ['0%', '100%'] }}
           transition={{ duration: 10, repeat: Infinity, ease: 'linear' }}
         />
@@ -338,7 +348,7 @@ export default function HomePage() {
             animate={{ opacity: 1 }}
             transition={{ duration: 0.8, delay: 0.5 }}
           >
-            {[['48h', 'Delivery'], ['67+', 'Specialists'], ['100%', 'Transparent']].map(([val, label]) => (
+            {[['48h', 'Delivery'], ['68+', 'Specialists'], ['100%', 'Transparent']].map(([val, label]) => (
               <div key={label} className="text-center">
                 <div className="text-3xl md:text-4xl font-outfit font-extrabold text-white">{val}</div>
                 <div className="text-xs text-white/30 uppercase tracking-widest mt-1 font-mono">{label}</div>
