@@ -20,6 +20,93 @@ export interface TimelineEvent {
 
 export const blogPosts: BlogPost[] = [
 
+  // ── SYSTEM UPDATE — JaiOS 4.0 February 2026 ──────────────────────────────
+
+  {
+    slug: 'jarios-4-edge-cluster-new-ventures-feb-2026',
+    title: 'Jai.OS 4.0 February Update: Pi Edge Cluster, Two New AI Products, and the Social Pipeline',
+    excerpt:
+      'This month we shipped a Raspberry Pi 5 edge compute cluster, launched two new in-house AI products — Review Coach and GuardLayer — and wired the Orchestra into Facebook, Instagram, and WhatsApp. Here\'s everything.',
+    date: '2026-02-27',
+    category: 'System Update',
+    readTime: 8,
+    featured: true,
+    tags: ['Jai.OS 4.0', 'Raspberry Pi edge AI', 'AI firewall', 'peer review AI', 'Antigravity Orchestra', 'AI product launch', 'edge computing'],
+    content: `
+The Antigravity Orchestra has had a dense February. Rather than drip-feeding individual announcements, this is the full picture — everything we shipped, what it means for clients, and where the system goes next.
+
+## The Pi Edge Cluster — Local AI at the Desk
+
+The most significant infrastructure change is physical: a Raspberry Pi 5 edge compute cluster is now running on the desk.
+
+The architecture is five nodes. **pi-research-01** handles web scraping, competitor monitoring, and heavy research tasks — replacing cloud API calls with local compute. **pi-llm-01** and **pi-llm-02** run [Ollama](https://ollama.ai) locally, serving the \`qwen2.5:1.5b\` model at 18–25 tokens per second. **pi-automation** handles cron scheduling and webhook processing. **pi-betting** serves the Betting Stable ecosystem's arbitrage and line-monitoring scripts.
+
+Why does this matter? Cost, latency, and sovereignty. The research-01 node alone replaces roughly £200/month in cloud scraping API calls. The Ollama nodes mean that high-frequency, low-complexity tasks — classification, pre-checks, binary decisions, field extraction — never touch paid APIs. The local router (\`execution/local_router.py\`) automatically sends tasks to the right compute node based on complexity scoring: simple tasks go to Ollama on the Pi, complex tasks go to Claude.
+
+The full Pi Node Runbook is documented at \`docs/infrastructure/PI_NODE_RUNBOOK.md\`.
+
+**ROI from the betting node alone:** the Arb Scanner is projected to capture 4× more arbitrage windows than the previous cloud-dependent setup. Conservative annual upside: £36,000–54,750 vs £9,000–13,700 on cloud. The hardware pays for itself in weeks.
+
+## Review Coach — AI for Academic Peer Reviewers
+
+The first new in-house product is **Review Coach** — an AI validation layer for academic peer reviewers.
+
+The idea came from @Dreamer's weekly trend run. The academic peer review system handles over 6 million submissions per year. First-time reviewers often submit reviews they're not confident in. Senior reviewers rushing through paper 7 of 9 produce inconsistent outputs. Journal editors receive reviews that are too thin to be actionable. There's no quality gate before submission.
+
+Review Coach sits between the reviewer and the submit button. Paste your review, select your venue (NeurIPS, ICML, ICLR, ACL, CVPR, or 47 others), and get a confidence score in under 60 seconds. The system checks for bias and logical inconsistency, rubric alignment against the conference's actual criteria, tone and clarity (hostile language flags), and section-by-section weaknesses with specific improvement suggestions.
+
+No paper content is ever stored. It's blind-review compliant by design. The paper PDF is never required — only the reviewer's own text.
+
+Pricing starts at **$5 per review** (Pay-Per-Check) or **$29/month** for unlimited checks. Journal and programme committee licensing starts at $2,000/month with white-label integration and API access.
+
+The waitlist is live at [jonnyai.co.uk/review-coach](/review-coach).
+
+## GuardLayer — Production AI Security Firewall
+
+The second product is **GuardLayer** — a real-time security firewall for AI APIs.
+
+The problem is straightforward: as businesses integrate LLMs into production, their AI endpoints become attack surfaces. Prompt injection, jailbreaks, PII leakage, data exfiltration, and competitive intel fishing are live threats — not theoretical ones. Most companies add safety measures after an incident. GuardLayer makes it a day-one infrastructure decision.
+
+GuardLayer sits in front of any LLM API. One SDK call replaces your existing API call. Every request is scanned across 12 threat categories in under 2ms before it reaches the model. Blocked requests are logged with reason codes; allowed requests pass through unchanged. Integration is genuinely one line of code.
+
+The threat table covers: PII Leakage (CRITICAL), Prompt Injection (CRITICAL), Jailbreak Attempt (HIGH), Data Exfiltration (HIGH), Sensitive Output (HIGH), and Competitive Intelligence Fishing (MEDIUM) — all blocked, all logged.
+
+Pricing: **Starter at $199/month** (1M requests/month included), **Growth at $0.001 per request** (pay-as-you-scale), and **Enterprise POA** for self-hosted and SOC 2 deployments.
+
+The product page is live at [jonnyai.co.uk/ai-firewall](/ai-firewall).
+
+## The Social Bridge — Orchestra → Facebook, Instagram, WhatsApp
+
+The third major shipping milestone is the Social Pipeline.
+
+The Orchestra now has a direct broadcast channel to social media. \`execution/social_bridge.py\` monitors the Shared Brain chatroom for messages tagged \`[MISSION]\`, \`[INFRASTRUCTURE]\`, and \`[ACADEMY]\`. When a milestone is detected, @contentforge processes the raw log entry into platform-optimised copy. The formatted post then dispatches to Facebook, Instagram, and WhatsApp via the Meta Graph API.
+
+The token in play is a full-scope Meta System User token for the JonnyAI app — covering Pages management, Instagram content publishing, WhatsApp Business messaging, insights, and ads. The publisher (\`execution/facebook_publisher.py\`) now supports all three channels: Facebook feed posts, Instagram image + caption publishing (2-step container/publish pattern), and WhatsApp text messages and approved templates.
+
+This means the Orchestra can announce its own milestones in real-time without human intervention. When the Betting Node captures a profitable arbitrage window, when a new client project is onboarded, when the Pi cluster ships a new runbook — it broadcasts automatically.
+
+## Pricing Page Upgrade
+
+The jonnyai.co.uk homepage pricing section has been upgraded. Every service now shows the full feature breakdown — what's included, what's guaranteed, what makes each tier different. This addresses the single most common question from inbound leads: "what exactly do I get?"
+
+The 10 pricing cards across Build, Traffic, and Workforce now include 5 specific deliverables per card, with the featured options highlighted by the citrus accent line and a "Most Popular" badge.
+
+## What's Next
+
+The immediate roadmap:
+
+**Pi Cluster Phase 2** — the betting node's arb scanner is going live. 17 scheduled cron jobs across 6 bookmaker APIs, targeting 4× the arb window capture rate of the previous setup. ETA: this week.
+
+**Edge Orchestra Plan** — @Dreamer scored this an 8.2/10 on the Gravy Scale. Privacy-first AI hardware for regulated professionals — solicitors, IFAs, GP practices — who can't use cloud AI. The full venture plan is at \`docs/ventures/EDGE_ORCHESTRA_PLAN.md\`. Decision on launch: March 2026.
+
+**Academy Enrollment** — The Agentic Mastery course is live with founding member enrollment active. The Social Pipeline will handle automated updates to enrolled members.
+
+The Orchestra is 68 agents strong. The Shared Brain is live on Supabase. The Pi cluster is on the desk.
+
+This is what Jai.OS 4.0 looks like in operation.
+    `.trim(),
+  },
+
   // ── WEEKLY INTEL ─────────────────────────────────────────────────────────
 
   {

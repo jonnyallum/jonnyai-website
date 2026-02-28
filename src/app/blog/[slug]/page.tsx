@@ -35,9 +35,26 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   };
 }
 
-/** Converts **text** → <strong>text</strong> and renders paragraphs */
+/** Converts markdown-lite content to React elements */
 function renderContent(raw: string) {
   return raw.split('\n\n').map((para, i) => {
+    // ## Heading
+    if (para.startsWith('## ')) {
+      return (
+        <h2 key={i} className="font-outfit font-bold text-2xl text-white mt-10 mb-4">
+          {para.slice(3)}
+        </h2>
+      );
+    }
+    // ### Sub-heading
+    if (para.startsWith('### ')) {
+      return (
+        <h3 key={i} className="font-outfit font-semibold text-lg text-white/80 mt-8 mb-3">
+          {para.slice(4)}
+        </h3>
+      );
+    }
+    // Legacy: entire paragraph is **bold** = heading
     const isHeading = para.startsWith('**') && para.endsWith('**') && !para.slice(2).includes('**');
     if (isHeading) {
       return (

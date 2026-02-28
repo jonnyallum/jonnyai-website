@@ -14,6 +14,8 @@ const navLinks = [
   { label: 'The Workforce', href: '#workforce' },
   { label: 'AgentPort', href: '/agentport' },
   { label: 'Empire OS', href: '/empire' },
+  { label: 'Review Coach', href: '/review-coach' },
+  { label: 'AI Firewall', href: '/ai-firewall' },
   { label: 'Blog', href: '/blog' },
 ];
 

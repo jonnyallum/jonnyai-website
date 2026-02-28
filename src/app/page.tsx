@@ -804,6 +804,85 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* ── AI VENTURES ──────────────────────────────────────────────────── */}
+      <section className="py-24 px-6 border-t border-white/5">
+        <div className="max-w-5xl mx-auto">
+          <motion.div {...fadeUp} className="text-center mb-14">
+            <span className="section-label block mb-4">NEW — Antigravity Ventures</span>
+            <h2 className="futuristic-title text-4xl md:text-5xl leading-tight">
+              AI Products.<br /><span className="text-citrus">Built In-House.</span>
+            </h2>
+            <p className="text-white/40 mt-4 max-w-xl mx-auto text-sm leading-relaxed">
+              The Orchestra doesn&apos;t just build for clients. We launch our own AI products — battle-tested by the same agents that build your stack.
+            </p>
+          </motion.div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {/* Review Coach */}
+            <motion.div {...fadeUp} className="glass-card relative overflow-hidden group">
+              <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+                style={{ background: 'radial-gradient(ellipse at 50% 0%, rgba(217,119,87,0.08) 0%, transparent 70%)' }} />
+              <div className="relative z-10">
+                <div className="flex items-start justify-between mb-4">
+                  <span className="text-[10px] font-mono uppercase tracking-[0.3em] text-citrus border border-citrus/30 px-2 py-0.5 rounded-sm">Early Access</span>
+                  <span className="text-[10px] font-mono text-white/20">Research &amp; Academic</span>
+                </div>
+                <h3 className="font-outfit font-extrabold text-2xl text-white mb-2">Review Coach</h3>
+                <p className="text-white/40 text-sm leading-relaxed mb-5">
+                  AI-powered validation layer for academic peer reviewers. Checks your review for bias, rubric gaps, and inconsistencies before you hit submit. Used by NeurIPS, ICML, and ICLR reviewers.
+                </p>
+                <div className="flex flex-wrap gap-3 mb-6 text-[10px] font-mono text-white/30">
+                  <span>✓ Bias detection</span>
+                  <span>✓ 50+ conference rubrics</span>
+                  <span>✓ Blind-review safe</span>
+                  <span>✓ Results in 60s</span>
+                </div>
+                <div className="flex items-center justify-between pt-4 border-t border-white/8">
+                  <div>
+                    <div className="text-xs text-white/30">From</div>
+                    <div className="text-citrus font-outfit font-extrabold text-xl">$5 <span className="text-white/30 text-sm font-normal">/ review</span></div>
+                  </div>
+                  <Link href="/review-coach" className="btn-citrus text-xs py-2 px-5">
+                    Learn More →
+                  </Link>
+                </div>
+              </div>
+            </motion.div>
+
+            {/* AI Firewall */}
+            <motion.div {...fadeUp} transition={{ delay: 0.1 }} className="glass-card relative overflow-hidden group">
+              <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+                style={{ background: 'radial-gradient(ellipse at 50% 0%, rgba(34,197,94,0.06) 0%, transparent 70%)' }} />
+              <div className="relative z-10">
+                <div className="flex items-start justify-between mb-4">
+                  <span className="text-[10px] font-mono uppercase tracking-[0.3em] text-signal border border-signal/30 px-2 py-0.5 rounded-sm">Live</span>
+                  <span className="text-[10px] font-mono text-white/20">Security &amp; Infrastructure</span>
+                </div>
+                <h3 className="font-outfit font-extrabold text-2xl text-white mb-2">GuardLayer</h3>
+                <p className="text-white/40 text-sm leading-relaxed mb-5">
+                  Production AI security firewall. Blocks prompt injection, PII leakage, jailbreaks, and data exfiltration in real-time — sits in front of any LLM API with a single line of code.
+                </p>
+                <div className="flex flex-wrap gap-3 mb-6 text-[10px] font-mono text-white/30">
+                  <span>✓ &lt;2ms latency</span>
+                  <span>✓ 12 threat categories</span>
+                  <span>✓ SOC 2 ready</span>
+                  <span>✓ Any LLM provider</span>
+                </div>
+                <div className="flex items-center justify-between pt-4 border-t border-white/8">
+                  <div>
+                    <div className="text-xs text-white/30">From</div>
+                    <div className="text-citrus font-outfit font-extrabold text-xl">$199 <span className="text-white/30 text-sm font-normal">/ month</span></div>
+                  </div>
+                  <Link href="/ai-firewall" className="btn-ghost text-xs py-2 px-5">
+                    View Product →
+                  </Link>
+                </div>
+              </div>
+            </motion.div>
+          </div>
+        </div>
+      </section>
+
       {/* ── FINAL CTA ────────────────────────────────────────────────────── */}
       <section className="py-32 px-6 border-t border-white/5 relative overflow-hidden">
         <div
@@ -850,6 +929,8 @@ export default function HomePage() {
                 <Link href="#build" className="text-white/30 hover:text-citrus transition-colors text-xs">The Build</Link>
                 <Link href="/empire" className="text-white/30 hover:text-citrus transition-colors text-xs">Empire OS</Link>
                 <Link href="/agentport" className="text-white/30 hover:text-citrus transition-colors text-xs">AgentPort</Link>
+                <Link href="/review-coach" className="text-white/30 hover:text-citrus transition-colors text-xs">Review Coach</Link>
+                <Link href="/ai-firewall" className="text-white/30 hover:text-citrus transition-colors text-xs">GuardLayer</Link>
               </div>
               <div className="flex flex-col gap-3">
                 <div className="text-white font-bold text-xs uppercase tracking-widest mb-2">Company</div>
