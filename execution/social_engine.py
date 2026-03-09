@@ -303,7 +303,30 @@ class SocialEngine:
         return {"status": "PUBLISHED", "results": res}
 
     def _check_staggering(self):
+        """
+        Ensures we don't exceed 3 posts per day and maintains the 3-hour window.
+        Returns: (should_stagger: bool, next_slot_iso: str)
+        """
         now = datetime.now(timezone.utc)
+        today_start = now.replace(hour=0, minute=0, second=0, microsecond=0).isoformat()
+        
+        # 1. Check Daily Limit (Max 3)
+        today_posts = self._query_brain("social_posts", {"created_at": f"gte.{today_start}"})
+        today_scheduled = self._query_brain("content_calendar", {
+            "status": "eq.scheduled", 
+            "scheduled_for": f"gte.{today_start}",
+            "scheduled_for": f"lt.{(now + timedelta(days=1)).replace(hour=0, minute=0, second=0, microsecond=0).isoformat()}"
+        })
+        
+        total_today = len(today_posts) + len(today_scheduled)
+        
+        if total_today >= 3:
+            # Shift to 9am tomorrow
+            tomorrow_9am = (now + timedelta(days=1)).replace(hour=9, minute=0, second=0, microsecond=0)
+            print(f"  🛑 DAILY LIMIT REACHED ({total_today}/3). Shifting to tomorrow {tomorrow_9am.strftime('%H:%M')}")
+            return True, tomorrow_9am.isoformat()
+
+        # 2. Check 3-Hour Window
         win_start = (now - timedelta(hours=STAGGER_WINDOW_HOURS)).isoformat()
         recent = self._query_brain("social_posts", {"created_at": f"gte.{win_start}", "limit": "1"})
         upcoming = self._query_brain("content_calendar", {"status": "eq.scheduled", "scheduled_for": f"gte.{now.isoformat()}", "limit": "1"})
@@ -324,6 +347,7 @@ class SocialEngine:
         
         next_dt = last_time + timedelta(hours=STAGGER_WINDOW_HOURS)
         return True, next_dt.isoformat()
+
 
     def _queue_staggered(self, message, pillar, source_agent, project_id, slot):
         self._insert_brain("content_calendar", {
