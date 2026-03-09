@@ -6,6 +6,19 @@ The **Antigravity Orchestra** is a production-grade agentic enterprise operating
 
 ---
 
+## AI Collaborator Instructions
+
+| AI | Instructions | Role |
+| :--- | :--- | :--- |
+| **Claude Code** | [CLAUDE.md](CLAUDE.md) | Builder — executes, deploys, codes |
+| **Perplexity** | [PERPLEXITY.md](PERPLEXITY.md) | Research — web intel, agent design, competitor analysis |
+| **Gemini** | [GEMINI.md](GEMINI.md) | Analysis — deep reasoning, document synthesis |
+| **Cline** | [cline_mission_briefing.md](cline_mission_briefing.md) | Builder — alternative execution agent |
+
+**Perplexity:** Read `PERPLEXITY.md` for your full brief. Commit research to `perplexity/` — not to Jonny's clipboard.
+
+---
+
 ## Architecture
 
 ```
