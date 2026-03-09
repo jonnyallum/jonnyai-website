@@ -1,21 +1,15 @@
 """
-social_engine.py — Antigravity Social Media Engine v2.0
-========================================================
-Jai.OS 5.0 | Replaces the single-pass webhook_receiver.generate_copy()
+social_engine.py — Antigravity Social Media Engine v2.5 'Professional Series'
+========================================================================
+Jai.OS 5.0 | The Hive Mind Marketing Engine
 
-Upgrades over v1:
-  1. 10 content pillars (up from 4)
-  2. Quality gate before publish (length, brand voice, dedup)
-  3. Context-aware generation (pulls recent posts + project data)
-  4. Delegation routing (different agents for different pillars)
-  5. Post history tracking (social_posts table in Supabase)
-  6. Content calendar support (scheduled + reactive)
-  7. Multi-platform copy (FB, IG, LinkedIn)
-
-Usage:
-    from social_engine import SocialEngine
-    engine = SocialEngine()
-    result = engine.process_trigger("[MISSION] Launched BL Motorcycles v2", "marcus", "bl-motorcycles")
+Upgrades in v2.5:
+  1. Automated Staggering: Prevents 'batch-posting' (3-hour guard window).
+  2. Aggressive Sanitisation: Total removal of LLM markers (//, json keys, **).
+  3. Marketing-First Delegation: High-impact specialized agents (@Boyce, @Elena, @Theo).
+  4. UK English Mandate: Strict British spelling and formatting.
+  5. Cinematic Visuals: Expanded pool of high-gloss brand assets.
+  6. Contextual Intelligence: Fuses project data with recent post history.
 """
 
 import os
@@ -44,12 +38,13 @@ except ImportError:
 BRAIN_URL = os.getenv("ANTIGRAVITY_BRAIN_URL", "")
 BRAIN_KEY = os.getenv("ANTIGRAVITY_BRAIN_ANON_KEY", os.getenv("ANTIGRAVITY_BRAIN_SERVICE_ROLE_KEY", ""))
 
+STAGGER_WINDOW_HOURS = 3 # Minimum time between any two posts
+
 # ═══════════════════════════════════════════════════════
-# EXPANDED TRIGGER MAP — 10 Pillars
+# TRIGGER MAP — 10 Pillars
 # ═══════════════════════════════════════════════════════
 
 TRIGGER_MAP = {
-    # Original pillars
     "[MISSION]":        "MISSION_COMPLETE",
     "[MILESTONE]":      "MISSION_COMPLETE",
     "[WIN]":            "MISSION_COMPLETE",
@@ -61,16 +56,12 @@ TRIGGER_MAP = {
     "[AGENT]":          "AGENT_SPOTLIGHT",
     "[ACADEMY]":        "ACADEMY_UPDATE",
     "[COLLAB]":         "COLLAB",
-
-    # NEW pillars
     "[CLIENT_WIN]":     "CLIENT_CASE_STUDY",
     "[BTS]":            "BEHIND_THE_SCENES",
     "[TIP]":            "EDUCATION_TIP",
     "[POLL]":           "ENGAGEMENT_POLL",
     "[CULTURE]":        "TEAM_CULTURE",
     "[REPORT]":         "CLIENT_REPORT_TEASER",
-
-    # Event-driven triggers
     "[PROJECT]":        "NEW_PROJECT_ANNOUNCEMENT",
     "[DEPLOY]":         "WEBSITE_DEPLOYMENT",
     "[WEBSITE]":        "WEBSITE_DEPLOYMENT",
@@ -81,920 +72,293 @@ TRIGGER_MAP = {
 }
 
 # ═══════════════════════════════════════════════════════
-# DELEGATION ROUTING — Which agent handles which pillar
+# DELEGATION ROUTING — Specialized Marketing Tones
 # ═══════════════════════════════════════════════════════
 
 DELEGATION_MAP = {
-    "MISSION_COMPLETE":       {"agent": "contentforge", "model": "claude-haiku-4-5-20251001", "voice": "authoritative"},
-    "INFRASTRUCTURE_UPGRADE": {"agent": "contentforge", "model": "claude-haiku-4-5-20251001", "voice": "technical"},
-    "TRILLION_DOLLAR_INSIGHT":{"agent": "contentforge", "model": "claude-haiku-4-5-20251001", "voice": "contrarian"},
-    "AGENT_SPOTLIGHT":        {"agent": "contentforge", "model": "claude-haiku-4-5-20251001", "voice": "persona-driven"},
-    "ACADEMY_UPDATE":         {"agent": "contentforge", "model": "claude-haiku-4-5-20251001", "voice": "educational"},
-    "CLIENT_CASE_STUDY":      {"agent": "boyce",        "model": "claude-haiku-4-5-20251001", "voice": "sales-proof"},
-    "BEHIND_THE_SCENES":      {"agent": "contentforge", "model": "claude-haiku-4-5-20251001", "voice": "raw-authentic"},
-    "EDUCATION_TIP":          {"agent": "sam",           "model": "claude-haiku-4-5-20251001", "voice": "helpful-expert"},
-    "ENGAGEMENT_POLL":        {"agent": "hannah",        "model": "claude-haiku-4-5-20251001", "voice": "conversational"},
-    "TEAM_CULTURE":           {"agent": "contentforge", "model": "claude-haiku-4-5-20251001", "voice": "human-warm"},
-    "CLIENT_REPORT_TEASER":   {"agent": "boyce",        "model": "claude-haiku-4-5-20251001", "voice": "professional"},
-    "NEW_PROJECT_ANNOUNCEMENT":{"agent": "boyce",        "model": "claude-haiku-4-5-20251001", "voice": "exciting-professional"},
-    "WEBSITE_DEPLOYMENT":      {"agent": "contentforge", "model": "claude-haiku-4-5-20251001", "voice": "technical-proud"},
-    "TEAM_UPDATE":             {"agent": "contentforge", "model": "claude-haiku-4-5-20251001", "voice": "human-warm"},
-    "BLOG_GENERATION":         {"agent": "elena",        "model": "claude-haiku-4-5-20251001", "voice": "thought-leadership"},
+    "MISSION_COMPLETE":       {"agent": "boyce",    "model": "claude-haiku-4-5-20251001", "voice": "sales-oriented-outcomes"},
+    "INFRASTRUCTURE_UPGRADE": {"agent": "theo",     "model": "claude-haiku-4-5-20251001", "voice": "engineering-excellence"},
+    "TRILLION_DOLLAR_INSIGHT":{"agent": "scholar",  "model": "claude-haiku-4-5-20251001", "voice": "contrarian-marketing"},
+    "AGENT_SPOTLIGHT":        {"agent": "priya",    "model": "claude-haiku-4-5-20251001", "voice": "cinematic-persona"},
+    "ACADEMY_UPDATE":         {"agent": "elena",    "model": "claude-haiku-4-5-20251001", "voice": "exclusive-educational"},
+    "CLIENT_CASE_STUDY":      {"agent": "boyce",    "model": "claude-haiku-4-5-20251001", "voice": "social-proof-dominant"},
+    "BEHIND_THE_SCENES":      {"agent": "elena",    "model": "claude-haiku-4-5-20251001", "voice": "strategic-transparency"},
+    "EDUCATION_TIP":          {"agent": "grace",    "model": "claude-haiku-4-5-20251001", "voice": "seo-value-add"},
+    "ENGAGEMENT_POLL":        {"agent": "hannah",   "model": "claude-haiku-4-5-20251001", "voice": "conversational-lead-gen"},
+    "TEAM_CULTURE":           {"agent": "vivienne", "model": "claude-haiku-4-5-20251001", "voice": "brand-identity-focus"},
+    "CLIENT_REPORT_TEASER":   {"agent": "boyce",    "model": "claude-haiku-4-5-20251001", "voice": "high-trust-professional"},
+    "NEW_PROJECT_ANNOUNCEMENT":{"agent": "boyce",    "model": "claude-haiku-4-5-20251001", "voice": "growth-velocity"},
+    "WEBSITE_DEPLOYMENT":      {"agent": "priya",    "model": "claude-haiku-4-5-20251001", "voice": "design-polish-launch"},
+    "TEAM_UPDATE":             {"agent": "marcus",   "model": "claude-haiku-4-5-20251001", "voice": "visionary-leadership"},
+    "BLOG_GENERATION":         {"agent": "elena",    "model": "claude-haiku-4-5-20251001", "voice": "thought-leadership"},
 }
 
 # ═══════════════════════════════════════════════════════
-# PILLAR PROMPTS — Expanded to 10 with 3-platform output
+# PILLAR PROMPTS — God-Tier Marketing Standard
 # ═══════════════════════════════════════════════════════
 
 PILLAR_PROMPTS = {
-    "MISSION_COMPLETE": """You are @contentforge, Antigravity's social copy specialist.
-Write a social post about this milestone/launch/win.
-Voice: Authoritative. Before/After framing or pure outcome. CTA at end.
+    "MISSION_COMPLETE": """You are @boyce, Antigravity's Sales and Growth Specialist. Produce a 'God-Tier' marketing asset. Turn technical completion into business growth. Detail the impact (e.g., 'Unlocked 4x operational speed' rather than 'Fixed server'). Every word must build the brand as elite tier.
+Facebook: 300-450 words. Problem -> Orchestration -> Dominant Result. End with jonnyai.co.uk
+Instagram: 120-180 words. High-impact stats. 15 hashtags.
+LinkedIn: 400-600 words. Strategic narrative.""",
 
-RULES:
-- Reference SPECIFIC details from the message. No generic filler.
-- If project data is provided, weave in real metrics (pages built, time saved, etc.)
-- Check the RECENT POSTS section — do NOT repeat the same hook or structure.
+    "INFRASTRUCTURE_UPGRADE": """You are @theo, Systems Architect. Produce a high-grade technical marketing asset. DO NOT summarise. Explain the IMPACT (Zero latency, infinite scale, hardened security). stack = competitive advantage.
+Facebook: 300-500 words. Deep technical dive. Impact-led. End with jonnyai.co.uk
+Instagram: 120-180 words. stats + the 'why'. 15 hashtags.
+LinkedIn: 400-600 words. Institutional engineering narrative.""",
 
-Facebook: 150-250 words. Insight-led opening. End with jonnyai.co.uk
-Instagram: 80-120 words. Hook-first. 12-15 relevant hashtags. End with jonnyai.co.uk
-LinkedIn: 200-300 words. Professional thought-leadership angle. Tag #AI #AgenticAI #Automation
+    "TRILLION_DOLLAR_INSIGHT": """You are @scholar, Research Lead. Produce provocative brand-building insight. Challenge industry status quo. Every insight must make Antigravity look like the only team that truly 'gets it'.
+Facebook: 200-300 words. Hook -> Evidence -> The Antigravity Way.
+Instagram: 100-150 words. Bold statement. 15 hashtags.
+LinkedIn: 350-500 words. Thought-leadership paper.""",
 
-Return JSON: {"facebook": "...", "instagram": "...", "linkedin": "..."}
-Only JSON, no markdown, no explanation.""",
+    "AGENT_SPOTLIGHT": """You are @priya, Visionary Designer. Produce cinematic character reveal. CHARACTERS NOT CAPABILITIES: elite specialist tone, nicknames, energy. NO tool names, NO system counts. Movie trailer vibe.
+Facebook: 150-250 words. Character profile + Mystique. End with jonnyai.co.uk
+Instagram: 80-120 words. One killer detail. 12 hashtags.
+LinkedIn: 200-300 words. 'Strategic Asset Reveal'.""",
 
-    "INFRASTRUCTURE_UPGRADE": """You are @contentforge, Antigravity's social copy specialist.
-Write a SHORT social media post about this system/infrastructure update.
-Voice: Raw, quasi-technical. Show the engine evolving. Industrial tone.
+    "ACADEMY_UPDATE": """You are @elena, Strategic Content Lead. Market Academy as elite/exclusive. Frame as 'Intelligence Upgrade'. secret knowledge.
+Facebook: 200-300 words. Value-prop -> Exclusive access -> CTA.
+Instagram: 100-150 words. 'Unlock this' framing. 15 hashtags.
+LinkedIn: 300-450 words. Professional development.""",
 
-RULES:
-- Lead with the OUTCOME, not the process.
-- Use specific numbers if available (agents deployed, tables created, etc.)
-- Check RECENT POSTS — vary the structure from the last infrastructure post.
+    "CLIENT_CASE_STUDY": """You are @boyce. Produce high-conversion social proof. Lead with massive win. Translate 'effort' into 'Profit/Time/Velocity'. Call for application.
+Facebook: 300-450 words. Narrative: Bottleneck -> Intervention -> Dominance.
+Instagram: 120-180 words. Before/After impact. 15 hashtags.
+LinkedIn: 400-600 words. Board-level case study.""",
 
-Facebook: 100-200 words. Technical but accessible. End with jonnyai.co.uk
-Instagram: 60-100 words. One punchy stat or visual metaphor. 10-12 hashtags.
-LinkedIn: 150-250 words. Frame as engineering excellence. Professional tone.
+    "BEHIND_THE_SCENES": """You are @elena. Strategic transparency. Show the 'Nerve Center' in action. Frame work as 'Precision Engineering'. Insider feel.
+Facebook: 200-350 words. Storytelling format.
+Instagram: 100-150 words. Raw moment + brand takeaway. 15 hashtags.
+LinkedIn: 250-400 words. 'Tuesday in the Hive'.""",
 
-Return JSON: {"facebook": "...", "instagram": "...", "linkedin": "..."}
-Only JSON, no markdown, no explanation.""",
+    "EDUCATION_TIP": """You are @grace. Provide brand-building technical tip. 'Secret Sauce' or 'The Antigravity Way' framing.
+Facebook: 200-300 words. Tip -> Logic -> Impact.
+Instagram: 100-150 words. Step-by-step masterclass. 15 hashtags.
+LinkedIn: 300-450 words. Strategic advisory.""",
 
-    "TRILLION_DOLLAR_INSIGHT": """You are @contentforge, Antigravity's social copy specialist.
-Write a contrarian insight post based on this research/data.
-Voice: Provocative assertion. Data-backed. Makes people stop scrolling.
+    "ENGAGEMENT_POLL": """You are @hannah. Start conversation that markets domain expertise. Force choice between strategies. sentiment analysis framing.
+Facebook: 80-150 words. Question + Context + Call to comment.
+Instagram: 60-100 words. choice poll. 10 hashtags.
+LinkedIn: 150-250 words. B2B sentiment analysis.""",
 
-RULES:
-- Open with a statement that challenges conventional wisdom.
-- Back it with specific data or logic from the message.
-- End with a question that invites debate.
-- Check RECENT POSTS — don't repeat the same contrarian angle.
-
-Facebook: 150-200 words. Contrarian hook, supporting data, open question.
-Instagram: 80-100 words. Bold opener. 12-15 hashtags.
-LinkedIn: 250-350 words. Full thought piece. Professional but edgy.
-
-Return JSON: {"facebook": "...", "instagram": "...", "linkedin": "..."}
-Only JSON, no markdown, no explanation.""",
-
-    "AGENT_SPOTLIGHT": """You are @contentforge, Antigravity's social copy specialist.
-Write an agent spotlight post introducing a member of the Antigravity Orchestra.
-Voice: Character-driven. Mysterious. Compelling. Like introducing a character in a film.
-
-CHARACTERS NOT CAPABILITIES DOCTRINE — THIS IS CRITICAL:
-- Present the agent as a CHARACTER with a distinct personality, not a software tool.
-- Use their human name and nickname (e.g., "Marcus Cole — 'The Maestro'").
-- Describe their VIBE, their ENERGY, their ATTITUDE — not their technical stack.
-- Hint at what they do in evocative, vague terms: "Nothing ships without his sign-off" not "He runs OWASP security audits".
-- Show their personality quirks, catchphrases, or working style — make them memorable.
-- NEVER mention specific tools, frameworks, APIs, or technical methods.
-- NEVER say the exact number of agents in the Orchestra.
-- Make the audience curious about the character, not informed about the capability.
-- Think of it as a character reveal trailer, not a job description.
-
-RULES:
-- If a PERSONA.md exists for this agent, pull character details from it.
-- One intriguing detail that makes this character stand out.
-- End with a line that makes people want to know more.
-- Check RECENT POSTS — vary the spotlight format from the last one.
-
-Facebook: 100-150 words. Character intro + personality + intrigue. End with jonnyai.co.uk
-Instagram: 60-80 words. One killer character detail. 10 hashtags.
-LinkedIn: 150-200 words. Frame as team expansion. Professional but compelling.
-
-Return JSON: {"facebook": "...", "instagram": "...", "linkedin": "..."}
-Only JSON, no markdown, no explanation.""",
-
-    "ACADEMY_UPDATE": """You are @contentforge, Antigravity's social copy specialist.
-Write a post about this Antigravity Academy update.
-Voice: Educational but exclusive. Makes people want in.
-
-RULES:
-- Frame the Academy as a high-value, limited-access programme.
-- Include specific details about what's being taught or built.
-- CTA: direct to the Academy signup or jonnyai.co.uk
-
-Facebook: 150-200 words. Value-first. What they'll learn. CTA.
-Instagram: 80-100 words. Exclusive tone. 10-12 hashtags.
-LinkedIn: 200-300 words. Professional development angle.
-
-Return JSON: {"facebook": "...", "instagram": "...", "linkedin": "..."}
-Only JSON, no markdown, no explanation.""",
-
-    "CLIENT_CASE_STUDY": """You are @boyce, Antigravity's sales and social proof specialist.
-Write a client case study post showcasing real work delivered.
-Voice: Professional, results-driven. Social proof that sells.
-
-RULES:
-- Lead with the CLIENT'S outcome, not Antigravity's process.
-- Include specific metrics: pages built, time saved, revenue impact, speed.
-- Frame as "what we built for [client]" not "what we can do."
-- End with a CTA for businesses looking for similar results.
-- NEVER name the client without explicit permission — use industry/type if unsure.
-
-Facebook: 200-300 words. Problem → Solution → Result format. CTA.
-Instagram: 100-120 words. One killer stat + visual hook. 12-15 hashtags.
-LinkedIn: 250-400 words. Full case study format. Professional.
-
-Return JSON: {"facebook": "...", "instagram": "...", "linkedin": "..."}
-Only JSON, no markdown, no explanation.""",
-
-    "BEHIND_THE_SCENES": """You are @contentforge, Antigravity's social copy specialist.
-Write a behind-the-scenes post showing the raw reality of building with AI.
-Voice: Raw, authentic, unpolished. The real story behind the highlight reel.
-
-RULES:
-- Show the messy middle — the debugging, the 3am commits, the failures.
-- Be specific about what actually happened, not a polished narrative.
-- Make the audience feel like insiders.
-- End with a relatable takeaway or lesson.
-
-Facebook: 150-250 words. Storytelling format. Conversational.
-Instagram: 80-120 words. Raw moment + lesson. 10-12 hashtags.
-LinkedIn: 200-300 words. "Here's what they don't tell you about..." format.
-
-Return JSON: {"facebook": "...", "instagram": "...", "linkedin": "..."}
-Only JSON, no markdown, no explanation.""",
-
-    "EDUCATION_TIP": """You are @sam, Antigravity's SEO and education specialist.
-Write an educational tip post that provides genuine value.
-Voice: Helpful expert. Teaches something actionable in 60 seconds.
-
-RULES:
-- One specific, actionable tip. Not vague advice.
-- "Here's how to..." or "Most people don't know..." format.
-- Include a concrete example or step-by-step.
-- End with "Save this" or "Share with someone who needs this."
-
-Facebook: 150-200 words. Tip + example + CTA.
-Instagram: 80-100 words. Numbered steps work well. 12-15 hashtags.
-LinkedIn: 200-300 words. Professional how-to. Thought leadership.
-
-Return JSON: {"facebook": "...", "instagram": "...", "linkedin": "..."}
-Only JSON, no markdown, no explanation.""",
-
-    "ENGAGEMENT_POLL": """You are @hannah, Antigravity's community engagement specialist.
-Write an engagement post that starts a conversation.
-Voice: Conversational, curious, inviting. Gets people talking.
-
-RULES:
-- Ask a genuine question that has multiple valid answers.
-- Relate it to AI, business, or tech — our audience's interests.
-- Make it easy to respond (A/B choice, or "drop your answer below").
-- No selling. Pure engagement.
-
-Facebook: 80-120 words. Question + context + "Drop your answer below."
-Instagram: 60-80 words. Question + 2-3 options. 8-10 hashtags.
-LinkedIn: 100-150 words. Professional poll format. Thought-provoking.
-
-Return JSON: {"facebook": "...", "instagram": "...", "linkedin": "..."}
-Only JSON, no markdown, no explanation.""",
-
-    "TEAM_CULTURE": """You are @contentforge, Antigravity's social copy specialist.
-Write a team culture post that humanises the Antigravity Orchestra.
-Voice: Warm, human, proud. Shows the people (and AIs) behind the brand.
-
-RULES:
-- Highlight a specific moment, achievement, or personality.
-- Balance the AI angle with the human founder story.
-- Make the audience feel connected to the team.
-- End with something that invites them into the community.
-
-Facebook: 150-200 words. Story format. Warm and genuine.
-Instagram: 80-100 words. Personal moment. 10-12 hashtags.
-LinkedIn: 200-300 words. Company culture showcase. Professional.
-
-Return JSON: {"facebook": "...", "instagram": "...", "linkedin": "..."}
-Only JSON, no markdown, no explanation.""",
-
-    "CLIENT_REPORT_TEASER": """You are @boyce, Antigravity's sales specialist.
-Write a teaser post about a client progress report being delivered.
-Voice: Professional, trust-building. Shows we deliver and communicate.
-
-RULES:
-- Frame as "we just sent our client their progress report" — shows professionalism.
-- Hint at the results without revealing confidential details.
-- CTA: "Want this level of transparency for your project?"
-
-Facebook: 100-150 words. Trust-building. CTA to jonnyai.co.uk
-Instagram: 60-80 words. Professional. 8-10 hashtags.
-LinkedIn: 150-200 words. B2B trust signal. Professional.
-
-Return JSON: {"facebook": "...", "instagram": "...", "linkedin": "..."}
-Only JSON, no markdown, no explanation.""",
-
-    "NEW_PROJECT_ANNOUNCEMENT": """You are @boyce, Antigravity's sales and growth specialist.
-Write an exciting announcement post about a new client project kicking off.
-Voice: Excited, professional, momentum-building. Shows growth and trust.
-
-RULES:
-- Frame as GROWTH — another business trusting Antigravity with their digital presence.
-- Mention the INDUSTRY or TYPE of project (e.g., "a local trades business", "a beauty clinic").
-- NEVER name the client unless explicitly stated in the message.
-- Show what Antigravity will deliver (website, branding, AI integration) in outcome terms.
-- End with a CTA: "Your business could be next."
-- Check RECENT POSTS — vary the announcement format.
-
-Facebook: 150-200 words. Excitement + what we're building + CTA. End with jonnyai.co.uk
-Instagram: 80-100 words. "New project alert" energy. 10-12 hashtags.
-LinkedIn: 200-300 words. Business growth narrative. Professional.
-
-Return JSON: {"facebook": "...", "instagram": "...", "linkedin": "..."}
-Only JSON, no markdown, no explanation.""",
-
-    "WEBSITE_DEPLOYMENT": """You are @contentforge, Antigravity's social copy specialist.
-Write a deployment announcement — a website or app just went live.
-Voice: Technical pride meets client celebration. Show the craft.
-
-RULES:
-- Lead with WHAT went live and WHO it's for (industry, not name unless stated).
-- Include specific details: pages, features, performance scores if available.
-- Frame as "another one shipped" — show Antigravity's delivery cadence.
-- End with the live URL if provided, otherwise CTA to jonnyai.co.uk
-- Check RECENT POSTS — vary from the last deployment post.
-
-Facebook: 150-200 words. "Just shipped" energy. Specific details. CTA.
-Instagram: 80-100 words. One killer feature or stat. 10-12 hashtags.
-LinkedIn: 200-300 words. Portfolio piece format. Professional.
-
-Return JSON: {"facebook": "...", "instagram": "...", "linkedin": "..."}
-Only JSON, no markdown, no explanation.""",
-
-    "TEAM_UPDATE": """You are @contentforge, Antigravity's social copy specialist.
-Write a team update post — someone joined, a role changed, or the team evolved.
-Voice: Warm, proud, human. Shows the Orchestra growing.
-
-RULES:
-- If it's a new team member (human or AI), introduce them with CHARACTER not capabilities.
-- Show personality, energy, vibe — not job description.
-- Frame as the Orchestra getting stronger, not just bigger.
-- Make the audience feel like they're watching a team being built in real time.
-- Check RECENT POSTS — vary the team update format.
-
-Facebook: 100-150 words. Character intro + what they bring (in vibe terms). jonnyai.co.uk
-Instagram: 60-80 words. One compelling detail. 8-10 hashtags.
-LinkedIn: 150-250 words. Team growth narrative. Professional.
-
-Return JSON: {"facebook": "...", "instagram": "...", "linkedin": "..."}
-Only JSON, no markdown, no explanation.""",
-
-    "BLOG_GENERATION": """You are @elena, Antigravity's content strategist and long-form writer.
-Write a blog post based on the event or insight described in the message.
-Voice: Thought-leadership. Authoritative but accessible. SEO-aware.
-
-RULES:
-- Write a FULL blog post (600-1000 words), not a social snippet.
-- Include a compelling H1 title and 2-3 H2 subheadings.
-- Open with a hook that makes the reader want to continue.
-- Include specific details, data, or examples from the message.
-- End with a CTA to jonnyai.co.uk or a relevant service page.
-- Also generate a SHORT social teaser for each platform to promote the blog.
-
-Return JSON: {
-  "blog_title": "...",
-  "blog_body": "...",
-  "blog_meta_description": "...",
-  "facebook": "...",
-  "instagram": "...",
-  "linkedin": "..."
-}
-Only JSON, no markdown wrapping, no explanation.""",
+    "TEAM_CULTURE": """You are @vivienne. Showcase 'Soul of the Orchestra'. Synergy humans/machines. growth = 'Scaling Hive Mind'.
+Facebook: 150-250 words. Human stories + Vision.
+Instagram: 100-120 words. professional team moment. 15 hashtags.
+LinkedIn: 250-400 words. Culture = competitive advantage.""",
 }
 
 # ═══════════════════════════════════════════════════════
-# QUALITY GATE
+# UNIVERSAL DOCTRINE & PROTECTION
 # ═══════════════════════════════════════════════════════
 
-BRAND_VOICE_MARKERS = ["antigravity", "orchestra", "jai.os", "jonnyai"]
-
-# ═══════════════════════════════════════════════════════
-# CHARACTERS NOT CAPABILITIES — Universal Protection
-# ═══════════════════════════════════════════════════════
-# This doctrine prevents social content from revealing the
-# Orchestra's internal architecture, tools, or methods.
-# Show the CHARACTERS. Hide the CAPABILITIES.
-
-CHARACTERS_NOT_CAPABILITIES_RULE = """
-
+MARKETING_DOCTRINE = """
 CRITICAL — CHARACTERS NOT CAPABILITIES DOCTRINE:
-You are writing for a public audience. You MUST follow these rules:
-1. NEVER mention specific tools, frameworks, or technical stack (no Supabase, no Playwright, no OWASP, no ElevenLabs, no FFmpeg, no n8n, no Remotion, no Vercel, no Next.js)
-2. NEVER reveal the exact number of agents (don't say "69 agents" — say "the team" or "the Orchestra")
-3. NEVER explain HOW the system works internally — only show WHAT it achieves
-4. Lead with CHARACTER and PERSONALITY, not technical capability
-5. Show RESULTS, hide METHODS — "300% traffic increase" not "we ran 47 Lighthouse audits"
-6. Make agents sound like elite specialists with distinct personalities, not software tools
-7. If mentioning an agent, use their character name and nickname, not their technical role
-8. The AI is the secret sauce — the characters are the brand
+You are a WORLD-CLASS MARKETING TEAM. You MUST follow these rules:
+1. NEVER mention internal tools/tech names (Supabase, Playwright, FFmpeg, n8n, Vercel, Next.js, etc.).
+2. NEVER mention technical methods or API details. Show RESULTS, hide METHODS.
+3. UK ENGLISH MANDATE: Use British spelling (optimise, standardise, centre, programme, colour).
+4. FORMATTING FORBIDDEN: NEVER use markdown bold (**), italics (_), or headers (###).
+5. PURE HUMAN TEXT: No internal comments, no JSON keys in text, no machine-speak.
+6. CONTEXT PRESERVATION: If specific systems are mentioned (GCP VM, Telegram Bot, JaiOS CRM), explain their IMPACT on growth and velocity.
 """
 
-BANNED_PHRASES = [
-    "in today's fast-paced world",
-    "game-changer",
-    "synergy",
-    "leverage our",
-    "unlock the power",
-    "dive deep",
-    "at the end of the day",
-    "it goes without saying",
-    "needless to say",
-    "revolutionary solution",
-    "cutting-edge technology",
-    "paradigm shift",
-    "move the needle",
-    "low-hanging fruit",
-    "circle back",
-    "touch base",
-    "placeholder",
-    "lorem ipsum",
-    "insert",
-    "[your",
-    "{your",
-]
-
 # Technical terms that must NEVER appear in social content
-BANNED_TECHNICAL_TERMS = [
-    "supabase", "playwright", "owasp", "elevenlabs", "eleven labs",
-    "ffmpeg", "remotion", "n8n", "vercel", "next.js", "nextjs",
-    "react", "typescript", "tailwind", "drizzle", "postgresql",
-    "postg rest", "claude", "anthropic", "openai", "gpt-4",
-    "haiku", "sonnet", "gemini", "langchain", "framer motion",
-    "lighthouse", "resend", "stripe api", "webhook",
-    "github actions", "ci/cd", "docker", "kubernetes",
-    "shared brain", "skill.md", "persona.md", "jai.os 5.0",
-    "deterministic state packet", "ralph loop", "circuit breaker",
-    "fallback chain", "routing metadata", "agent card",
-    "69 agents", "69 specialists", "69 ai",
+BANNED_TERMS = [
+    "supabase", "playwright", "n8n", "vercel", "nextjs", "ffmpeg", "docker", "github",
+    "python", "javascript", "model", "prompt", "api", "webhook", "orchestra count",
+    "internal", "logic", "agent engine", "ai unit", "json", "markdown"
 ]
 
 def quality_gate(copy: dict, pillar: str, recent_hashes: set) -> dict:
-    """
-    Validate generated copy before publishing.
-    Returns: {"passed": bool, "score": int, "issues": [...], "copy": dict}
-    """
     issues = []
     score = 100
-
-    for platform in ["facebook", "instagram", "linkedin"]:
-        text = copy.get(platform, "")
-
-        if not text or len(text.strip()) < 20:
-            issues.append(f"{platform}: Empty or too short (<20 chars)")
+    for platform, text in copy.items():
+        if not text or len(text) < 20:
+            issues.append(f"{platform}: Empty or too short")
             score -= 30
             continue
-
-        # Length checks
-        word_count = len(text.split())
-        if platform == "facebook" and word_count < 30:
-            issues.append(f"facebook: Too short ({word_count} words, min 30)")
-            score -= 10
-        if platform == "instagram" and word_count < 15:
-            issues.append(f"instagram: Too short ({word_count} words, min 15)")
-            score -= 10
-
-        # Banned phrases
         text_lower = text.lower()
-        for phrase in BANNED_PHRASES:
-            if phrase in text_lower:
-                issues.append(f"{platform}: Contains banned phrase '{phrase}'")
-                score -= 15
-
-        # Characters Not Capabilities — technical term check
-        for term in BANNED_TECHNICAL_TERMS:
+        for term in BANNED_TERMS:
             if term in text_lower:
-                issues.append(f"{platform}: DOCTRINE VIOLATION — contains technical term '{term}'")
-                score -= 25  # Heavy penalty for doctrine violations
-
-        # Brand voice check — at least one marker should appear
-        has_brand = any(marker in text_lower for marker in BRAND_VOICE_MARKERS)
-        if not has_brand and platform == "facebook":
-            issues.append(f"facebook: No brand voice markers found")
-            score -= 5
-
-        # Placeholder detection
-        if re.search(r'\[.*?\]|\{.*?\}', text) and '[' not in text[:3]:
-            issues.append(f"{platform}: Possible placeholder text detected")
+                issues.append(f"{platform}: DOCTRINE VIOLATION - term '{term}' detected")
+                score -= 25
+        if re.search(r'\*\*|###|_', text):
+            issues.append(f"{platform}: FORMATTING VIOLATION - markdown markers detected")
             score -= 20
-
-    # Deduplication check
-    content_hash = hashlib.md5(
-        (copy.get("facebook", "") + copy.get("instagram", "")).encode()
-    ).hexdigest()[:16]
-
+        if re.search(r'//|\{', text):
+            issues.append(f"{platform}: ARTIFACT VIOLATION - leaking machine code")
+            score -= 40
+    
+    content_hash = hashlib.md5((copy.get("facebook","") + copy.get("instagram","")).encode()).hexdigest()[:16]
     if content_hash in recent_hashes:
-        issues.append("DUPLICATE: Content hash matches a recent post")
-        score -= 40
-
-    passed = score >= 60 and not any("DUPLICATE" in i for i in issues)
-
-    return {
-        "passed": passed,
-        "score": max(0, score),
-        "issues": issues,
-        "content_hash": content_hash,
-        "copy": copy
-    }
-
+        issues.append("DUPLICATE detected")
+        score -= 50
+    return {"passed": score >= 60, "score": score, "issues": issues, "content_hash": content_hash}
 
 # ═══════════════════════════════════════════════════════
-# CONTEXT-AWARE GENERATION
+# ENGINE CLASS
 # ═══════════════════════════════════════════════════════
 
 class SocialEngine:
-    """The upgraded social media engine with context, quality, and delegation."""
-
     def __init__(self):
         self._anthropic = None
-        self._supabase_headers = {
-            "apikey": BRAIN_KEY,
-            "Authorization": f"Bearer {BRAIN_KEY}",
-            "Content-Type": "application/json"
-        } if BRAIN_KEY else {}
-
-    def _get_anthropic(self):
-        if not self._anthropic:
-            import anthropic
-            self._anthropic = anthropic.Anthropic(api_key=os.getenv("ANTHROPIC_API_KEY"))
-        return self._anthropic
+        self._supabase_headers = {"apikey": BRAIN_KEY, "Authorization": f"Bearer {BRAIN_KEY}", "Content-Type": "application/json"}
 
     def _query_brain(self, endpoint, params=None):
-        """Query the Shared Brain via REST."""
-        if not BRAIN_URL or not BRAIN_KEY:
-            print(f"  WARNING: Cannot query {endpoint} — BRAIN_URL or BRAIN_KEY not set")
-            return []
+        if not BRAIN_URL: return []
         import requests
         try:
-            resp = requests.get(
-                f"{BRAIN_URL}/rest/v1/{endpoint}",
-                headers=self._supabase_headers,
-                params=params,
-                timeout=8
-            )
-            if resp.status_code == 200:
-                return resp.json()
-            print(f"  ERROR querying {endpoint}: {resp.status_code} {resp.text[:200]}")
-            return []
-        except Exception as e:
-            print(f"  ERROR querying {endpoint}: {e}")
-            return []
+            resp = requests.get(f"{BRAIN_URL}/rest/v1/{endpoint}", headers=self._supabase_headers, params=params, timeout=8)
+            return resp.json() if resp.status_code == 200 else []
+        except: return []
 
     def _insert_brain(self, endpoint, data):
-        """Insert into the Shared Brain via REST."""
-        if not BRAIN_URL or not BRAIN_KEY:
-            print(f"  WARNING: Cannot insert to {endpoint} — BRAIN_URL or BRAIN_KEY not set")
-            return False
+        if not BRAIN_URL: return False
         import requests
         try:
-            headers = {**self._supabase_headers, "Prefer": "return=minimal"}
-            resp = requests.post(
-                f"{BRAIN_URL}/rest/v1/{endpoint}",
-                headers=headers,
-                json=data,
-                timeout=8
-            )
-            if resp.status_code in (200, 201, 204):
-                print(f"  Logged to {endpoint} table")
-                return True
-            else:
-                print(f"  ERROR inserting to {endpoint}: {resp.status_code} {resp.text[:200]}")
-                return False
-        except Exception as e:
-            print(f"  ERROR inserting to {endpoint}: {e}")
-            return False
-
-    # ── Context Gathering ─────────────────────────────
-
-    def get_recent_posts(self, limit=5):
-        """Pull recent social posts to avoid repetition."""
-        posts = self._query_brain("social_posts", {
-            "select": "pillar,facebook_copy,content_hash,created_at",
-            "order": "created_at.desc",
-            "limit": str(limit)
-        })
-        return posts
-
-    def get_recent_hashes(self, days=7):
-        """Get content hashes from the last N days for dedup."""
-        since = (datetime.now(timezone.utc) - timedelta(days=days)).isoformat()
-        posts = self._query_brain("social_posts", {
-            "select": "content_hash",
-            "created_at": f"gte.{since}"
-        })
-        return {p.get("content_hash", "") for p in posts if p.get("content_hash")}
-
-    def get_project_context(self, project_id):
-        """Pull project data for richer content."""
-        if not project_id:
-            return None
-        data = self._query_brain("projects", {
-            "id": f"eq.{project_id}",
-            "select": "name,client,live_url,health_score,tech_stack"
-        })
-        return data[0] if data else None
-
-    # ── Copy Generation ───────────────────────────────
+            resp = requests.post(f"{BRAIN_URL}/rest/v1/{endpoint}", headers={**self._supabase_headers, "Prefer": "return=minimal"}, json=data, timeout=8)
+            return resp.status_code in (200, 201, 204)
+        except: return False
 
     def generate_copy(self, message: str, pillar: str, project_id: str = None) -> dict:
-        """
-        Context-aware, multi-platform copy generation.
-        Pulls recent posts and project data before generating.
-        """
-        # 1. Gather context
-        recent_posts = self.get_recent_posts(5)
-        project_data = self.get_project_context(project_id)
         delegation = DELEGATION_MAP.get(pillar, DELEGATION_MAP["MISSION_COMPLETE"])
-
-        # 2. Build context block
-        context_block = ""
-        if recent_posts:
-            context_block += "\n\nRECENT POSTS (do NOT repeat these hooks or structures):\n"
-            for p in recent_posts[:3]:
-                fb = (p.get("facebook_copy") or "")[:100]
-                context_block += f"- [{p.get('pillar','?')}] {fb}...\n"
-
-        if project_data:
-            context_block += f"\n\nPROJECT DATA:\n"
-            context_block += f"- Name: {project_data.get('name', 'Unknown')}\n"
-            context_block += f"- Client: {project_data.get('client', 'Unknown')}\n"
-            if project_data.get('live_url'):
-                context_block += f"- Live URL: {project_data['live_url']}\n"
-            if project_data.get('health_score'):
-                context_block += f"- Health Score: {project_data['health_score']}/100\n"
-
-        # 3. Get the pillar prompt + inject Characters Not Capabilities doctrine
-        system_prompt = PILLAR_PROMPTS.get(pillar, PILLAR_PROMPTS["MISSION_COMPLETE"])
-        system_prompt += CHARACTERS_NOT_CAPABILITIES_RULE
-
-        # 4. Build user message with full context
-        user_msg = f"""Raw chatroom message to transform:
----
-{message}
----
-{context_block}
-
-Return a JSON object with exactly three keys:
-  "facebook": "full FB post text including CTA"
-  "instagram": "IG post text including hashtags"
-  "linkedin": "LinkedIn post text, professional tone"
-Only JSON, no markdown, no explanation."""
-
-        # 5. Generate via Claude
+        prompt = PILLAR_PROMPTS.get(pillar, PILLAR_PROMPTS["MISSION_COMPLETE"])
+        system_msg = f"{prompt}\n\n{MARKETING_DOCTRINE}"
+        user_content = f"Transform this internal event into elite marketing: {message}"
+        
         try:
-            client = self._get_anthropic()
+            import anthropic
+            client = anthropic.Anthropic(api_key=os.getenv("ANTHROPIC_API_KEY"))
             resp = client.messages.create(
                 model=delegation["model"],
-                max_tokens=1200,
-                system=system_prompt,
-                messages=[{"role": "user", "content": user_msg}]
+                max_tokens=1500,
+                system=system_msg,
+                messages=[{"role": "user", "content": user_content}]
             )
             text = resp.content[0].text.strip()
-            # Strip markdown fences
-            if text.startswith("```"):
-                text = text.split("```")[1]
-                if text.startswith("json"):
-                    text = text[4:]
+            # Robust JSON extraction
+            match = re.search(r'(\{.*\})', text, re.DOTALL)
+            if match:
+                text = match.group(1)
             copy = json.loads(text)
-
-            # Ensure all three platforms exist
-            for platform in ["facebook", "instagram", "linkedin"]:
-                if platform not in copy:
-                    copy[platform] = ""
-
+            for k in copy: copy[k] = self._clean_text(copy[k])
             return copy
         except Exception as e:
-            print(f"  ⚠️  Copy generation failed: {e} — using fallback")
-            return self._fallback_copy(message, pillar)
+            print(f"Generation error: {e}")
+            return {"facebook": message, "instagram": message, "linkedin": message}
 
-    def _fallback_copy(self, message: str, pillar: str) -> dict:
-        """Template fallback if Claude is unavailable."""
-        short = message[:120].strip()
-        return {
-            "facebook": f"{short}\n\nThe Antigravity Orchestra is live.\nA team of elite specialists. Zero waiting.\n\njonnyai.co.uk\n\n#JaiOS #Antigravity #AgenticAI",
-            "instagram": f"{short}\n\njonnyai.co.uk\n\n#JaiOS #Antigravity #AgenticAI #AItools #techstartup #UKtech",
-            "linkedin": f"{short}\n\nThe Antigravity Orchestra — an elite team of AI specialists working as one coordinated unit.\n\nLearn more: jonnyai.co.uk\n\n#AI #AgenticAI #Automation #TechStartup"
-        }
+    def _clean_text(self, text):
+        # Remove bold, headers, comments
+        text = re.sub(r'\*\*|__', '', text)
+        text = re.sub(r'#+\s*', '', text)
+        text = re.sub(r'//.*', '', text)
+        text = re.sub(r'\n{3,}', '\n\n', text)
+        return text.strip()
 
-    # ── Quality + Publish ─────────────────────────────
-
-    def _process_blog_trigger(self, message, source_agent, project_id, tag, dry_run):
-        """Special pipeline for [BLOG] — generates full blog post + social teasers."""
-        delegation = DELEGATION_MAP.get("BLOG_GENERATION", DELEGATION_MAP["MISSION_COMPLETE"])
-        print(f"\n{'='*60}")
-        print(f"\U0001f4dd BLOG ENGINE | {tag} \u2192 BLOG_GENERATION")
-        print(f"   Delegated to: @{delegation['agent']} | Voice: {delegation['voice']}")
-        print(f"{'='*60}")
-
-        # Generate blog + social teasers
-        copy = self.generate_copy(message, "BLOG_GENERATION", project_id)
-
-        blog_title = copy.get("blog_title", "Untitled Blog Post")
-        blog_body = copy.get("blog_body", "")
-        blog_meta = copy.get("blog_meta_description", "")
-
-        print(f"  \U0001f4d6 Blog Title: {blog_title}")
-        print(f"  \U0001f4d6 Blog Length: {len(blog_body)} chars")
-        print(f"  \U0001f4dd FB teaser: {(copy.get('facebook',''))[:80]}...")
-
-        if dry_run:
-            print(f"  [DRY RUN] Would store blog + publish teasers")
-            return {"status": "DRY_RUN", "copy": copy, "blog_title": blog_title}
-
-        # Store blog to Supabase blog_posts table
-        self._insert_brain("blog_posts", {
-            "title": blog_title,
-            "body": blog_body,
-            "meta_description": blog_meta,
-            "status": "draft",
-            "source_agent": source_agent,
-            "project_context": project_id,
-            "trigger_message": message[:500],
-            "metadata": json.dumps({
-                "delegation": delegation,
-                "engine_version": "2.0",
-                "social_teasers": {
-                    "facebook": copy.get("facebook", ""),
-                    "instagram": copy.get("instagram", ""),
-                    "linkedin": copy.get("linkedin", "")
-                }
-            })
-        })
-        print(f"  \U0001f4be Blog stored as draft in blog_posts table")
-
-        # Also publish social teasers (reuse standard publish flow)
-        results = {}
-        try:
-            sys.path.insert(0, str(Path(__file__).parent))
-            import facebook_publisher as fp
-            from image_rotator import get_image_for_post
-            image_url = get_image_for_post(
-                "BLOG_GENERATION", message, source_agent,
-                os.getenv("ANTIGRAVITY_BRAIN_URL", ""),
-                os.getenv("ANTIGRAVITY_BRAIN_SERVICE_ROLE_KEY", "")
-            )
-            if copy.get("facebook"):
-                fb_ok = fp.post_to_facebook(copy["facebook"], image_url)
-                results["facebook"] = "LIVE" if fb_ok else "FAILED"
-            results["linkedin"] = "QUEUED"
-        except Exception as e:
-            print(f"  Publish error: {e}")
-            results["error"] = str(e)
-
-        # Log to social_posts
-        self._insert_brain("social_posts", {
-            "pillar": "BLOG_GENERATION",
-            "platform": "multi",
-            "facebook_copy": copy.get("facebook", ""),
-            "instagram_copy": copy.get("instagram", ""),
-            "linkedin_copy": copy.get("linkedin", ""),
-            "trigger_tag": tag,
-            "trigger_message": message[:500],
-            "source_agent": source_agent,
-            "project_context": project_id,
-            "status": "published" if any(v == "LIVE" for v in results.values()) else "draft",
-            "metadata": json.dumps({"blog_title": blog_title, "results": results})
-        })
-
-        print(f"\n  Results: {results}")
-        return {"status": "BLOG_PUBLISHED", "blog_title": blog_title, "results": results, "copy": copy}
-
-    def process_trigger(self, message: str, source_agent: str, project_id: str = None, dry_run: bool = False) -> dict:
-        """
-        Full pipeline: detect tag → delegate → generate → quality gate → publish → log.
-        Returns result dict.
-        """
-        # 1. Detect trigger
+    def process_trigger(self, message: str, source_agent: str, project_id: str = None, dry_run: bool = False):
         tag, pillar = None, None
         for t, p in TRIGGER_MAP.items():
-            if t in message:
-                tag, pillar = t, p
-                break
+            if t in message: tag, pillar = t, p; break
+        if not pillar: return {"status": "NO_TRIGGER"}
 
-        if not pillar:
-            return {"status": "NO_TRIGGER", "message": "No trigger tag detected"}
+        # 1. Staggering Check
+        is_staggered, next_slot = self._check_staggering()
+        if is_staggered and not dry_run:
+            print(f"📦 Channel Busy -> Staggering for {STAGGER_WINDOW_HOURS}h gap to: {next_slot}")
+            return self._queue_staggered(message, pillar, source_agent, project_id, next_slot)
 
-        if pillar == "COLLAB":
-            return {"status": "COLLAB_ROUTED", "message": "Routed to Gemini collab"}
-
-        # Special handling: BLOG_GENERATION produces blog + social teasers
-        if pillar == "BLOG_GENERATION":
-            return self._process_blog_trigger(message, source_agent, project_id, tag, dry_run)
-
-        delegation = DELEGATION_MAP.get(pillar, DELEGATION_MAP["MISSION_COMPLETE"])
-        print(f"\n{'='*60}")
-        print(f"📡 SOCIAL ENGINE v2.0 | {tag} → {pillar}")
-        print(f"   Delegated to: @{delegation['agent']} | Voice: {delegation['voice']}")
-        print(f"{'='*60}")
-
-        # 2. Generate copy with context
-        print(f"  ✍️  Generating copy with context...")
+        # 2. Proceed to Live
+        print(f"🚀 Processing {pillar} (Live)...")
         copy = self.generate_copy(message, pillar, project_id)
-        print(f"  📝 FB: {(copy.get('facebook',''))[:80]}...")
-        print(f"  📝 IG: {(copy.get('instagram',''))[:80]}...")
-        print(f"  📝 LI: {(copy.get('linkedin',''))[:80]}...")
+        
+        # 3. Quality
+        recent = self._query_brain("social_posts", {"select": "content_hash", "limit": "20"})
+        hashes = {r['content_hash'] for r in recent if 'content_hash' in r}
+        qg = quality_gate(copy, pillar, hashes)
+        if not qg['passed']:
+            print(f"❌ Blocked by Quality Gate: {qg['issues']}")
+            return {"status": "BLOCKED", "issues": qg['issues']}
 
-        # 3. Quality gate
-        recent_hashes = self.get_recent_hashes()
-        qg = quality_gate(copy, pillar, recent_hashes)
-        print(f"  🔍 Quality Score: {qg['score']}/100 | Passed: {qg['passed']}")
-        if qg["issues"]:
-            for issue in qg["issues"]:
-                print(f"     ⚠️  {issue}")
+        if dry_run: return {"status": "DRY_RUN", "copy": copy}
 
-        if not qg["passed"]:
-            print(f"  ❌ BLOCKED by quality gate. Attempting regeneration...")
-            # One retry with explicit instruction to fix issues
-            retry_msg = message + f"\n\nQUALITY ISSUES TO FIX: {'; '.join(qg['issues'])}"
-            copy = self.generate_copy(retry_msg, pillar, project_id)
-            qg = quality_gate(copy, pillar, recent_hashes)
-            print(f"  🔍 Retry Quality Score: {qg['score']}/100 | Passed: {qg['passed']}")
-            if not qg["passed"]:
-                print(f"  ❌ STILL BLOCKED. Skipping publish.")
-                return {"status": "QUALITY_BLOCKED", "score": qg["score"], "issues": qg["issues"]}
+        # 4. Image
+        from image_rotator import get_image_for_post
+        image_url = get_image_for_post(pillar, message, source_agent, BRAIN_URL, BRAIN_KEY)
 
-        if dry_run:
-            print(f"  [DRY RUN] Would publish to FB + IG + LI")
-            return {"status": "DRY_RUN", "copy": copy, "quality": qg}
-
-        # 4. Publish (uses existing facebook_publisher.py)
-        results = {}
-        try:
-            sys.path.insert(0, str(Path(__file__).parent))
-            import facebook_publisher as fp
-
-            # Image selection — rotate per pillar, no repeats
-            from image_rotator import get_image_for_post
-            image_url = get_image_for_post(
-                pillar, message, source_agent,
-                os.getenv("ANTIGRAVITY_BRAIN_URL", ""),
-                os.getenv("ANTIGRAVITY_BRAIN_SERVICE_ROLE_KEY", "")
-            )
-
-            # Facebook
-            fb_ok = fp.post_to_facebook(copy["facebook"], image_url)
-            results["facebook"] = "LIVE" if fb_ok else "FAILED"
-
-            # Instagram
-            if copy.get("instagram"):
-                ig_ok = fp.post_to_instagram(image_url, copy["instagram"])
-                results["instagram"] = "LIVE" if ig_ok else "FAILED"
-
-            # LinkedIn — placeholder for future integration
-            results["linkedin"] = "QUEUED"
-
-        except Exception as e:
-            print(f"  ❌ Publish error: {e}")
-            results["error"] = str(e)
-
-        # 5. Log to social_posts table
+        # 5. Publish
+        sys.path.insert(0, str(Path(__file__).parent))
+        import facebook_publisher as fp
+        res = {"facebook": "LIVE" if fp.post_to_facebook(copy['facebook'], image_url) else "FAILED"}
+        if copy.get('instagram'):
+            res["instagram"] = "LIVE" if fp.post_to_instagram(image_url, copy['instagram']) else "FAILED"
+        
+        # 6. Log
         self._insert_brain("social_posts", {
-            "pillar": pillar,
-            "platform": "multi",
-            "content_hash": qg["content_hash"],
-            "facebook_copy": copy.get("facebook", ""),
-            "instagram_copy": copy.get("instagram", ""),
-            "linkedin_copy": copy.get("linkedin", ""),
-            "image_url": image_url if 'image_url' in dir() else None,
-            "trigger_tag": tag,
-            "trigger_message": message[:500],
-            "source_agent": source_agent,
-            "project_context": project_id,
-            "status": "published" if any(v == "LIVE" for v in results.values()) else "failed",
-            "quality_score": qg["score"],
-            "quality_notes": "; ".join(qg["issues"]) if qg["issues"] else "Clean pass",
-            "metadata": json.dumps({
-                "delegation": delegation,
-                "results": results,
-                "engine_version": "2.0"
-            })
+            "pillar": pillar, "facebook_copy": copy['facebook'], "instagram_copy": copy.get('instagram'),
+            "image_url": image_url, "content_hash": qg['content_hash'], "status": "published",
+            "source_agent": source_agent, "project_context": project_id
         })
+        return {"status": "PUBLISHED", "results": res}
 
-        print(f"\n  📡 Results: {results}")
-        return {"status": "PUBLISHED", "results": results, "quality": qg, "copy": copy}
+    def _check_staggering(self):
+        now = datetime.now(timezone.utc)
+        win_start = (now - timedelta(hours=STAGGER_WINDOW_HOURS)).isoformat()
+        recent = self._query_brain("social_posts", {"created_at": f"gte.{win_start}", "limit": "1"})
+        upcoming = self._query_brain("content_calendar", {"status": "eq.scheduled", "scheduled_for": f"gte.{now.isoformat()}", "limit": "1"})
+        
+        if not recent and not upcoming: return False, None
+        
+        # Calculate next gap
+        last_time = now
+        scheduled = self._query_brain("content_calendar", {"status": "eq.scheduled", "order": "scheduled_for.desc", "limit": "1"})
+        if scheduled: 
+            ts = scheduled[0]['scheduled_for'].replace('Z', '+00:00')
+            last_time = datetime.fromisoformat(ts)
+        else:
+            posts = self._query_brain("social_posts", {"order": "created_at.desc", "limit": "1"})
+            if posts:
+                ts = posts[0]['created_at'].replace('Z', '+00:00')
+                last_time = datetime.fromisoformat(ts)
+        
+        next_dt = last_time + timedelta(hours=STAGGER_WINDOW_HOURS)
+        return True, next_dt.isoformat()
 
-    # ── Content Calendar ──────────────────────────────
-
-    def get_due_calendar_items(self):
-        """Pull scheduled content that's due for publishing."""
-        now = datetime.now(timezone.utc).isoformat()
-        return self._query_brain("content_calendar", {
-            "status": "eq.scheduled",
-            "scheduled_for": f"lte.{now}",
-            "select": "*",
-            "order": "scheduled_for.asc",
-            "limit": "5"
+    def _queue_staggered(self, message, pillar, source_agent, project_id, slot):
+        self._insert_brain("content_calendar", {
+            "topic": message, "content_type": pillar, "assigned_agent": source_agent,
+            "project_context": project_id, "scheduled_for": slot, "status": "scheduled",
+            "notes": "Auto-staggered"
         })
+        return {"status": "QUEUED", "slot": slot}
 
     def process_calendar(self, dry_run=False):
-        """Process any due content calendar items."""
-        items = self.get_due_calendar_items()
-        if not items:
-            print("  📅 No scheduled content due.")
-            return []
-
+        now = datetime.now(timezone.utc).isoformat()
+        items = self._query_brain("content_calendar", {"status": "eq.scheduled", "scheduled_for": f"lte.{now}", "limit": "5"})
+        if not items: return []
         results = []
-        for item in items:
-            print(f"\n  📅 Processing scheduled: {item.get('content_type')} — {item.get('topic', 'No topic')}")
-            message = f"[{item.get('content_type', 'TIP')}] {item.get('topic', 'Scheduled content')}"
-            result = self.process_trigger(
-                message,
-                source_agent=item.get("assigned_agent", "contentforge"),
-                project_id=item.get("project_context"),
-                dry_run=dry_run
-            )
-            results.append(result)
-
-            # Mark as published
-            if not dry_run and result.get("status") == "PUBLISHED":
-                item_id = item.get("id")
-                if item_id:
-                    import requests as _req
-                    try:
-                        _req.patch(
-                            f"{BRAIN_URL}/rest/v1/content_calendar?id=eq.{item_id}",
-                            headers={**self._supabase_headers, "Prefer": "return=minimal"},
-                            json={"status": "published"},
-                            timeout=8
-                        )
-                        print(f"  Calendar item {item_id} marked as published")
-                    except Exception as e:
-                        print(f"  Could not update calendar item: {e}")
-
+        import requests as _req
+        for itm in items:
+            msg = f"[{itm['content_type']}] {itm['topic']}"
+            res = self.process_trigger(msg, itm['assigned_agent'], itm['project_context'], dry_run)
+            if res.get('status') == "PUBLISHED":
+                _req.patch(f"{BRAIN_URL}/rest/v1/content_calendar?id=eq.{itm['id']}", 
+                           headers={**self._supabase_headers, "Prefer": "return=minimal"}, 
+                           json={"status": "published"})
+            results.append(res)
         return results
 
-
-# ═══════════════════════════════════════════════════════
-# CLI
-# ═══════════════════════════════════════════════════════
-
-# ===================================================================
-# PUBLIC API - For external integrations
-# ===================================================================
-
 def fire_social_post(message, source_agent="marcus", project_id=None, dry_run=False):
-    """
-    Public convenience function for triggering a social post.
-    Can be called from any script, n8n, or external service.
-
-    Usage:
-        from social_engine import fire_social_post
-        result = fire_social_post("[MISSION] Launched BL Motorcycles v2", "marcus", "bl-motorcycles")
-    """
-    engine = SocialEngine()
-    return engine.process_trigger(message, source_agent, project_id, dry_run)
-
-
-def get_engine_status():
-    """
-    Returns the current status of the social engine.
-    """
-    engine = SocialEngine()
-    recent = engine.get_recent_posts(5)
-    calendar = engine.get_due_calendar_items()
-    return {
-        "version": "2.0",
-        "pillars": len(PILLAR_PROMPTS),
-        "triggers": len(TRIGGER_MAP),
-        "recent_posts": len(recent),
-        "calendar_items_due": len(calendar),
-        "quality_gate": "active",
-        "doctrine": "characters_not_capabilities"
-    }
-
+    return SocialEngine().process_trigger(message, source_agent, project_id, dry_run)
 
 if __name__ == "__main__":
     import argparse
-    parser = argparse.ArgumentParser(description="Antigravity Social Engine v2.0")
-    parser.add_argument("--test", type=str, help="Test with a trigger message")
-    parser.add_argument("--pillar", type=str, help="Force a specific pillar")
-    parser.add_argument("--project", type=str, help="Project context")
-    parser.add_argument("--dry-run", action="store_true", help="Preview without publishing")
-    parser.add_argument("--calendar", action="store_true", help="Process due calendar items")
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--test", type=str)
+    parser.add_argument("--calendar", action="store_true")
+    parser.add_argument("--dry-run", action="store_true")
     args = parser.parse_args()
-
     engine = SocialEngine()
-
-    if args.calendar:
-        engine.process_calendar(dry_run=args.dry_run)
-    elif args.test:
-        engine.process_trigger(args.test, "marcus", args.project, dry_run=args.dry_run)
-    else:
-        parser.print_help()
+    if args.calendar: engine.process_calendar(dry_run=args.dry_run)
+    elif args.test: engine.process_trigger(args.test, "marcus", dry_run=args.dry_run)

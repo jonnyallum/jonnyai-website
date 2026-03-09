@@ -31,74 +31,51 @@ DEDUP_WINDOW = 10  # Don't repeat an image within last N posts
 # ─────────────────────────────────────────────────────────────────────────────
 PILLAR_IMAGE_MAP = {
     "MISSION_COMPLETE": {
-        "primary": "marcus_cole.png",
-        "pool": ["marcus_cole.png", "orchestra_visual.png", "neo.png", "julian_west.png", "hugo_reeves.png"]
+        "primary": "antigravity_victory.png",
+        "pool": ["antigravity_victory.png", "orchestra_visual.png", "the_hive_wide.png", "marcus_cole.png", "success_glow.png"]
     },
     "INFRASTRUCTURE_UPGRADE": {
-        "primary": "sebastian_cross.png",
-        "pool": ["sebastian_cross.png", "devops_derek.png", "deploy_owen.png", "felix_morgan.png", "milo_chen.png"]
+        "primary": "the_nerve_center.png",
+        "pool": ["the_nerve_center.png", "the_vault_door.png", "sebastian_cross.png", "server_monolith.png", "data_velocity.png"]
     },
     "TRILLION_DOLLAR_INSIGHT": {
-        "primary": "scholar.png",
-        "pool": ["scholar.png", "grace_liu.png", "elias_thorne.png", "jasper_cole.png", "diana_chen.png"]
+        "primary": "the_oracle_chamber.png",
+        "pool": ["the_oracle_chamber.png", "scholar.png", "deep_analysis_glow.png", "the_blueprint.png", "elias_thorne.png"]
     },
     "AGENT_SPOTLIGHT": {
-        "primary": None,  # Dynamic — use the mentioned agent's portrait
+        "primary": None,  # Dynamic
         "pool": [
             "marcus_cole.png", "priya_sharma.png", "elena_vasquez.png", "winston_hayes.png",
             "sam_blackwood.png", "grace_liu.png", "sebastian_cross.png", "felix_morgan.png",
             "maya_singh.png", "luna_sterling.png", "hannah_park.png", "hugo_reeves.png",
             "jasper_cole.png", "diana_chen.png", "vivienne_frost.png", "rowan.png",
-            "theo_martinez.png", "victor_reyes.png", "nina_patel.png", "sterling_brooks.png"
+            "theo_martinez.png", "victor_reyes.png", "nina_patel.png", "sterling_brooks.png",
+            "devops_derek.png", "deploy_owen.png", "blaise_moreau.png", "carlos_mendez.png"
         ]
     },
     "ACADEMY_UPDATE": {
-        "primary": "scholar.png",
-        "pool": ["scholar.png", "grace_liu.png", "elias_thorne.png", "diana_chen.png", "jasper_cole.png"]
+        "primary": "academy_atrium.png",
+        "pool": ["academy_atrium.png", "scholar.png", "the_library.png", "knowledge_transfer.png", "elias_thorne.png"]
     },
     "CLIENT_CASE_STUDY": {
-        "primary": "sterling_brooks.png",
-        "pool": ["sterling_brooks.png", "vivienne_frost.png", "hugo_reeves.png", "boyce.png", "monty_carlo.png"]
+        "primary": "client_velocity.png",
+        "pool": ["client_velocity.png", "the_partnership.png", "sterling_brooks.png", "project_launch.png", "growth_graph.png"]
     },
     "BEHIND_THE_SCENES": {
-        "primary": "orchestra_visual.png",
-        "pool": ["orchestra_visual.png", "marcus_cole.png", "priya_sharma.png", "sebastian_cross.png", "elena_vasquez.png"]
+        "primary": "the_hive_action.png",
+        "pool": ["the_hive_action.png", "late_night_glow.png", "the_whiteboard.png", "orchestra_rehearsal.png", "the_machine_room.png"]
     },
     "EDUCATION_TIP": {
-        "primary": "sam_blackwood.png",
-        "pool": ["sam_blackwood.png", "grace_liu.png", "scholar.png", "elias_thorne.png", "diana_chen.png"]
+        "primary": "the_manual.png",
+        "pool": ["the_manual.png", "sam_blackwood.png", "grace_liu.png", "quick_tip_neon.png", "the_vault_secrets.png"]
     },
     "ENGAGEMENT_POLL": {
-        "primary": "hannah_park.png",
-        "pool": ["hannah_park.png", "luna_sterling.png", "nina_patel.png", "maya_singh.png", "vivienne_frost.png"]
+        "primary": "the_assembly.png",
+        "pool": ["the_assembly.png", "hannah_park.png", "voice_of_the_crowd.png", "decision_matrix.png", "the_forum.png"]
     },
     "TEAM_CULTURE": {
-        "primary": "orchestra_visual.png",
-        "pool": ["orchestra_visual.png", "marcus_cole.png", "priya_sharma.png", "elena_vasquez.png", "luna_sterling.png"]
-    },
-    "CLIENT_REPORT_TEASER": {
-        "primary": "sterling_brooks.png",
-        "pool": ["sterling_brooks.png", "hugo_reeves.png", "vivienne_frost.png", "monty_carlo.png", "boyce.png"]
-    },
-    "NEW_PROJECT_ANNOUNCEMENT": {
-        "primary": "marcus_cole.png",
-        "pool": ["marcus_cole.png", "sterling_brooks.png", "priya_sharma.png", "sebastian_cross.png", "hugo_reeves.png"]
-    },
-    "WEBSITE_DEPLOYMENT": {
-        "primary": "priya_sharma.png",
-        "pool": ["priya_sharma.png", "sebastian_cross.png", "felix_morgan.png", "deploy_owen.png", "milo_chen.png"]
-    },
-    "TEAM_UPDATE": {
-        "primary": "orchestra_visual.png",
-        "pool": ["orchestra_visual.png", "marcus_cole.png", "luna_sterling.png", "hannah_park.png", "hugo_reeves.png"]
-    },
-    "BLOG_GENERATION": {
-        "primary": "elena_vasquez.png",
-        "pool": ["elena_vasquez.png", "elena_vasquez_alt.png", "scholar.png", "grace_liu.png", "jasper_cole.png"]
-    },
-    "COLLAB": {
-        "primary": "marcus_cole.png",
-        "pool": ["marcus_cole.png", "sterling_brooks.png", "vivienne_frost.png", "hugo_reeves.png", "luna_sterling.png"]
+        "primary": "orchestra_together.png",
+        "pool": ["orchestra_together.png", "marcus_cole.png", "the_celebration.png", "culture_vision.png", "antigravity_base.png"]
     },
 }
 
@@ -128,7 +105,7 @@ AGENT_PORTRAIT_MAP = {
     "neo":          "neo.png",
     "julian":       "julian_west.png",
     "boyce":        "sterling_brooks.png",
-    "contentforge": "orchestra_visual.png",
+    "contentforge": "the_nerve_center.png", # Group portrait
     "milo":         "milo_chen.png",
     "derek":        "devops_derek.png",
     "owen":         "deploy_owen.png",
@@ -153,8 +130,14 @@ AGENT_PORTRAIT_MAP = {
 
 # Brand images (non-portrait, used for variety)
 BRAND_IMAGES = [
-    "orchestra_visual.png",
-    "hero_background.png",
+    "antigravity_victory.png",
+    "the_hive_wide.png",
+    "the_nerve_center.png",
+    "the_vault_door.png",
+    "the_oracle_chamber.png",
+    "academy_atrium.png",
+    "client_velocity.png",
+    "antigravity_logo_cinematic.png",
 ]
 
 
