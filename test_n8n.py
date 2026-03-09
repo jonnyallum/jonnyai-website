@@ -1,7 +1,7 @@
 import requests
 
 url = "https://n8n.jonnyai.co.uk/mcp-server/http"
-token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIwZjRlZmQ0Ni0xNjdiLTRjYTEtYTA4Ni1iOTY5YTFkNGZkNWMiLCJpc3MiOiJuOG4iLCJhdWQiOiJtY3Atc2VydmVyLWFwaSIsImp0aSI6ImI3OTc5Njg0LWUzMTItNDE4OS05YzhkLTY1ODViZDc0MjlmNSIsImlhdCI6MTc3MjYxMDM5NH0.b7UL4nLWmsLgVwKlPp6KAropodCCVzKsF8G4h5mMe_c"
+token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjYTc1NDk5OS0zZjFiLTQyNTMtODRlZi0wMTY1NzgzYTg0MTYiLCJpc3MiOiJuOG4iLCJhdWQiOiJwdWJsaWMtYXBpIiwiaWF0IjoxNzQyNjQxMDQ3fQ.CunwVQF87d7I3qNktPVb8jrBUt0"
 
 headers = {
     "Authorization": f"Bearer {token}",

@@ -129,7 +129,7 @@ _70 specialized personnel across 12 tiers._
 | **@Design-Manager** | [Automated Logic] | "The Overseer" | Design Systems & QA Director                               |
 | **@Delegator**      | Cassian Hart      | "Control Room" | Meta-Orchestrator — mission decomposition, NEXTHOP routing |
 
-### Development Tier (8)
+### Development Tier (9)
 
 | Handle         | Human Name      | Nickname               | Role                                                   |
 | :------------- | :-------------- | :--------------------- | :----------------------------------------------------- |
@@ -141,6 +141,7 @@ _70 specialized personnel across 12 tiers._
 | **@Owen**      | Owen Stinger    | "The Hornet"           | Deployment Specialist — zero-downtime shipping, CI/CD  |
 | **@Milo**      | Milo Chen       | "The Optimizer"        | Performance & Mobile QA — Lighthouse, Expo             |
 | **@Adrian**    | Adrian Cross    | "The Welder"           | MCP Server Development — custom server builds          |
+| **@Kai**       | Kai Vertex      | "The Platform"         | GCP AI Platform Specialist — ADK, Vertex AI Agent Engine, A2A, Terraform   |
 
 ### Design & Creative Tier (4)
 

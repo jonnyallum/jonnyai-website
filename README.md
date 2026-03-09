@@ -1,15 +1,15 @@
 # Antigravity Orchestra — Jai.OS 5.0
 
-> **The Hive Mind Architecture** | 70 Specialist Agents | 265 Catalogued Skills | Collective Velocity | Trillion-Dollar Quality
+> **The Hive Mind Architecture** | 71 Specialist Agents | 269 Catalogued Skills | Collective Velocity | Trillion-Dollar Quality
 
-The **Antigravity Orchestra** is a production-grade agentic enterprise operating system. 70 specialized AI personas collaborate as a unified swarm — routing tasks, enforcing quality gates, running autonomous build loops, and maintaining a live Shared Brain on Supabase. Every agent has a SKILL.md: their identity, SOPs, collaboration patterns, and performance metrics.
+The **Antigravity Orchestra** is a production-grade agentic enterprise operating system. 71 specialized AI personas collaborate as a unified swarm — routing tasks, enforcing quality gates, running autonomous build loops, and maintaining a live Shared Brain on Supabase. Every agent has a SKILL.md: their identity, SOPs, collaboration patterns, and performance metrics.
 
 ---
 
 ## Architecture
 
 ```
-Layer 1 — The Talent      .agent/skills/[handle]/SKILL.md     70 agent personas + SOPs
+Layer 1 — The Talent      .agent/skills/[handle]/SKILL.md     71 agent personas + SOPs
 Layer 2 — The Boardroom   .agent/boardroom/                   Protocol, chatroom, decision log
 Layer 3 — The Engine      execution/                          Python automation + Ralph Loop
 Layer 4 — The Memory      Supabase Shared Brain               Live agents, learnings, chatroom
@@ -23,7 +23,7 @@ Layer 4 — The Memory      Supabase Shared Brain               Live agents, lea
 
 ---
 
-## The 70-Agent Orchestra
+## The 71-Agent Orchestra
 
 ### Command (3)
 | Handle | Name | Role |
@@ -32,12 +32,13 @@ Layer 4 — The Memory      Supabase Shared Brain               Live agents, lea
 | @design-manager | Routing Metadata — used by @marcus and orchestrator for auto-dispatch | Design Systems & QA Director — visual regression control, token enforcement, and multi-ecosystem design harmony for all Antigravity projects. |
 | @marcus | Routing Metadata — used by @marcus and orchestrator for auto-dispatch | Orchestrator & Command Lead — mission decomposition, Ralph Loop deployment, quality gate orchestration, agent workload balancing, emergency protocol activation, cross-AI coordination |
 
-### Development (9)
+### Development (10)
 | Handle | Name | Role |
 |:---|:---|:---|
 | @adrian | Routing Metadata — used by @marcus and orchestrator for auto-dispatch | MCP Server Developer — building production-grade servers to external systems |
 | @derek | Routing Metadata — used by @marcus and orchestrator for auto-dispatch | Infrastructure & DevOps lead — hosting environments, CI/CD pipelines, environment variable management, and deployment toolchain. |
 | @diana | Routing Metadata — used by @marcus and orchestrator for auto-dispatch | Database Architect — Supabase, PostgreSQL, RLS |
+| @kai | Kai Vertex — Agent Profile | GCP AI Platform Specialist — ADK authoring, Vertex AI Agent Engine deployment, A2A protocol, Terraform infrastructure |
 | @mason | Routing Metadata — used by @marcus and orchestrator for auto-dispatch | MCP Discovery & Integration Specialist — finding and wiring MCP servers |
 | @milo | Routing Metadata — used by @marcus and orchestrator for auto-dispatch | Performance & Mobile QA — Lighthouse, Expo, app diagnostics |
 | @owen | Routing Metadata — used by @marcus and orchestrator for auto-dispatch | Deployment Specialist — zero-downtime shipping, CI/CD |
@@ -145,26 +146,26 @@ Layer 4 — The Memory      Supabase Shared Brain               Live agents, lea
 
 ## Shared Brain (Supabase)
 
-All 70 agent profiles are live and queryable in Supabase (`lkwydqtfbdjhxaarelaz`):
+All 71 agent profiles are live and queryable in Supabase (`lkwydqtfbdjhxaarelaz`):
 
 | Table | Contents |
 |:---|:---|
-| `agents` | 70 agents — full SKILL.md in `philosophy` column |
+| `agents` | 71 agents — full SKILL.md in `philosophy` column |
 | `learnings` | Individual learnings propagated after every task |
 | `chatroom` | Real-time session broadcasts and DSPs |
 | `projects` | Active client project registry |
-| `skills` | 265 catalogued skills with SOP coverage flags |
+| `skills` | 269 catalogued skills with SOP coverage flags |
 | `events` | Incidents, fixes, wins, training days, deploys |
 
 ---
 
 ## Skill Catalog
 
-**265 skills** catalogued across 9 domains. All have SOP files.
+**269 skills** catalogued across 9 domains. All have SOP files.
 
 | Section | Skills |
 |:---|:---|
-| Development Skills | 38 |
+| Development Skills | 42 |
 | Intelligence & Research Skills | 22 |
 | Operations & Automation Skills | 30 |
 | Marketing & Growth Skills | 8 |
@@ -259,5 +260,5 @@ python execution/orchestra_status.py
 
 ---
 
-*Jai.OS 5.0 | Antigravity Orchestra | 70 Agents | 265 Skills | Shared Brain: ONLINE*
+*Jai.OS 5.0 | Antigravity Orchestra | 71 Agents | 269 Skills | Shared Brain: ONLINE*
 *Last updated: 2026-03-09 — auto-generated by sync_readme.py*

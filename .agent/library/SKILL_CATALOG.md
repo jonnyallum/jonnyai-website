@@ -30,6 +30,10 @@ A **Skill** is a discrete, composable capability — a set of SOPs, tools, and d
 | `css-architecture-refactor`       | Frontend        | BEM, utility-first, design token migration                            | @priya, @sebastian   |
 | `react-component-test-generator`  | Testing         | Jest, React Testing Library component tests                           | @sam                 |
 | `test-driven-bug-fix`             | QA              | TDD workflow for bug resolution                                       | @sam                 |
+| `test-driven-development`         | Dev Excellence  | Comprehensive TDD: Iron Law, Red-Green-Refactor, anti-patterns        | @sam                 |
+| `debugging-strategies`            | Dev Excellence  | Systematic debugging: scientific method, binary search, git bisect    | @sam, @sebastian     |
+| `pricing-strategy`                | Growth          | Value-based pricing, Van Westendorp, tier design, enterprise pricing  | @felix, @boyce       |
+| `analytics-tracking`              | Growth          | Measurement Readiness Index, event taxonomy, GA4/GTM, UTM discipline  | @maya                |
 | `memory-leak-detective`           | Performance     | Heap profiling, event listener audits                                 | @milo                |
 | `performance-regression-debugger` | Performance     | Lighthouse regression analysis, bundle analysis                       | @milo                |
 | `web-performance-audit`           | Performance     | Core Web Vitals, Lighthouse, INP optimization                         | @milo                |

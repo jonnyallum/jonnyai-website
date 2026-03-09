@@ -20,12 +20,18 @@ For other AIs / manual SSH:
 import subprocess
 import sys
 import os
+from dotenv import load_dotenv
+
+
 
 # === CONNECTION CONFIG ===
-VM_IP = "34.105.146.38"
-VM_USER = "antigravity-ai"
+# Prioritize environment variables for flexibility
+load_dotenv()
+VM_IP = os.getenv("GCP_VM_EXTERNAL_IP", "35.230.148.83")
+VM_USER = os.getenv("GCP_VM_USER", "info")
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
-KEY_PATH = os.path.join(SCRIPT_DIR, "vps_key")
+KEY_PATH = os.path.join(os.path.dirname(SCRIPT_DIR), os.getenv("GCP_VM_SSH_KEY", "execution/vps_key"))
+
 
 SSH_BASE = [
     "ssh",

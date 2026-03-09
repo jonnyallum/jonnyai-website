@@ -1,9 +1,10 @@
 # 🎯 Cline Mission Briefing
-> **From:** @Marcus (The Maestro) | **To:** @Cline (Antigravity AI) | **Date:** 2026-03-04
+>
+> **From:** @Marcus (The Maestro) | **To:** @Cline (Antigravity AI) | **Date:** 2026-03-09
 
 ## Situation Report
 
-The Antigravity Orchestra is live on GCP (`34.105.146.38`). Infrastructure is stable. The Engine Room is operational. Your three primary missions are detailed below.
+The Antigravity Orchestra is live on GCP (`35.230.148.83`). Infrastructure is stable. The Engine Room is operational. Your four primary missions are detailed below.
 
 ---
 
@@ -13,14 +14,16 @@ The Antigravity Orchestra is live on GCP (`34.105.146.38`). Infrastructure is st
 **Codebase:** `Clients/jonnyai.website/`  
 **Goal:** The "Command Center" — the world's entry point to the Antigravity Orchestra.
 
-### What Needs Doing
+### Mission 1: Tasks
+
 - Rebuild to Next.js 15 App Router + React 19 — full type safety
 - Supabase Google Auth integration is broken — refactor the auth middleware
 - Dashboard needs a full rebuild (high-performance, mobile-first)
 - The `/workforce` page must pull live from Supabase `agents` table (not static data)
 - `AgentGrid.tsx` and `agents.ts` data layer need refactoring to use real-time data
 
-### Acceptance Criteria
+### Mission 1: Acceptance Criteria
+
 - [ ] Google Auth works end-to-end (sign in → dashboard)
 - [ ] Dashboard loads in < 1.5s (Lighthouse 90+)
 - [ ] `/workforce` shows live agent data from Supabase
@@ -34,25 +37,6 @@ The Antigravity Orchestra is live on GCP (`34.105.146.38`). Infrastructure is st
 **n8n Endpoint:** `https://n8n.jonnyai.co.uk`  
 **Goal:** Move @Dreamer ideation from a cron script to a multi-agent n8n automation loop.
 
-### Architecture
-```
-[Daily Trigger] → [HN API + Product Hunt RSS]
-    → [Gemini Analysis Node] → [Score & Rank Ideas]
-    → [Supabase Insert] (chatroom + dreamer_ideas tables)
-    → [Slack/Resend Notify Jonny]
-```
-
-### What Needs Doing
-- Create n8n workflow: `Dreamer Daily Pipeline`
-- Replace `execution/dreamer_daily.py` cron with n8n schedule trigger
-- Add Supabase node writing to `chatroom` table (agent_id: `dreamer`)
-- Add email summary to Jonny via Resend when Gravy Index ≥ 8
-
-### Acceptance Criteria
-- [ ] Workflow live at `n8n.jonnyai.co.uk/workflow/dreamer-daily`
-- [ ] Runs at 08:00 UTC daily
-- [ ] Ideas visible in Supabase chatroom within 5 minutes of trigger
-
 ---
 
 ## 🥉 Mission 3: Visual Regression Testing
@@ -60,39 +44,48 @@ The Antigravity Orchestra is live on GCP (`34.105.146.38`). Infrastructure is st
 **Status:** Queued | **Priority:** P2  
 **Goal:** Ensure "God-Tier" brand quality is never compromised by code drift.
 
-### Stack
-- **Playwright** (already in MCP) for screenshot capture
-- **Pixelmatch** or **Argos CI** for diff detection
-- All key pages: `/`, `/workforce`, `/brief`, `/status`
+---
 
-### What Needs Doing
-- Create `execution/visual_regression.py` — Playwright-based screenshot suite
-- Baseline screenshots stored in `library/brand_assets/screenshots/baselines/`
-- CI trigger: run on every PR to `jonnyai.website`
-- Failures broadcast to `chatroom` table (agent_id: `qualityguard`)
+## 🎖️ Mission 4: Awesome Skills Evaluation & Integration
 
-### Acceptance Criteria
-- [ ] Baseline screenshots captured for all 4 key pages
-- [ ] Diff threshold: < 0.5% pixel change = pass
-- [ ] Results posted to Supabase chatroom
+**Status:** Active | **Priority:** P1  
+**Goal:** Systematically evaluate and integrate external skills from `sickn33/antigravity-awesome-skills` into Jai.OS 4.0.
+
+### Mission 4: Architecture
+
+- Follows the [Awesome Skills Integration Runbook](file:///c:/Users/jonny/Desktop/JonnyAI_JaiOS_4.0/docs/skills_evaluation_runbook.md).
+- Evaluates skills across Security, Architecture, Workflow, and AI domains.
+
+### Mission 4: Tasks
+
+- **Catalog & Triage:** Clone `antigravity-awesome-skills` and generate a master catalog in `docs/skills_catalog.md`.
+- **Domain Review:** Assign domain owners for deep-dive evaluations.
+- **Boardroom Session:** Group skills into buckets (Integrate Now, Available, Skip).
+- **Implementation:** Use @Neo's SOP to formalize A-class skills as Jai.OS agent capabilities or methodology skills.
+
+### Mission 4: Acceptance Criteria
+
+- [ ] Master skills catalog created and prioritized.
+- [ ] A-class skills implemented as Orchestra-grade `SKILL.md` files.
+- [ ] New skills validated in real missions (behavioral testing).
 
 ---
 
 ## 🧰 Supporting Context
 
 | Resource | Location |
-|:---------|:---------|
+| :--- | :--- |
 | SSH to VM | `python execution/ssh_to_vps.py status` |
-| VM SSH Guide | `docs/GCP_VM_SSH_GUIDE.md` |
-| BL Motorcycles n8n brief | `.tmp/message4nathan.md` |
+| CRM Admin | `https://crm.jonnyai.co.uk` |
+| Skills Runbook | `docs/skills_evaluation_runbook.md` |
+| Skills Catalog | `docs/skills_catalog.md` |
 | Server tasks | `docs/tasks/SERVER_TIGHTEN_UP.md` |
-| Brand assets | `library/brand_assets/` |
 | Chatroom | `.agent/boardroom/chatroom.md` |
 
-## 🚦 Immediate Next Action
+## Next Step Guidance
 
-> Start with **Mission 1** — the jonnyai.co.uk auth fix is blocking client-facing visibility. Once auth is solid, the dashboard unlock makes everything else visible.
+> Complete the **CRM Calibration** (CRM data population and BL Motorcycles migration) then move to **Mission 4** to start the Skills Catalog.
 
 ---
 
-_Briefing generated by @Marcus | Jai.OS 5.0 | 2026-03-04_
+_Briefing generated by @Marcus | Jai.OS 5.0 | 2026-03-09_

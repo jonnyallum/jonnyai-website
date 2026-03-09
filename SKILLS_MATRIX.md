@@ -1,7 +1,7 @@
 # Antigravity Agent Skills Matrix
 
 > **Generated:** 2026-03-09 | **Jai.OS 5.0** | **Shared Brain:** ONLINE
-> **Orchestra Size:** 70 agents | **11/11 Compliant:** 70/70
+> **Orchestra Size:** 71 agents | **11/11 Compliant:** 71/71
 
 ---
 
@@ -12,7 +12,7 @@
 | Betting Ecosystem | 8 | 8/8 |
 | Command | 3 | 3/3 |
 | Design & Creative | 4 | 4/4 |
-| Development | 9 | 9/9 |
+| Development | 10 | 10/10 |
 | Education & Course Design | 1 | 1/1 |
 | Growth & Marketing | 7 | 7/7 |
 | Intelligence & Research | 6 | 6/6 |
@@ -64,6 +64,7 @@
 | @adrian | Adrian Cross | The Welder | MCP Server Developer — connecting agents to external systems | ✅ 11/11 |
 | @derek | Derek O'Brien | The Engine | Infrastructure & DevOps Lead | ✅ 11/11 |
 | @diana | Diana Chen | The Vault | Database Architect — Supabase, PostgreSQL, RLS | ✅ 11/11 |
+| @kai | Kai Vertex | The Platform | GCP AI Platform Specialist — ADK authoring, Agent Engine deployment, A2A orchestration | ✅ 11/11 |
 | @mason | Mason Drake | The Bridgemaster | MCP Discovery & Integration Specialist — finding and wiring external tools | ✅ 11/11 |
 | @milo | Milo Chen | The Optimizer | Performance & Mobile QA — Lighthouse, Expo, app diagnostics | ✅ 11/11 |
 | @owen | Owen Stinger | The Hornet | Deployment Specialist — zero-downtime shipping, CI/CD | ✅ 11/11 |
