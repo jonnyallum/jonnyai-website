@@ -1,0 +1,199 @@
+[
+  {
+    "id": "F3UUrM965xO9Ug3R",
+    "name": "BL Motorcycles \u2014 Order Cancellation Follow-Up",
+    "active": false,
+    "nodes": [
+      "Webhook",
+      "Switch: Error Type",
+      "Email: Brett Dispatch",
+      "Email: SKU Apology",
+      "Log to Chatroom"
+    ],
+    "has_connections": true
+  },
+  {
+    "id": "B1U78Zdoei3DmgAF",
+    "name": "bl-sku-alert",
+    "active": true,
+    "nodes": [
+      "Webhook",
+      "Email Bike It",
+      "Email CMPO",
+      "Brett SKU Alert",
+      "Log"
+    ],
+    "has_connections": true
+  },
+  {
+    "id": "X1lP95P6LucP7uUB",
+    "name": "BL: Monday Weekly Ops Summary",
+    "active": true,
+    "nodes": [
+      "Monday 08:00",
+      "Get Week Orders",
+      "Get Low Stock",
+      "Merge Data",
+      "Compute Stats",
+      "Send Weekly Summary"
+    ],
+    "has_connections": true
+  },
+  {
+    "id": "FRcj8vaNDUKwh3Gg",
+    "name": "BL Motorcycles \u2014 SKU Not Found Ops Alert",
+    "active": true,
+    "nodes": [
+      "Webhook",
+      "Email Ops",
+      "Log"
+    ],
+    "has_connections": true
+  },
+  {
+    "id": "y6Nh2Fqt4dgx1u9p",
+    "name": "BL: Overdue Order Escalator",
+    "active": true,
+    "nodes": [
+      "Every 6 Hours",
+      "Get Overdue Orders (3d+)",
+      "Has Overdue?",
+      "Email Brett Overdue Alert",
+      "Mark Escalated"
+    ],
+    "has_connections": true
+  },
+  {
+    "id": "HelXvZ4HsjIbATno",
+    "name": "BL: Dispatch Email to Customer",
+    "active": true,
+    "nodes": [
+      "Poll Every 5min",
+      "Get Dispatched Orders Without Email",
+      "Has Orders?",
+      "Split Orders",
+      "Send Dispatch Email",
+      "Mark Email Sent"
+    ],
+    "has_connections": true
+  },
+  {
+    "id": "LDz7RsTQoaSEnBx3",
+    "name": "BL Motorcycles \u2014 Manual Dispatch Alert (Brett)",
+    "active": true,
+    "nodes": [
+      "Webhook: Manual Dispatch",
+      "Filter: Local Stock",
+      "Email Brett",
+      "Log Dispatch Alert"
+    ],
+    "has_connections": true
+  },
+  {
+    "id": "NJk9uncrrV8scRJA",
+    "name": "BL: Oversell Guard (Out of Stock Alert)",
+    "active": true,
+    "nodes": [
+      "Every 2 Hours",
+      "Get OOS Products Still Active",
+      "Any OOS?",
+      "Email Oversell Alert"
+    ],
+    "has_connections": true
+  },
+  {
+    "id": "hqZk5CXtXWBguyEt",
+    "name": "BL Motorcycles \u2014 Manual Dispatch Alert (Brett)",
+    "active": true,
+    "nodes": [
+      "Webhook",
+      "Email Brett",
+      "Log"
+    ],
+    "has_connections": true
+  },
+  {
+    "id": "LVhGxQdypNhnIL07",
+    "name": "bl-order-cancel",
+    "active": true,
+    "nodes": [
+      "Webhook",
+      "Route by Error",
+      "Email Brett: Dispatch",
+      "Email Cust: Dispatch",
+      "Email Cust: SKU Error",
+      "Email Cust: Generic",
+      "Upsert Mailing List",
+      "Log"
+    ],
+    "has_connections": true
+  },
+  {
+    "id": "9XitRAsKEG2A4BMh",
+    "name": "BL Motorcycles \u2014 Order Cancellation Follow-Up",
+    "active": true,
+    "nodes": [
+      "Webhook: Order Cancel",
+      "Filter: Cancelled",
+      "Switch: Cancel Reason",
+      "Email: Local Stock",
+      "Email: SKU Not Found",
+      "Email: Generic Cancel",
+      "Log to Chatroom"
+    ],
+    "has_connections": true
+  },
+  {
+    "id": "uoqZexQDkT5LYJeq",
+    "name": "BL Motorcycles \u2014 SKU Not Found Ops Alert",
+    "active": true,
+    "nodes": [
+      "Webhook: SKU Alert",
+      "Filter: SKU Not Found",
+      "Email Ops Alert",
+      "Log SKU Alert"
+    ],
+    "has_connections": true
+  },
+  {
+    "id": "7fU4cJyQeC9nklEX",
+    "name": "bl-manual-dispatch",
+    "active": true,
+    "nodes": [
+      "Webhook",
+      "Dispatch Email to Brett",
+      "Log"
+    ],
+    "has_connections": true
+  },
+  {
+    "id": "KJqyWHRflNKUeZ55",
+    "name": "Antigravity CRM -> Marcus Sync",
+    "active": false,
+    "nodes": [
+      "Webhook: CRM Event",
+      "Log to Chatroom (@Marcus)"
+    ],
+    "has_connections": true
+  },
+  {
+    "id": "rM6UpaZPbR5BdSNZ",
+    "name": "Antigravity CRM -> Marcus Sync",
+    "active": false,
+    "nodes": [
+      "Webhook",
+      "HTTP Request"
+    ],
+    "has_connections": true
+  },
+  {
+    "id": "IXnG6uZu3LSiPctj",
+    "name": "Antigravity CRM -> Marcus Sync",
+    "active": true,
+    "nodes": [
+      "Webhook",
+      "Log to Chatroom (@Marcus)"
+    ],
+    "has_connections": true
+  }
+]

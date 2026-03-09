@@ -171,13 +171,15 @@ if ANTHROPIC_KEY:
                 "content-type": "application/json"
             },
             json={
-                "model": "claude-haiku-4-5-20251001",
-                "max_tokens": 1800,
+                "model": "claude-3-5-sonnet-20241022",
+                "max_tokens": 4096,
                 "messages": [{
                     "role": "user",
-                    "content": f"""You are @dreamer (Davey "The Gravy" Butcha), Creative Venture Architect for Antigravity Agency.
+                    "content": f"""You are @dreamer (Davey "The Gravy" Butcha), Creative Venture Architect and Elite Systems Evaluator for Antigravity Agency. Your mandate is to cut through the tech-bro noise and deliver TRUTH, METRICS, and ACTION in the form of elite, VC-style intel reports.
 
-Today's intelligence across 5 signal sources:
+I DO NOT want generic overviews. I want hard-hitting, extremely detailed briefs that map exactly how Antigravity can print money or dominate a niche within 30 days.
+
+Today's raw systemic intelligence across 5 signal sources:
 
 **HN Top Stories:**
 {hn_titles}
@@ -194,18 +196,33 @@ Today's intelligence across 5 signal sources:
 **IndieHackers Milestones:**
 {ih_titles if ih_titles else "_(unavailable)_"}
 
-Generate exactly 5 high-intent business ideas based on ALL these signals combined. For each idea:
-- **Name**: punchy 3-5 word title
-- **Concept**: one crisp sentence
-- **Monetization**: specific price and model
-- **Gravy Index**: score 1-10 with one-line reason
-- **Signal**: which source(s) triggered this idea and why NOW
+Based on the meta-trends you see intersecting across these 5 feeds, synthesise EXACTLY 3 (Three) God-Tier SaaS / Venture concepts. 
+For each concept, you will write a highly-detailed, exhaustive breakdown broken down into the following explicit subsections. If you use jargon, explain it. Your tone should be ruthlessly analytical but easily readable by a non-technical CEO (Jonny).
 
-Format as markdown. Be ruthless — only asymmetric opportunities Antigravity can build and monetise within 30 days.
-End with "DAILY EMPIRE FEED COMPLETE — @dreamer 🍖" """
+For each of the 3 ideas, provide:
+
+### 🚀 [Idea Name: 3-5 Punchy Words]
+**The Metatrend (Why this exists):** Look at the data sources above. Which specific posts or launches prove this isn't just a hallucination but a screaming market demand? Cite exactly what triggered this.
+
+**The Broken Reality:** What is wrong with the current way people do this? Detail the exact friction point, time wasted, or money burned by the end user right now. Be visceral.
+
+**The Remedy (How It Works):** Explain the product mechanics step-by-step. Assume I am a 5 year old. If a user logs in, what do they click? What does the AI do in the background? What is the final output? Explain the exact user flow.
+
+**The MVP Architecture (The Stack):** How does Antigravity actually build this in a weekend? What is the frontend framework? What API do we wrap? Do we use n8n, Supabase, Claude? Give me the brutal, simplest tech stack to build V1.
+
+**Monetization & The Hook (Go-To-Market):** 
+- **Pricing:** Exactly how much do we charge? Flat fee? Per API call?
+- **The Hook:** What is the first cold email or LinkedIn DM we send to get our first 5 paying customers? Write a 1-sentence sales pitch.
+
+**The Moat:** Once we build this, how do we prevent someone from cloning it the next day? Where is our unfair advantage?
+
+**Gravy Index:** [Score 1-10] — Provide a 2-sentence brutal justification of why this score is accurate.
+
+Format heavily using Markdown. Use bolding to make skimming easy. BE SPECIFIC. Do NOT use fake placeholders. 
+End the entire report with exactly: "DAILY EMPIRE FEED COMPLETE — @dreamer 🍖" """
                 }]
             },
-            timeout=30
+            timeout=60
         ).json()
         ideas_content = resp["content"][0]["text"]
         print("[DREAMER] Claude-powered analysis complete.")
