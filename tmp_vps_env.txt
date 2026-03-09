@@ -1,0 +1,35 @@
+# Jonny AI CRM - Environment Configuration
+NODE_ENV=production
+SERVER_URL=https://crm.jonnyai.co.uk
+FRONTEND_URL=https://crm.jonnyai.co.uk
+NODE_TLS_REJECT_UNAUTHORIZED=0
+
+# Database (Dedicated CRM Supabase: sspbbdimkhsputpehybk)
+PG_DATABASE_URL=postgresql://postgres.sspbbdimkhsputpehybk:Aprilia100%2169.@aws-1-eu-west-2.pooler.supabase.com:6543/postgres?sslmode=require
+REDIS_URL=redis://redis:6379
+SUPABASE_URL=https://sspbbdimkhsputpehybk.supabase.co
+SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNzcGJiZGlta2hzcHV0cGVoeWJrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI2NjMzMzcsImV4cCI6MjA4ODIzOTMzN30.s3CuF7o1tv04h4qkEIAZmABXn8qmAr9Lbit-yzbvsm4
+SUPABASE_SERVICE_ROLE_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNzcGJiZGlta2hzcHV0cGVoeWJrIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3MjY2MzMzNywiZXhwIjoyMDg4MjM5MzM3fQ.D1SuW45R7zI8ghBiT1BVBTpkNXSO_fGdxmkTj3nYFaI
+SUPABASE_PROJECT_REF=sspbbdimkhsputpehybk
+
+# JWT Secret
+APP_SECRET=JonnyAI_Agency_GodTier_CRM_777
+
+# Emails (@jonnyai.co.uk)
+EMAIL_FROM_ADDRESS=crm@jonnyai.co.uk
+EMAIL_SYSTEM_ADDRESS=system@jonnyai.co.uk
+EMAIL_FROM_NAME='Jonny AI CRM'
+EMAIL_DRIVER=SMTP
+EMAIL_SMTP_HOST=smtp.resend.com
+EMAIL_SMTP_PORT=465
+EMAIL_SMTP_USER=resend
+EMAIL_SMTP_PASSWORD=re_ikc6Lxw5_Nas1LoakZvaGN1oybWkAQQAg
+
+# Socials (Meta)
+FACEBOOK_PAGE_ID=969852546211527
+INSTAGRAM_BUSINESS_ID=17841480650116183
+META_ACCESS_TOKEN=EAFoLDoMoLW0BQ6qPF9YsQd7XJUL66vnfsbNUWC3CrE30MvHxZAb1IQh6ubQCv7Y1UY8eRuU4FCJWYOITBTFsEBZCioZChAtoUzK8kMJ7Xd8ITgSNZCsMCtzNaFDpkRwpVlu1taNh4WAMw5M5SVphhwamNzCc3jWw7At3azkPgemK9SWcU1k7y2Mf4oktBD4pybMZC
+
+# Theme / Branding
+BRAND_PRIMARY_COLOR='#d97757'
+BRAND_SECONDARY_COLOR='#FFFFFF'

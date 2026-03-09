@@ -1,0 +1,86 @@
+{
+    "meta": {
+        "templateCredsSetupCompleted": true
+    },
+    "nodes": [
+        {
+            "parameters": {
+                "httpMethod": "POST",
+                "path": "crm-webhook",
+                "options": {}
+            },
+            "id": "eb7fe91b-6893-4a94-81ae-281b3734e565",
+            "name": "Webhook",
+            "type": "n8n-nodes-base.webhook",
+            "typeVersion": 2,
+            "position": [
+                220,
+                280
+            ],
+            "webhookId": "c9eab46b-80df-4f40-8fbd-dfaebeb01980"
+        },
+        {
+            "parameters": {
+                "method": "POST",
+                "url": "https://lkwydqtfbdjhxaarelaz.supabase.co/rest/v1/chatroom",
+                "sendHeaders": true,
+                "headerParameters": {
+                    "parameters": [
+                        {
+                            "name": "apikey",
+                            "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imxrd3lkcXRmYmRqaHhhYXJlbGF6Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3MDI5ODI4MiwiZXhwIjoyMDg1ODc0MjgyfQ.35gJkeetflYO5FYXrjELwikxqFvcScxFCQr5qDD-Z24"
+                        },
+                        {
+                            "name": "Authorization",
+                            "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imxrd3lkcXRmYmRqaHhhYXJlbGF6Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3MDI5ODI4MiwiZXhwIjoyMDg1ODc0MjgyfQ.35gJkeetflYO5FYXrjELwikxqFvcScxFCQr5qDD-Z24"
+                        }
+                    ]
+                },
+                "sendBody": true,
+                "bodyParameters": {
+                    "parameters": [
+                        {
+                            "name": "agent_id",
+                            "value": "marcus"
+                        },
+                        {
+                            "name": "message_type",
+                            "value": "broadcast"
+                        },
+                        {
+                            "name": "ai_source",
+                            "value": "n8n-crm-sync"
+                        },
+                        {
+                            "name": "message",
+                            "value": "={{ '🔔 CRM Event: ' + JSON.stringify($json.body) }}"
+                        }
+                    ]
+                },
+                "options": {}
+            },
+            "id": "d6fbcf3a-4be7-4a00-8438-e6bcafb90c01",
+            "name": "HTTP Request",
+            "type": "n8n-nodes-base.httpRequest",
+            "typeVersion": 4.1,
+            "position": [
+                440,
+                280
+            ]
+        }
+    ],
+    "connections": {
+        "Webhook": {
+            "main": [
+                [
+                    {
+                        "node": "HTTP Request",
+                        "type": "main",
+                        "index": 0
+                    }
+                ]
+            ]
+        }
+    },
+    "pinData": {}
+}
