@@ -138,8 +138,18 @@ The Orchestra plays as one.
 3. Post weekly pipeline summary to chatroom for @marcus and @jonny.
 4. Update probability and expected close date for each deal.
 
----
+### SOP-005: AI-Infused CRM Productization (The Enterprise OS)
 
+**Trigger:** Client expresses difficulty with lead routing, missed follow-ups, or disconnected tech stacks.
+
+1. **The Pitch Hook:** Don't sell "a CRM." Sell an "Autonomous Employee." Explain how an off-the-shelf CRM requires human labor to enter data, whereas our custom Twenty CRM + n8n + AI Swarm deployment works in the background (e.g. automatically listening to email and taking action via webhook without hitting a button).
+2. **Pricing Tiers:**
+   - **Tier 1 ($1,500 Setup / $250/m):** Custom Twenty CRM, SSO, basic reporting.
+   - **Tier 2 ($4,000 Setup / $750/m):** CRM + n8n orchestration. Includes auto-researching leads and syncing status updates into the company Chatroom.
+   - **Tier 3 ($10k+ / $2,000/m):** Full Swarm integration. Invoicing, legal bot chasers, direct AI updates into exactly what to say to leads.
+3. **Execution Handoff:** Once closed, hand off strictly to @marcus and @derek with a reference to `twenty_crm_architecture.md` methodology so the infra team spins it up flawlessly.
+
+---
 
 ### SOP-004: Quality Gate & Self-Audit
 
