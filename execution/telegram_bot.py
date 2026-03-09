@@ -8,8 +8,9 @@ Features:
 - Smart context injection (auto-pulls live data based on what you ask)
 - Claude Sonnet for proper understanding of vague/conversational messages
 - Voice notes → Whisper transcription → same flow
-- /crm, /orders, /tasks, /brain, /chatroom, /vm, /pi, /run, /voice
+- /crm, /orders, /tasks, /addtask, /done, /brain, /chatroom, /vm, /pi, /run, /voice
 - Voice replies via ElevenLabs (toggle with /voice)
+- Natural language task creation: "add a task to chase Brett"
 
 Run as systemd service: antigravity-telegram.service
 """
@@ -145,6 +146,93 @@ def get_crm_tasks(limit=15):
                 related = f" [{p.get('firstName','')} {p.get('lastName','')}]"
         lines.append(f"• {title}{related} — {status} | {due}")
     return lines
+
+
+def crm_create_task(title: str, company_name: str = "") -> dict:
+    """Create a task in Twenty CRM, optionally linked to a company."""
+    # If company name given, look up its ID first
+    company_id = None
+    if company_name:
+        data = crm_gql(f'{{companies(filter:{{name:{{like:"%{company_name}%"}}}},first:1){{edges{{node{{id name}}}}}}}}')
+        edges = data.get("companies", {}).get("edges", [])
+        if edges:
+            company_id = edges[0]["node"]["id"]
+
+    mutation = f"""
+    mutation {{
+      createTask(data: {{
+        title: {json.dumps(title)},
+        status: TODO
+      }}) {{
+        id
+        title
+        status
+      }}
+    }}"""
+    data = crm_gql(mutation)
+    task = data.get("createTask", {})
+    task_id = task.get("id")
+
+    # Link to company if found
+    if task_id and company_id:
+        link_mutation = f"""
+        mutation {{
+          createTaskTarget(data: {{
+            taskId: "{task_id}",
+            targetCompanyId: "{company_id}"
+          }}) {{
+            id
+          }}
+        }}"""
+        crm_gql(link_mutation)
+        task["company"] = company_name
+
+    return task
+
+
+def crm_update_task_status(task_id: str, status: str) -> bool:
+    """Update task status: TODO | IN_PROGRESS | DONE."""
+    mutation = f"""
+    mutation {{
+      updateTask(id: "{task_id}", data: {{status: {status}}}) {{
+        id status
+      }}
+    }}"""
+    data = crm_gql(mutation)
+    return bool(data.get("updateTask"))
+
+
+def crm_find_tasks(fragment: str, status_filter: str = "") -> list:
+    """Find tasks matching a title fragment."""
+    status_q = f', filter:{{status:{{neq:DONE}}}}' if not status_filter else f', filter:{{status:{{eq:{status_filter}}}}}'
+    data = crm_gql(f'{{tasks(first:50{status_q}){{edges{{node{{id title status dueAt taskTargets{{edges{{node{{company{{name}}}}}}}}}}}}}}}}')
+    tasks = data.get("tasks", {}).get("edges", [])
+    frag_lower = fragment.lower()
+    return [t["node"] for t in tasks if frag_lower in t["node"].get("title", "").lower()]
+
+
+def get_task_stats() -> dict:
+    """Get counts by status for daily digest."""
+    data = crm_gql('{tasks(first:100){edges{node{status dueAt}}}}')
+    tasks = data.get("tasks", {}).get("edges", [])
+    now = datetime.now(timezone.utc)
+    overdue = 0
+    counts = {"TODO": 0, "IN_PROGRESS": 0, "DONE": 0}
+    for t in tasks:
+        n = t["node"]
+        s = n.get("status", "TODO")
+        counts[s] = counts.get(s, 0) + 1
+        due = n.get("dueAt")
+        if due and s != "DONE":
+            try:
+                due_dt = datetime.fromisoformat(due.replace("Z", "+00:00"))
+                if due_dt < now:
+                    overdue += 1
+            except Exception:
+                pass
+    counts["overdue"] = overdue
+    counts["total"] = len(tasks)
+    return counts
 
 
 def get_chatroom(limit=8):
@@ -306,6 +394,10 @@ def build_live_context(needs: list[str]) -> str:
 
 # ── AI brain ──────────────────────────────────────────────────────────────────
 
+TASK_CREATE_KEYWORDS = {"add", "create", "make", "new", "log", "remind", "remindme", "note", "track"}
+TASK_DONE_KEYWORDS   = {"done", "finished", "complete", "completed", "close", "closed", "tick", "ticked"}
+
+
 SYSTEM_PROMPT = """You are Marcus Cole — "The Maestro" — Orchestrator and Command Lead of the Antigravity Orchestra.
 
 Your creed:
@@ -333,6 +425,15 @@ Your context:
 - Twenty CRM at crm.jonnyai.co.uk
 
 When live data is provided in context, USE IT to answer specifically. Do not say "I'd need to check" when the data is right there.
+
+Task management:
+- If Jonny says something like "add a task to chase Brett", "remind me to call Marzer", "log a task for X" → reply with EXACTLY: CREATE_TASK: <title> | <company or blank>
+  Example: CREATE_TASK: Chase Brett re fitment spreadsheet | BL Motorcycles
+  Example: CREATE_TASK: Call Dave at Marzer re invoice | Marzer Pro Roofing
+  Example: CREATE_TASK: Review n8n workflows |
+- If Jonny says "done with X", "mark X as done", "finished X" → reply with EXACTLY: DONE_TASK: <title fragment>
+  Example: DONE_TASK: Chase Brett
+- Only use these special replies when the intent is clearly task creation/completion. For everything else, respond normally.
 
 Rules:
 - Keep it SHORT — Jonny's on his phone, 2-4 sentences max unless he asks for detail
@@ -434,16 +535,18 @@ async def cmd_start(update: Update, ctx: ContextTypes.DEFAULT_TYPE):
         "Commands:\n"
         "/crm — pipeline snapshot\n"
         "/orders — BL orders (24h)\n"
-        "/tasks — CRM task list\n"
+        "/tasks — open CRM tasks\n"
+        "/addtask <title> [@company] — add a task\n"
+        "/done <fragment> — mark task done\n"
         "/chatroom — Orchestra chatroom\n"
-        "/chat <msg> — post to chatroom as @marcus\n"
+        "/chat <msg> — post to chatroom\n"
         "/brain — agent activity\n"
         "/pi — Pi node status\n"
         "/vm — server health\n"
         "/voice — toggle voice replies\n"
         "/run <script> — trigger VM script\n"
         "/reset — clear conversation memory\n\n"
-        "Or just type/speak — Marcus is listening."
+        "Or just type/speak — \"add a task to chase Brett\", \"done with the fitment review\""
     )
 
 
@@ -518,6 +621,50 @@ async def cmd_tasks(update: Update, ctx: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text(text)
 
 
+async def cmd_addtask(update: Update, ctx: ContextTypes.DEFAULT_TYPE):
+    """Usage: /addtask <title> [@company] or /addtask <title>"""
+    if not is_allowed(update): return
+    raw = " ".join(ctx.args or []).strip()
+    if not raw:
+        await update.message.reply_text("Usage: /addtask <title> [@company]\nExample: /addtask Chase Brett re fitment @BL Motorcycles")
+        return
+
+    # Parse optional @company at end
+    company = ""
+    title = raw
+    if " @" in raw:
+        idx = raw.rfind(" @")
+        title = raw[:idx].strip()
+        company = raw[idx+2:].strip()
+
+    await update.message.chat.send_action("typing")
+    task = crm_create_task(title, company)
+    if task.get("id"):
+        co_bit = f" [{company}]" if company else ""
+        await update.message.reply_text(f"Task added{co_bit}:\n{title}")
+    else:
+        await update.message.reply_text("Couldn't create task — CRM might be down.")
+
+
+async def cmd_done(update: Update, ctx: ContextTypes.DEFAULT_TYPE):
+    """Usage: /done <title fragment>"""
+    if not is_allowed(update): return
+    fragment = " ".join(ctx.args or []).strip()
+    if not fragment:
+        await update.message.reply_text("Usage: /done <title fragment>\nExample: /done Chase Brett")
+        return
+
+    matches = crm_find_tasks(fragment)
+    if not matches:
+        await update.message.reply_text(f"No open task matching \"{fragment}\".")
+    elif len(matches) == 1:
+        crm_update_task_status(matches[0]["id"], "DONE")
+        await update.message.reply_text(f"Done: {matches[0]['title']}")
+    else:
+        lines = "\n".join(f"• {m['title']}" for m in matches[:5])
+        await update.message.reply_text(f"Multiple matches — be more specific:\n{lines}")
+
+
 async def cmd_pi(update: Update, ctx: ContextTypes.DEFAULT_TYPE):
     if not is_allowed(update): return
     lines = get_pi_status()
@@ -582,11 +729,38 @@ async def handle_text(update: Update, ctx: ContextTypes.DEFAULT_TYPE):
 
     await update.message.chat.send_action("typing")
 
-    # Detect what live data to pull
     needs = detect_context_needs(text)
     live_context = build_live_context(needs) if needs else ""
 
     response = await ask_claude(update.effective_chat.id, text, live_context)
+
+    # Intercept CREATE_TASK signal from Marcus
+    if response.startswith("CREATE_TASK:"):
+        parts = response[len("CREATE_TASK:"):].strip().split("|")
+        title = parts[0].strip()
+        company = parts[1].strip() if len(parts) > 1 else ""
+        task = crm_create_task(title, company)
+        if task.get("id"):
+            co_bit = f" [{company}]" if company else ""
+            await update.message.reply_text(f"Task added{co_bit}:\n{title}")
+        else:
+            await update.message.reply_text(f"Couldn't create task — CRM might be down.")
+        return
+
+    # Intercept DONE_TASK signal from Marcus
+    if response.startswith("DONE_TASK:"):
+        fragment = response[len("DONE_TASK:"):].strip()
+        matches = crm_find_tasks(fragment)
+        if not matches:
+            await update.message.reply_text(f"No open task matching \"{fragment}\" found.")
+        elif len(matches) == 1:
+            crm_update_task_status(matches[0]["id"], "DONE")
+            await update.message.reply_text(f"Done: {matches[0]['title']}")
+        else:
+            lines = "\n".join(f"• {m['title']}" for m in matches[:5])
+            await update.message.reply_text(f"Multiple matches — be more specific:\n{lines}")
+        return
+
     await send_reply(update, response, use_voice=True)
 
 
@@ -633,6 +807,8 @@ def main():
     app.add_handler(CommandHandler("chatroom", cmd_chatroom))
     app.add_handler(CommandHandler("chat",     cmd_chat))
     app.add_handler(CommandHandler("tasks",    cmd_tasks))
+    app.add_handler(CommandHandler("addtask",  cmd_addtask))
+    app.add_handler(CommandHandler("done",     cmd_done))
     app.add_handler(CommandHandler("pi",       cmd_pi))
     app.add_handler(CommandHandler("vm",       cmd_vm))
     app.add_handler(CommandHandler("voice",    cmd_voice))
