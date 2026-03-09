@@ -632,6 +632,7 @@ async def cmd_start(update: Update, ctx: ContextTypes.DEFAULT_TYPE):
         "/tasks — open CRM tasks\n"
         "/addtask <title> [@company] — add a task\n"
         "/done <fragment> — mark task done\n"
+        "/perplexity — latest Perplexity research drops\n"
         "/ideas — today's Dreamer venture ideas\n"
         "/client <name> — full client brief\n"
         "/post <message> — post to Facebook\n"
@@ -716,6 +717,53 @@ async def cmd_tasks(update: Update, ctx: ContextTypes.DEFAULT_TYPE):
     else:
         text = "No open tasks in CRM."
     await update.message.reply_text(text)
+
+
+async def cmd_perplexity(update: Update, ctx: ContextTypes.DEFAULT_TYPE):
+    """/perplexity — show what Perplexity has recently dropped in the repo."""
+    if not is_allowed(update): return
+    import subprocess
+    repo = Path(__file__).resolve().parent.parent
+    perp_dir = repo / "perplexity"
+
+    lines = ["Perplexity drops:"]
+    subfolders = ["research", "agents", "intel", "ideas", "briefs"]
+    total = 0
+    for sub in subfolders:
+        folder = perp_dir / sub
+        if not folder.exists():
+            continue
+        files = sorted(
+            [f for f in folder.iterdir() if f.suffix in (".md", ".json") and f.name != ".gitkeep"],
+            key=lambda f: f.stat().st_mtime, reverse=True
+        )
+        if files:
+            lines.append(f"\n{sub}/")
+            for f in files[:3]:
+                lines.append(f"  • {f.name}")
+                total += 1
+
+    if total == 0:
+        await update.message.reply_text(
+            "No Perplexity drops yet.\n\n"
+            "Tell Perplexity to read PERPLEXITY.md and commit research to perplexity/."
+        )
+        return
+
+    # Also show last git commit from Perplexity if any
+    try:
+        r = subprocess.run(
+            ["git", "log", "--oneline", "--author=Perplexity", "-5"],
+            cwd=str(repo), capture_output=True, text=True, timeout=5
+        )
+        if r.stdout.strip():
+            lines.append(f"\nRecent Perplexity commits:")
+            for line in r.stdout.strip().split("\n")[:3]:
+                lines.append(f"  {line}")
+    except Exception:
+        pass
+
+    await update.message.reply_text("\n".join(lines))
 
 
 async def cmd_ideas(update: Update, ctx: ContextTypes.DEFAULT_TYPE):
@@ -980,6 +1028,7 @@ def main():
     app.add_handler(CommandHandler("chatroom", cmd_chatroom))
     app.add_handler(CommandHandler("chat",     cmd_chat))
     app.add_handler(CommandHandler("tasks",    cmd_tasks))
+    app.add_handler(CommandHandler("perplexity", cmd_perplexity))
     app.add_handler(CommandHandler("ideas",    cmd_ideas))
     app.add_handler(CommandHandler("client",   cmd_client))
     app.add_handler(CommandHandler("post",     cmd_post))
