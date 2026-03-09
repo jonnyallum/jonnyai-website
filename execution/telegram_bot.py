@@ -4,13 +4,11 @@ telegram_bot.py — Antigravity Orchestra Mobile Bridge
 Jonny's command interface from phone → Orchestra via Telegram.
 
 Features:
-- Text messages → Claude (Haiku) with full context → response
+- Conversation history (Marcus remembers the last 20 messages)
+- Smart context injection (auto-pulls live data based on what you ask)
+- Claude Sonnet for proper understanding of vague/conversational messages
 - Voice notes → Whisper transcription → same flow
-- /crm → pipeline snapshot
-- /orders → BL last 24h orders
-- /brain → latest chatroom activity
-- /vm → VM health status
-- /run <script> → trigger VM cron scripts
+- /crm, /orders, /tasks, /brain, /chatroom, /vm, /pi, /run, /voice
 - Voice replies via ElevenLabs (toggle with /voice)
 
 Run as systemd service: antigravity-telegram.service
@@ -18,6 +16,7 @@ Run as systemd service: antigravity-telegram.service
 import os, sys, json, asyncio, tempfile, urllib.request, urllib.parse, logging
 from datetime import datetime, timezone, timedelta
 from pathlib import Path
+from collections import defaultdict
 from dotenv import load_dotenv
 
 load_dotenv(dotenv_path=Path(__file__).resolve().parent.parent / ".env")
@@ -35,13 +34,13 @@ from telegram.ext import (
 )
 import anthropic
 
-# ── Config ───────────────────────────────────────────────────────────────────
+# ── Config ────────────────────────────────────────────────────────────────────
 
 TELEGRAM_TOKEN    = os.getenv("TELEGRAM_BOT_TOKEN", "")
-ALLOWED_CHAT_ID   = int(os.getenv("TELEGRAM_ALLOWED_CHAT_ID", "0"))  # your personal chat ID
+ALLOWED_CHAT_ID   = int(os.getenv("TELEGRAM_ALLOWED_CHAT_ID", "0"))
 ANTHROPIC_KEY     = os.getenv("ANTHROPIC_API_KEY", "")
 ELEVENLABS_KEY    = os.getenv("ELEVENLABS_API_KEY", "")
-ELEVENLABS_VOICE  = os.getenv("ELEVENLABS_VOICE_ID", "ytcsltLTtCHxNn1vC76H")  # Ricky — British
+ELEVENLABS_VOICE  = os.getenv("ELEVENLABS_VOICE_ID", "ytcsltLTtCHxNn1vC76H")
 BRAIN_URL         = os.getenv("ANTIGRAVITY_BRAIN_URL", "https://lkwydqtfbdjhxaarelaz.supabase.co")
 BRAIN_KEY         = os.getenv("ANTIGRAVITY_BRAIN_SERVICE_ROLE_KEY", "")
 BL_URL            = os.getenv("SUPABASE_URL", "")
@@ -54,18 +53,23 @@ CRM_API_KEY       = (
     "MTZmYiJ9.1uOtmlrrG--EetlapjYpewC8PqiZogvNpZQxvabJoYQ"
 )
 
-# Per-user voice mode toggle (chat_id → bool)
+# Conversation history per chat_id: list of {"role": ..., "content": ...}
+conversation_history: dict[int, list] = defaultdict(list)
+MAX_HISTORY = 20  # messages to keep per chat
+
+# Per-user voice mode toggle
 voice_mode: dict[int, bool] = {}
 
-# ── Auth guard ───────────────────────────────────────────────────────────────
+
+# ── Auth guard ────────────────────────────────────────────────────────────────
 
 def is_allowed(update: Update) -> bool:
     if ALLOWED_CHAT_ID == 0:
-        return True  # not configured yet, allow all (set after first /start)
+        return True
     return update.effective_chat.id == ALLOWED_CHAT_ID
 
 
-# ── Data helpers ─────────────────────────────────────────────────────────────
+# ── Data helpers ──────────────────────────────────────────────────────────────
 
 def sb_get(base, key, table, params=""):
     try:
@@ -75,7 +79,7 @@ def sb_get(base, key, table, params=""):
         )
         with urllib.request.urlopen(req, timeout=8) as r:
             return json.loads(r.read())
-    except Exception as e:
+    except Exception:
         return []
 
 
@@ -96,7 +100,7 @@ def get_orders_snapshot():
     now = datetime.now(timezone.utc)
     yesterday = (now - timedelta(days=1)).strftime("%Y-%m-%d")
     orders = sb_get(BL_URL, BL_KEY, "orders",
-                    f"created_at=gte.{yesterday}T00:00:00Z&order=created_at.desc&limit=10")
+                    f"created_at=gte.{yesterday}T00:00:00Z&order=created_at.desc&limit=20")
     revenue = sum(float(o.get("total_price", 0) or 0) for o in orders)
     pending = [o for o in orders if o.get("status") == "pending"]
     return {"count": len(orders), "revenue": round(revenue, 2), "pending": len(pending), "rows": orders[:5]}
@@ -110,7 +114,7 @@ def get_crm_snapshot():
     opps = data.get("opportunities", {}).get("edges", [])
     total = sum((o["node"].get("amount") or {}).get("amountMicros", 0) / 1_000_000 for o in opps)
     lines = []
-    for o in opps[:8]:
+    for o in opps[:10]:
         n = o["node"]
         co = (n.get("company") or {}).get("name", "?")
         amt = (n.get("amount") or {}).get("amountMicros", 0) / 1_000_000
@@ -118,14 +122,28 @@ def get_crm_snapshot():
     return {"total": round(total), "count": len(opps), "lines": lines}
 
 
-def get_brain_snapshot():
-    msgs = sb_get(BRAIN_URL, BRAIN_KEY, "chatroom",
-                  "order=created_at.desc&limit=5")
+def get_crm_tasks(limit=15):
+    data = crm_gql("""{ tasks(first: 20, filter: {status: {neq: DONE}}) { edges { node {
+        id title status dueAt
+        taskTargets { edges { node { company { name } person { name { firstName lastName } } } } }
+    }}}}""")
+    tasks = data.get("tasks", {}).get("edges", [])
     lines = []
-    for m in msgs:
-        agent = m.get("agent_id", "?")
-        msg = (m.get("message") or "")[:100]
-        lines.append(f"@{agent}: {msg}")
+    for t in tasks[:limit]:
+        n = t["node"]
+        title = n.get("title", "?")
+        status = n.get("status", "?")
+        due = (n.get("dueAt") or "")[:10] or "no due"
+        targets = n.get("taskTargets", {}).get("edges", [])
+        related = ""
+        for tgt in targets[:1]:
+            tnode = tgt.get("node", {})
+            if tnode.get("company"):
+                related = f" [{tnode['company']['name']}]"
+            elif tnode.get("person"):
+                p = tnode["person"]["name"]
+                related = f" [{p.get('firstName','')} {p.get('lastName','')}]"
+        lines.append(f"• {title}{related} — {status} | {due}")
     return lines
 
 
@@ -141,30 +159,43 @@ def get_chatroom(limit=8):
     return lines
 
 
-def get_crm_tasks():
-    data = crm_gql("""{ tasks(first: 20, filter: {status: {neq: DONE}}) { edges { node {
-        id title status dueAt
-        taskTargets { edges { node { company { name } person { name { firstName lastName } } } } }
-    }}}}""")
-    tasks = data.get("tasks", {}).get("edges", [])
+def get_pi_status():
+    rows = sb_get(BRAIN_URL, BRAIN_KEY, "node_status",
+                  "order=last_seen.desc&limit=5")
     lines = []
-    for t in tasks:
-        n = t["node"]
-        title = n.get("title", "?")
-        status = n.get("status", "?")
-        due = (n.get("dueAt") or "")[:10] or "no due date"
-        # Get related company/person
-        targets = n.get("taskTargets", {}).get("edges", [])
-        related = ""
-        for tgt in targets[:1]:
-            tnode = tgt.get("node", {})
-            if tnode.get("company"):
-                related = f" [{tnode['company']['name']}]"
-            elif tnode.get("person"):
-                p = tnode["person"]["name"]
-                related = f" [{p.get('firstName','')} {p.get('lastName','')}]"
-        lines.append(f"• {title}{related} — {status} | {due}")
+    for r in rows:
+        nid = r.get("node_id", "?")
+        status = r.get("status", "?")
+        temp = r.get("cpu_temp_c", "?")
+        cpu = r.get("cpu_percent", "?")
+        mem = r.get("mem_percent", "?")
+        last = (r.get("last_seen") or "")[:16].replace("T", " ")
+        lines.append(f"{nid}: {status} | CPU:{cpu}% Temp:{temp}C RAM:{mem}% | seen {last}")
     return lines
+
+
+def get_vm_health():
+    import subprocess
+    results = []
+    try:
+        r = subprocess.run(["df", "-h", "/"], capture_output=True, text=True, timeout=5)
+        disk_line = r.stdout.strip().split("\n")[-1]
+        results.append(f"Disk: {disk_line.split()[4]} used")
+    except Exception:
+        results.append("Disk: unknown")
+    try:
+        r = subprocess.run(["uptime", "-p"], capture_output=True, text=True, timeout=5)
+        results.append(f"Uptime: {r.stdout.strip()}")
+    except Exception:
+        pass
+    try:
+        r = subprocess.run(["sudo", "docker", "ps", "--format", "{{.Names}}: {{.Status}}"],
+                           capture_output=True, text=True, timeout=5)
+        for line in r.stdout.strip().split("\n")[:5]:
+            results.append(line)
+    except Exception:
+        pass
+    return results
 
 
 def post_to_chatroom(message: str, agent_id: str = "marcus"):
@@ -191,82 +222,162 @@ def post_to_chatroom(message: str, agent_id: str = "marcus"):
         return False
 
 
-def get_vm_health():
-    import subprocess
-    results = []
-    try:
-        r = subprocess.run(["df", "-h", "/"], capture_output=True, text=True, timeout=5)
-        disk_line = r.stdout.strip().split("\n")[-1]
-        results.append(f"Disk: {disk_line.split()[4]} used")
-    except Exception:
-        results.append("Disk: unknown")
-    try:
-        r = subprocess.run(["uptime", "-p"], capture_output=True, text=True, timeout=5)
-        results.append(f"Uptime: {r.stdout.strip()}")
-    except Exception:
-        pass
-    try:
-        r = subprocess.run(["sudo", "docker", "ps", "--format", "{{.Names}}: {{.Status}}"],
-                           capture_output=True, text=True, timeout=5)
-        for line in r.stdout.strip().split("\n")[:4]:
-            results.append(line)
-    except Exception:
-        pass
-    return results
+# ── Smart context injection ───────────────────────────────────────────────────
+
+ORDERS_KEYWORDS   = {"order", "orders", "sale", "sales", "revenue", "bl", "brett", "motorcycle", "bike", "ebay", "pending"}
+CRM_KEYWORDS      = {"crm", "pipeline", "client", "clients", "deal", "deals", "mrr", "opportunity", "prospects", "contract"}
+TASKS_KEYWORDS    = {"task", "tasks", "todo", "to-do", "to do", "action", "actions", "follow", "chasing"}
+CHATROOM_KEYWORDS = {"chatroom", "orchestra", "agents", "team", "agent", "broadcast", "posted", "brain", "activity"}
+PI_KEYWORDS       = {"pi", "raspberry", "research", "heartbeat", "node", "worker", "temp", "cpu"}
+VM_KEYWORDS       = {"vm", "server", "vps", "docker", "health", "disk", "uptime", "host"}
 
 
-# ── AI brain ─────────────────────────────────────────────────────────────────
+def detect_context_needs(text: str) -> list[str]:
+    """Detect what live data to inject based on message content."""
+    lower = set(text.lower().replace(",", " ").replace("?", " ").split())
+    needs = []
+    if lower & ORDERS_KEYWORDS:   needs.append("orders")
+    if lower & CRM_KEYWORDS:      needs.append("crm")
+    if lower & TASKS_KEYWORDS:    needs.append("tasks")
+    if lower & CHATROOM_KEYWORDS: needs.append("chatroom")
+    if lower & PI_KEYWORDS:       needs.append("pi")
+    if lower & VM_KEYWORDS:       needs.append("vm")
+    return needs
+
+
+def build_live_context(needs: list[str]) -> str:
+    """Pull live data for detected context needs."""
+    parts = []
+    now = datetime.now(timezone.utc)
+    parts.append(f"Current time: {now.strftime('%A %d %B %Y %H:%M UTC')}")
+
+    if "orders" in needs:
+        o = get_orders_snapshot()
+        parts.append(
+            f"\nBL Motorcycles — Last 24h orders:\n"
+            f"Count: {o['count']} | Revenue: £{o['revenue']:.2f} | Pending: {o['pending']}"
+        )
+        if o["rows"]:
+            parts.append("Recent orders:")
+            for row in o["rows"][:4]:
+                sku = (row.get("sku") or row.get("item_sku") or "?")[:20]
+                val = f"£{float(row.get('total_price', 0) or 0):.2f}"
+                status = row.get("status", "?")
+                parts.append(f"  - {sku} {val} [{status}]")
+
+    if "crm" in needs:
+        snap = get_crm_snapshot()
+        parts.append(
+            f"\nCRM Pipeline:\n"
+            f"Total MRR: £{snap['total']:,}/mo across {snap['count']} deals"
+        )
+        if snap["lines"]:
+            parts.append("\n".join(snap["lines"][:6]))
+
+    if "tasks" in needs:
+        task_lines = get_crm_tasks(limit=10)
+        if task_lines:
+            parts.append(f"\nOpen CRM Tasks ({len(task_lines)} shown):")
+            parts.append("\n".join(task_lines))
+        else:
+            parts.append("\nNo open CRM tasks.")
+
+    if "chatroom" in needs:
+        chat_lines = get_chatroom(limit=6)
+        if chat_lines:
+            parts.append("\nOrchestra Chatroom (recent):")
+            parts.append("\n".join(chat_lines))
+
+    if "pi" in needs:
+        pi_lines = get_pi_status()
+        if pi_lines:
+            parts.append("\nPi Node Status:")
+            parts.append("\n".join(pi_lines))
+        else:
+            parts.append("\nPi: no heartbeat data yet.")
+
+    if "vm" in needs:
+        vm_lines = get_vm_health()
+        parts.append("\nVM Health:")
+        parts.append("\n".join(vm_lines))
+
+    return "\n".join(parts)
+
+
+# ── AI brain ──────────────────────────────────────────────────────────────────
 
 SYSTEM_PROMPT = """You are Marcus Cole — "The Maestro" — Orchestrator and Command Lead of the Antigravity Orchestra.
 
 Your creed:
 - You don't work alone. You orchestrate 70 specialist agents.
-- You don't guess. You query the Shared Brain or flag uncertainty.
+- You don't guess. When you have live data, use it. When you don't, say so.
 - You don't ship garbage. Every output passes quality gates.
 - You are world-class. Trillion-dollar enterprises trust your work.
 
 Your personality:
 - Authoritative, decisive, relentlessly mission-focused
 - Direct and structured — no waffle, no filler
-- Slightly impatient with ambiguity but always constructive
 - Dry wit. Cockney London roots. You say "proper", "sorted", "right then", "bollocks" when something's wrong.
 - You call Jonny "boss" occasionally. You take pride in the Orchestra.
+- You remember what was said earlier in this conversation — never ask Jonny to repeat himself.
 
 Your context:
 - You're Jonny Allum's personal command interface via Telegram — he's on his phone
-- 9 active clients: BL Motorcycles (eBay automation, Brett), Marzer Pro Roofing, Sparta Coatings, JSC Contractors, Construct FM, La Aesthetician, DJ Waste, Village Bakery, JonnyAI
+- Active clients: BL Motorcycles (eBay automation, Brett Lawson), Marzer Pro Roofing, Sparta Coatings, JSC Contractors, Construct FM, La Aesthetician, DJ Waste, Village Bakery, JonnyAI
 - Total agency MRR: ~£1,550/mo
-- VM at 35.230.148.83 running 16 cron jobs 24/7
-- Shared Brain: 70 agents, live Supabase
-- BL Motorcycles: fully automated eBay orders, stock sync, daily reports to Brett
+- GCP VM at 35.230.148.83 running cron jobs 24/7
+- Raspberry Pi at 100.115.197.34 (Tailscale) — research node, polls task_queue every 2 min, heartbeats every 5 min
+- Shared Brain: Supabase (lkwydqtfbdjhxaarelaz) — 70 agents, chatroom, node_status, task_queue live
+- BL Motorcycles: eBay orders auto-processed, stock sync, daily reports to Brett
+- n8n at n8n.jonnyai.co.uk — social automation workflows
+- Twenty CRM at crm.jonnyai.co.uk
+
+When live data is provided in context, USE IT to answer specifically. Do not say "I'd need to check" when the data is right there.
 
 Rules:
 - Keep it SHORT — Jonny's on his phone, 2-4 sentences max unless he asks for detail
-- Plain text only, no markdown
-- Be useful, be fast, be Marcus"""
+- Plain text only, no markdown formatting
+- Be useful, be fast, be Marcus
+- If you genuinely don't have data to answer something, say what command will get it"""
 
-async def ask_claude(message: str, context: str = "") -> str:
+
+async def ask_claude(chat_id: int, message: str, live_context: str = "") -> str:
     try:
         client = anthropic.Anthropic(api_key=ANTHROPIC_KEY)
-        messages = []
-        if context:
-            messages.append({"role": "user", "content": f"Context:\n{context}"})
-            messages.append({"role": "assistant", "content": "Got it, what do you need?"})
-        messages.append({"role": "user", "content": message})
+
+        # Build messages with history
+        history = conversation_history[chat_id]
+
+        # Prepend live context as a system injection if we have it
+        user_content = message
+        if live_context:
+            user_content = f"[Live data]\n{live_context}\n\n[Message from Jonny]\n{message}"
+
+        # Build message list from history + new message
+        messages = list(history) + [{"role": "user", "content": user_content}]
 
         resp = client.messages.create(
-            model="claude-haiku-4-5-20251001",
-            max_tokens=500,
+            model="claude-sonnet-4-6",
+            max_tokens=600,
             system=SYSTEM_PROMPT,
             messages=messages
         )
-        return resp.content[0].text.strip()
+        reply = resp.content[0].text.strip()
+
+        # Save to history (store clean message, not the context-injected one)
+        history.append({"role": "user", "content": message})
+        history.append({"role": "assistant", "content": reply})
+
+        # Trim to max history
+        if len(history) > MAX_HISTORY:
+            conversation_history[chat_id] = history[-MAX_HISTORY:]
+
+        return reply
     except Exception as e:
         return f"Brain error: {e}"
 
 
 async def transcribe_voice(file_path: str) -> str:
-    """Transcribe voice note using OpenAI Whisper."""
     try:
         import openai
         client = openai.OpenAI(api_key=os.getenv("OPENAI_API_KEY", ""))
@@ -280,7 +391,6 @@ async def transcribe_voice(file_path: str) -> str:
 
 
 async def speak(text: str) -> bytes | None:
-    """Generate voice response via ElevenLabs."""
     if not ELEVENLABS_KEY:
         return None
     try:
@@ -299,7 +409,7 @@ async def speak(text: str) -> bytes | None:
         return None
 
 
-# ── Reply helper ─────────────────────────────────────────────────────────────
+# ── Reply helper ──────────────────────────────────────────────────────────────
 
 async def send_reply(update: Update, text: str, use_voice: bool = False):
     chat_id = update.effective_chat.id
@@ -315,7 +425,7 @@ async def send_reply(update: Update, text: str, use_voice: bool = False):
     await update.message.reply_text(text)
 
 
-# ── Command handlers ──────────────────────────────────────────────────────────
+# ── Command handlers ───────────────────────────────────────────────────────────
 
 async def cmd_start(update: Update, ctx: ContextTypes.DEFAULT_TYPE):
     chat_id = update.effective_chat.id
@@ -328,11 +438,20 @@ async def cmd_start(update: Update, ctx: ContextTypes.DEFAULT_TYPE):
         "/chatroom — Orchestra chatroom\n"
         "/chat <msg> — post to chatroom as @marcus\n"
         "/brain — agent activity\n"
+        "/pi — Pi node status\n"
         "/vm — server health\n"
         "/voice — toggle voice replies\n"
-        "/run <script> — trigger VM script\n\n"
+        "/run <script> — trigger VM script\n"
+        "/reset — clear conversation memory\n\n"
         "Or just type/speak — Marcus is listening."
     )
+
+
+async def cmd_reset(update: Update, ctx: ContextTypes.DEFAULT_TYPE):
+    if not is_allowed(update): return
+    chat_id = update.effective_chat.id
+    conversation_history[chat_id] = []
+    await update.message.reply_text("Memory cleared. Fresh start.")
 
 
 async def cmd_crm(update: Update, ctx: ContextTypes.DEFAULT_TYPE):
@@ -363,7 +482,7 @@ async def cmd_orders(update: Update, ctx: ContextTypes.DEFAULT_TYPE):
 
 async def cmd_brain(update: Update, ctx: ContextTypes.DEFAULT_TYPE):
     if not is_allowed(update): return
-    lines = get_brain_snapshot()
+    lines = get_chatroom(limit=5)
     text = "Orchestra Chatroom — Latest\n\n" + ("\n".join(lines) if lines else "No recent activity.")
     await update.message.reply_text(text)
 
@@ -395,7 +514,17 @@ async def cmd_tasks(update: Update, ctx: ContextTypes.DEFAULT_TYPE):
     if lines:
         text = f"CRM Tasks — {len(lines)} open\n\n" + "\n".join(lines)
     else:
-        text = "No open tasks in CRM. Add some at crm.jonnyai.co.uk"
+        text = "No open tasks in CRM."
+    await update.message.reply_text(text)
+
+
+async def cmd_pi(update: Update, ctx: ContextTypes.DEFAULT_TYPE):
+    if not is_allowed(update): return
+    lines = get_pi_status()
+    if lines:
+        text = "Pi Nodes\n\n" + "\n".join(lines)
+    else:
+        text = "No Pi heartbeats in Supabase yet."
     await update.message.reply_text(text)
 
 
@@ -424,9 +553,7 @@ async def cmd_run(update: Update, ctx: ContextTypes.DEFAULT_TYPE):
     }
     args = " ".join(ctx.args or []).strip().lower()
     if not args or args not in SAFE_SCRIPTS:
-        await update.message.reply_text(
-            f"Available: {', '.join(SAFE_SCRIPTS.keys())}"
-        )
+        await update.message.reply_text(f"Available: {', '.join(SAFE_SCRIPTS.keys())}")
         return
     script = SAFE_SCRIPTS[args]
     await update.message.reply_text(f"Running {args}...")
@@ -438,28 +565,28 @@ async def cmd_run(update: Update, ctx: ContextTypes.DEFAULT_TYPE):
             capture_output=True, text=True, timeout=60
         )
         out = (r.stdout + r.stderr)[-800:].strip() or "Done (no output)"
-        await update.message.reply_text(f"✓ {args} complete:\n{out}")
+        await update.message.reply_text(f"{args} complete:\n{out}")
     except subprocess.TimeoutExpired:
-        await update.message.reply_text(f"⏱ {args} timed out (still running in background)")
+        await update.message.reply_text(f"{args} timed out (still running in background)")
     except Exception as e:
-        await update.message.reply_text(f"✗ Error: {e}")
+        await update.message.reply_text(f"Error: {e}")
 
 
-# ── Message handlers ──────────────────────────────────────────────────────────
+# ── Message handlers ───────────────────────────────────────────────────────────
 
 async def handle_text(update: Update, ctx: ContextTypes.DEFAULT_TYPE):
     if not is_allowed(update): return
-    text = update.message.text or ""
-    if not text.strip():
+    text = (update.message.text or "").strip()
+    if not text:
         return
 
-    # Build context
-    context_parts = []
-    now = datetime.now(timezone.utc)
-    context_parts.append(f"Current time: {now.strftime('%A %d %B %Y %H:%M UTC')}")
-
     await update.message.chat.send_action("typing")
-    response = await ask_claude(text, "\n".join(context_parts))
+
+    # Detect what live data to pull
+    needs = detect_context_needs(text)
+    live_context = build_live_context(needs) if needs else ""
+
+    response = await ask_claude(update.effective_chat.id, text, live_context)
     await send_reply(update, response, use_voice=True)
 
 
@@ -467,47 +594,46 @@ async def handle_voice(update: Update, ctx: ContextTypes.DEFAULT_TYPE):
     if not is_allowed(update): return
     await update.message.chat.send_action("typing")
 
-    # Download voice file
     voice_file = await update.message.voice.get_file()
     with tempfile.NamedTemporaryFile(suffix=".ogg", delete=False) as f:
         await voice_file.download_to_drive(f.name)
         tmp_path = f.name
 
-    # Transcribe
     transcript = await transcribe_voice(tmp_path)
     os.unlink(tmp_path)
 
     if transcript.startswith("[transcription failed"):
-        await update.message.reply_text("Sorry, couldn't transcribe that voice note.")
+        await update.message.reply_text("Couldn't transcribe that voice note.")
         return
 
-    # Echo transcript so Jonny knows what was heard
-    await update.message.reply_text(f"🎤 \"{transcript}\"")
+    await update.message.reply_text(f'"{transcript}"')
 
-    # Process same as text
-    now = datetime.now(timezone.utc)
-    context = f"Current time: {now.strftime('%A %d %B %Y %H:%M UTC')}"
-    response = await ask_claude(transcript, context)
+    needs = detect_context_needs(transcript)
+    live_context = build_live_context(needs) if needs else ""
+
+    response = await ask_claude(update.effective_chat.id, transcript, live_context)
     await send_reply(update, response, use_voice=True)
 
 
-# ── Main ─────────────────────────────────────────────────────────────────────
+# ── Main ──────────────────────────────────────────────────────────────────────
 
 def main():
     if not TELEGRAM_TOKEN:
         log.error("TELEGRAM_BOT_TOKEN not set in .env")
         sys.exit(1)
 
-    log.info("Starting Antigravity Telegram Bot...")
+    log.info("Starting Antigravity Telegram Bot (Sonnet + conversation memory)...")
     app = Application.builder().token(TELEGRAM_TOKEN).build()
 
     app.add_handler(CommandHandler("start",    cmd_start))
+    app.add_handler(CommandHandler("reset",    cmd_reset))
     app.add_handler(CommandHandler("crm",      cmd_crm))
     app.add_handler(CommandHandler("orders",   cmd_orders))
     app.add_handler(CommandHandler("brain",    cmd_brain))
     app.add_handler(CommandHandler("chatroom", cmd_chatroom))
     app.add_handler(CommandHandler("chat",     cmd_chat))
     app.add_handler(CommandHandler("tasks",    cmd_tasks))
+    app.add_handler(CommandHandler("pi",       cmd_pi))
     app.add_handler(CommandHandler("vm",       cmd_vm))
     app.add_handler(CommandHandler("voice",    cmd_voice))
     app.add_handler(CommandHandler("run",      cmd_run))
