@@ -37,3 +37,19 @@ execution/vps_key.pub
 
 # GCP tokens
 execution/gcp_compute_token.json
+
+# BL Motorcycles data feeds (downloaded fresh from Bike It FTP — stored in Supabase)
+Clients/BL Motorcycles ltd/BL Motorcycles- Dropshipping/**/*.csv
+Clients/BL Motorcycles ltd/BL Motorcycles- Dropshipping/**/*.xlsx
+Clients/BL Motorcycles ltd/BL Motorcycles- Dropshipping/**/*.zip
+Clients/BL Motorcycles ltd/BL Motorcycles- Dropshipping/**/*.mp4
+Clients/BL Motorcycles ltd/BL Motorcycles- Dropshipping/**/*.exe
+
+# Large client images (not needed in version control)
+Clients/Jsc website/**/*.jpeg
+Clients/Jsc website/**/*.jpg
+Clients/Jsc website/**/*.png
+Clients/jsc-contractors*/**/*.jpeg
+Clients/jsc-contractors*/**/*.jpg
+Clients/jsc-contractors*/**/*.JPG
+Clients/jsc-contractors*/**/*.png
