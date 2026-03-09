@@ -235,6 +235,95 @@ def get_task_stats() -> dict:
     return counts
 
 
+def get_dreamer_ideas() -> str:
+    """Pull today's @dreamer post from the Shared Brain chatroom."""
+    msgs = sb_get(BRAIN_URL, BRAIN_KEY, "chatroom",
+                  "agent_id=eq.dreamer&order=created_at.desc&limit=3")
+    if not msgs:
+        return ""
+    # Return the most recent dreamer message
+    return (msgs[0].get("message") or "").strip()
+
+
+def get_client_brief(client_name: str) -> dict:
+    """Full snapshot for a client: CRM deal + tasks + recent orders (BL only)."""
+    result = {"name": client_name, "deal": None, "tasks": [], "orders": None}
+    name_lower = client_name.lower()
+
+    # CRM deal
+    data = crm_gql(f"""{{
+      companies(filter:{{name:{{like:"%{client_name}%"}}}}, first:1) {{
+        edges {{ node {{
+          id name
+          opportunities(first:5) {{ edges {{ node {{ name stage amount {{ amountMicros }} }} }} }}
+        }} }}
+      }}
+    }}""")
+    edges = data.get("companies", {}).get("edges", [])
+    if edges:
+        co = edges[0]["node"]
+        co_id = co["id"]
+        opps = co.get("opportunities", {}).get("edges", [])
+        if opps:
+            o = opps[0]["node"]
+            amt = (o.get("amount") or {}).get("amountMicros", 0) / 1_000_000
+            result["deal"] = f"{o.get('name','?')} — £{amt:.0f}/mo [{o.get('stage','?')}]"
+
+        # Tasks linked to this company
+        task_data = crm_gql(f"""{{
+          tasks(first:20, filter:{{status:{{neq:DONE}}}}) {{
+            edges {{ node {{
+              title status dueAt
+              taskTargets {{ edges {{ node {{ company {{ id name }} }} }} }}
+            }} }}
+          }}
+        }}""")
+        for t in task_data.get("tasks", {}).get("edges", []):
+            n = t["node"]
+            for tgt in (n.get("taskTargets", {}).get("edges") or []):
+                if (tgt.get("node", {}).get("company") or {}).get("id") == co_id:
+                    due = (n.get("dueAt") or "")[:10] or "no due"
+                    result["tasks"].append(f"• {n['title']} [{n.get('status','?')}] {due}")
+
+    # BL orders (only relevant for BL Motorcycles)
+    if any(k in name_lower for k in ["bl", "motorcycles", "brett"]):
+        now = datetime.now(timezone.utc)
+        cutoff = (now - timedelta(days=7)).strftime("%Y-%m-%d")
+        orders = sb_get(BL_URL, BL_KEY, "orders",
+                        f"created_at=gte.{cutoff}T00:00:00Z&order=created_at.desc&limit=50")
+        revenue = sum(float(o.get("total_price", 0) or 0) for o in orders)
+        pending = sum(1 for o in orders if o.get("status") == "pending")
+        result["orders"] = {"count": len(orders), "revenue": round(revenue, 2), "pending": pending, "days": 7}
+
+    return result
+
+
+def fb_post(message: str) -> bool:
+    """Post a text message to Facebook Page."""
+    page_id    = os.getenv("FACEBOOK_PAGE_ID", "")
+    page_token = os.getenv("FACEBOOK_PAGE_ACCESS_TOKEN", "")
+    if not page_id or not page_token:
+        return False
+    url = f"https://graph.facebook.com/v19.0/{page_id}/feed"
+    payload = json.dumps({"message": message, "access_token": page_token}).encode()
+    req = urllib.request.Request(url, data=payload,
+                                  headers={"Content-Type": "application/json"}, method="POST")
+    try:
+        with urllib.request.urlopen(req, timeout=15) as r:
+            data = json.loads(r.read())
+            return bool(data.get("id"))
+    except Exception as e:
+        log.warning(f"Facebook post error: {e}")
+        return False
+
+
+def ig_post(caption: str) -> bool:
+    """Post a text-only post to Instagram (via Facebook Graph, no image = caption only)."""
+    # IG requires an image for feed posts; for text-only we post to FB only
+    # This is a placeholder — IG text-only isn't supported by Graph API
+    return False
+
+
 def get_chatroom(limit=8):
     msgs = sb_get(BRAIN_URL, BRAIN_KEY, "chatroom",
                   f"order=created_at.desc&limit={limit}")
@@ -426,6 +515,11 @@ Your context:
 
 When live data is provided in context, USE IT to answer specifically. Do not say "I'd need to check" when the data is right there.
 
+Facebook posting:
+- If Jonny says "post to Facebook: <text>", "put this on Facebook: <text>", "share this on FB: <text>" → reply with EXACTLY: FB_POST: <the text to post>
+  Example: FB_POST: Big news — BL Motorcycles just launched same-day dispatch on all UK orders!
+- Keep the post copy punchy, engaging, on-brand. Do not add hashtags unless Jonny asks.
+
 Task management:
 - If Jonny says something like "add a task to chase Brett", "remind me to call Marzer", "log a task for X" → reply with EXACTLY: CREATE_TASK: <title> | <company or blank>
   Example: CREATE_TASK: Chase Brett re fitment spreadsheet | BL Motorcycles
@@ -538,6 +632,9 @@ async def cmd_start(update: Update, ctx: ContextTypes.DEFAULT_TYPE):
         "/tasks — open CRM tasks\n"
         "/addtask <title> [@company] — add a task\n"
         "/done <fragment> — mark task done\n"
+        "/ideas — today's Dreamer venture ideas\n"
+        "/client <name> — full client brief\n"
+        "/post <message> — post to Facebook\n"
         "/chatroom — Orchestra chatroom\n"
         "/chat <msg> — post to chatroom\n"
         "/brain — agent activity\n"
@@ -619,6 +716,72 @@ async def cmd_tasks(update: Update, ctx: ContextTypes.DEFAULT_TYPE):
     else:
         text = "No open tasks in CRM."
     await update.message.reply_text(text)
+
+
+async def cmd_ideas(update: Update, ctx: ContextTypes.DEFAULT_TYPE):
+    """/ideas — today's @Dreamer venture ideas from the Shared Brain."""
+    if not is_allowed(update): return
+    await update.message.chat.send_action("typing")
+    content = get_dreamer_ideas()
+    if not content:
+        await update.message.reply_text(
+            "No Dreamer output today yet. Run /run dreamer to trigger it."
+        )
+        return
+    # Trim to Telegram's 4096 char limit
+    if len(content) > 3800:
+        content = content[:3800] + "\n...(truncated)"
+    await update.message.reply_text(content)
+
+
+async def cmd_client(update: Update, ctx: ContextTypes.DEFAULT_TYPE):
+    """/client <name> — full snapshot: deal + tasks + orders."""
+    if not is_allowed(update): return
+    name = " ".join(ctx.args or []).strip()
+    if not name:
+        await update.message.reply_text(
+            "Usage: /client <name>\nExamples: /client BL, /client Marzer, /client Sparta"
+        )
+        return
+
+    await update.message.chat.send_action("typing")
+    brief = get_client_brief(name)
+    lines = [f"Client Brief — {brief['name']}"]
+
+    if brief["deal"]:
+        lines += ["", "Deal:", brief["deal"]]
+    else:
+        lines += ["", "Deal: none found in CRM"]
+
+    if brief["tasks"]:
+        lines += ["", f"Open Tasks ({len(brief['tasks'])}):", *brief["tasks"][:8]]
+    else:
+        lines += ["", "Tasks: none open"]
+
+    if brief["orders"]:
+        o = brief["orders"]
+        lines += ["", f"BL Orders (last {o['days']}d): {o['count']} | £{o['revenue']:.2f} | {o['pending']} pending"]
+
+    await update.message.reply_text("\n".join(lines))
+
+
+async def cmd_post(update: Update, ctx: ContextTypes.DEFAULT_TYPE):
+    """/post <message> — post to Facebook Page."""
+    if not is_allowed(update): return
+    message = " ".join(ctx.args or []).strip()
+    if not message:
+        await update.message.reply_text(
+            "Usage: /post <your message>\n"
+            "Or just say \"post to Facebook: <text>\" and Marcus will do it."
+        )
+        return
+
+    await update.message.chat.send_action("typing")
+    ok = fb_post(message)
+    if ok:
+        await update.message.reply_text(f"Posted to Facebook:\n\"{message[:200]}\"")
+    else:
+        await update.message.reply_text("Facebook post failed — check PAGE_ID / PAGE_ACCESS_TOKEN in .env.")
 
 
 async def cmd_addtask(update: Update, ctx: ContextTypes.DEFAULT_TYPE):
@@ -734,6 +897,16 @@ async def handle_text(update: Update, ctx: ContextTypes.DEFAULT_TYPE):
 
     response = await ask_claude(update.effective_chat.id, text, live_context)
 
+    # Intercept FB_POST signal from Marcus
+    if response.startswith("FB_POST:"):
+        post_text = response[len("FB_POST:"):].strip()
+        ok = fb_post(post_text)
+        if ok:
+            await update.message.reply_text(f"Posted to Facebook:\n\"{post_text[:200]}\"")
+        else:
+            await update.message.reply_text("Facebook post failed — check credentials in .env.")
+        return
+
     # Intercept CREATE_TASK signal from Marcus
     if response.startswith("CREATE_TASK:"):
         parts = response[len("CREATE_TASK:"):].strip().split("|")
@@ -807,6 +980,9 @@ def main():
     app.add_handler(CommandHandler("chatroom", cmd_chatroom))
     app.add_handler(CommandHandler("chat",     cmd_chat))
     app.add_handler(CommandHandler("tasks",    cmd_tasks))
+    app.add_handler(CommandHandler("ideas",    cmd_ideas))
+    app.add_handler(CommandHandler("client",   cmd_client))
+    app.add_handler(CommandHandler("post",     cmd_post))
     app.add_handler(CommandHandler("addtask",  cmd_addtask))
     app.add_handler(CommandHandler("done",     cmd_done))
     app.add_handler(CommandHandler("pi",       cmd_pi))
