@@ -1,0 +1,18 @@
+{
+  "_comment": "ElevenLabs voice configuration for @harry",
+  "agent_id": "harry",
+  "character_name": "Harry Thompson",
+  "voice_id": "PENDING_ASSIGNMENT",
+  "model_id": "eleven_multilingual_v2",
+  "voice_settings": {
+    "stability": 0.8,
+    "similarity_boost": 0.8,
+    "style": 0.2,
+    "use_speaker_boost": false
+  },
+  "language": "en",
+  "accent": "British English",
+  "archetype": "calm",
+  "assigned_by": null,
+  "assigned_at": null
+}

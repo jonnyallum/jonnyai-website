@@ -1,0 +1,13 @@
+[Unit]
+Description=Antigravity Content Calendar — processes scheduled social posts
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+User=antigravity-ai
+WorkingDirectory=/home/antigravity-ai/Antigravity_Orchestra
+ExecStart=/home/antigravity-ai/Antigravity_Orchestra/run_cron.sh process_content_calendar.py
+TimeoutStartSec=300
+StandardOutput=append:/home/antigravity-ai/Antigravity_Orchestra/logs/content-calendar.log
+StandardError=append:/home/antigravity-ai/Antigravity_Orchestra/logs/content-calendar.log

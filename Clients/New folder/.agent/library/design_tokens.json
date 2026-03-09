@@ -1,0 +1,33 @@
+{
+  "version": "1.0",
+  "name": "Antigravity God-Tier Aesthetic",
+  "tokens": {
+    "colors": {
+      "primary": "hsl(145, 100%, 50%)",
+      "secondary": "hsl(210, 100%, 45%)",
+      "accent": "hsl(280, 100%, 65%)",
+      "background": {
+        "dark": "hsl(230, 25%, 8%)",
+        "glass": "hsla(230, 25%, 15%, 0.7)"
+      },
+      "text": {
+        "main": "hsl(0, 0%, 95%)",
+        "muted": "hsl(230, 10%, 60%)"
+      }
+    },
+    "typography": {
+      "font-primary": "Inter, system-ui, sans-serif",
+      "font-mono": "'JetBrains Mono', monospace"
+    },
+    "effects": {
+      "glass-blur": "12px",
+      "border-glow": "1px solid hsla(145, 100%, 50%, 0.2)",
+      "card-shadow": "0 8px 32px 0 rgba(0, 0, 0, 0.37)"
+    },
+    "layout": {
+      "border-radius-lg": "16px",
+      "border-radius-md": "8px",
+      "max-width": "1200px"
+    }
+  }
+}

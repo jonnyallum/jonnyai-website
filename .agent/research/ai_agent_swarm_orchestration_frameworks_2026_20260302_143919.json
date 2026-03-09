@@ -1,0 +1,71 @@
+{
+  "timestamp": "2026-03-02T14:39:19.933879+00:00",
+  "query": "AI agent swarm orchestration frameworks 2026",
+  "mode": "FAST",
+  "truth_score": 70,
+  "synthesis": "# Research Brief: AI agent swarm orchestration frameworks 2026\n\n_AI synthesis unavailable — raw results below_\n\n1. **OpenAI Swarm Multi-Agent Framework in 2026: What It Is, How It Works, and How to Use It | Lexogrine Blog**\n   https://lexogrine.com/blog/openai-swarm-multi-agent-framework-2026\n   You want a server-side managed agent service instead of client-managed orchestration. In 2026, <strong>OpenAI positions Swarm as an educational framework, while the OpenAI Agents SDK is the supported path for production agent systems</strong>.\n\n2. **A Detailed Comparison of Top 6 AI Agent Frameworks in 2026**\n   https://www.turing.com/resources/ai-agent-frameworks\n   <strong>OpenAI Swarm</strong>[42] is an open-source, lightweight multi-agent orchestration framework developed by OpenAI. It is designed to make agent coordination simple, customizable, and easy to test.\n\n3. **Swarms AI - Enterprise Multi-Agent Framework**\n   https://www.swarms.ai/\n   <strong>Swarms is the enterprise-grade, production-ready multi-agent orchestration framework created by kyegomez</strong>. Build, deploy, and scale autonomous AI agent swarms with unprecedented control, reliability, and efficiency.\n\n4. **Top 5 Open-Source Agentic AI Frameworks in 2026**\n   https://aimultiple.com/agentic-frameworks\n   LangGraph: Complex workflows needing detailed control and orchestration · AutoGen: Research and prototyping with flexible agent behavior · CrewAI: Production systems with role-based task delegation · <strong>OpenAI Swarm</strong>: Lightweight experiments ...\n\n5. **r/AI_Agents on Reddit: 2026, the year of agent swarm**\n   https://www.reddit.com/r/AI_Agents/comments/1r0redn/2026_the_year_of_agent_swarm/\n   Cursor coordinated hundreds of GPT-5.2 agents to build a web browser from scratch in one week. <strong>Kimi K2.5</strong> can now self-direct up to 100 sub-agents across 1,500 tool calls, with swarm orchestration trained via reinforcement learning.\n\n6. **AI Agent Swarm Orchestration: Best Practices Guide (2026) | Fast.io**\n   https://fast.io/resources/ai-agent-swarm-orchestration/\n   It simplifies the process of assigning roles and goals to agents. <strong>OpenAI Swarm</strong>: An experimental framework that explores lightweight, ergonomic patterns for multi-agent orchestration, focusing on handoffs and routines.\n\n7. **LLM Orchestration in 2026: Top 22 frameworks and gateways**\n   https://research.aimultiple.com/llm-orchestration/\n   AI gateways: <strong>OpenRouter, SambaNova, TogetherAI, Groq, and AI/ML API</strong> tested across first-token latency, total latency, and output-token count with 300 short (≈18 tokens) and long (≈203 tokens) prompt tests.\n\n8. **GitHub - openai/swarm: Educational framework exploring ergonomic, lightweight multi-agent orchestration. Managed by OpenAI Solution team.**\n   https://github.com/openai/swarm\n   Educational framework exploring ergonomic, lightweight multi-agent orchestration. Managed by OpenAI Solution team. - openai/swarm\n\n9. **Top AI Agent Orchestration Platforms in 2026**\n   https://redis.io/blog/ai-agent-orchestration-platforms/\n   Maestro provides BPMN (Business Process Model and Notation)-based workflow modeling coordinating AI agents, RPA bots, and human reviewers. UiPath uses Redis in parts of its stack (for example, caching and high availability in Automation Suite), but its agent memory and state architecture is largely platform-defined. Teams who want a shared memory layer across multiple orchestration frameworks may prefer bringing Redis as an external, application-owned memory and state layer.\n\n10. **GitHub - kyegomez/swarms: The Enterprise-Grade Production-Ready Multi-Agent Orchestration Framework. Website: https://swarms.ai**\n   https://github.com/kyegomez/swarms\n   The Enterprise-Grade Production-Ready Multi-Agent Orchestration Framework. Website: https://swarms.ai - kyegomez/swarms\n\n",
+  "sources": [
+    {
+      "title": "OpenAI Swarm Multi-Agent Framework in 2026: What It Is, How It Works, and How to Use It | Lexogrine Blog",
+      "url": "https://lexogrine.com/blog/openai-swarm-multi-agent-framework-2026",
+      "description": "You want a server-side managed agent service instead of client-managed orchestration. In 2026, <strong>OpenAI positions Swarm as an educational framework, while the OpenAI Agents SDK is the supported path for production agent systems</strong>.",
+      "age": "2 weeks ago"
+    },
+    {
+      "title": "A Detailed Comparison of Top 6 AI Agent Frameworks in 2026",
+      "url": "https://www.turing.com/resources/ai-agent-frameworks",
+      "description": "<strong>OpenAI Swarm</strong>[42] is an open-source, lightweight multi-agent orchestration framework developed by OpenAI. It is designed to make agent coordination simple, customizable, and easy to test.",
+      "age": "3 weeks ago"
+    },
+    {
+      "title": "Swarms AI - Enterprise Multi-Agent Framework",
+      "url": "https://www.swarms.ai/",
+      "description": "<strong>Swarms is the enterprise-grade, production-ready multi-agent orchestration framework created by kyegomez</strong>. Build, deploy, and scale autonomous AI agent swarms with unprecedented control, reliability, and efficiency.",
+      "age": ""
+    },
+    {
+      "title": "Top 5 Open-Source Agentic AI Frameworks in 2026",
+      "url": "https://aimultiple.com/agentic-frameworks",
+      "description": "LangGraph: Complex workflows needing detailed control and orchestration · AutoGen: Research and prototyping with flexible agent behavior · CrewAI: Production systems with role-based task delegation · <strong>OpenAI Swarm</strong>: Lightweight experiments ...",
+      "age": ""
+    },
+    {
+      "title": "r/AI_Agents on Reddit: 2026, the year of agent swarm",
+      "url": "https://www.reddit.com/r/AI_Agents/comments/1r0redn/2026_the_year_of_agent_swarm/",
+      "description": "Cursor coordinated hundreds of GPT-5.2 agents to build a web browser from scratch in one week. <strong>Kimi K2.5</strong> can now self-direct up to 100 sub-agents across 1,500 tool calls, with swarm orchestration trained via reinforcement learning.",
+      "age": "3 weeks ago"
+    },
+    {
+      "title": "AI Agent Swarm Orchestration: Best Practices Guide (2026) | Fast.io",
+      "url": "https://fast.io/resources/ai-agent-swarm-orchestration/",
+      "description": "It simplifies the process of assigning roles and goals to agents. <strong>OpenAI Swarm</strong>: An experimental framework that explores lightweight, ergonomic patterns for multi-agent orchestration, focusing on handoffs and routines.",
+      "age": ""
+    },
+    {
+      "title": "LLM Orchestration in 2026: Top 22 frameworks and gateways",
+      "url": "https://research.aimultiple.com/llm-orchestration/",
+      "description": "AI gateways: <strong>OpenRouter, SambaNova, TogetherAI, Groq, and AI/ML API</strong> tested across first-token latency, total latency, and output-token count with 300 short (≈18 tokens) and long (≈203 tokens) prompt tests.",
+      "age": ""
+    },
+    {
+      "title": "GitHub - openai/swarm: Educational framework exploring ergonomic, lightweight multi-agent orchestration. Managed by OpenAI Solution team.",
+      "url": "https://github.com/openai/swarm",
+      "description": "Educational framework exploring ergonomic, lightweight multi-agent orchestration. Managed by OpenAI Solution team. - openai/swarm",
+      "age": ""
+    },
+    {
+      "title": "Top AI Agent Orchestration Platforms in 2026",
+      "url": "https://redis.io/blog/ai-agent-orchestration-platforms/",
+      "description": "Maestro provides BPMN (Business Process Model and Notation)-based workflow modeling coordinating AI agents, RPA bots, and human reviewers. UiPath uses Redis in parts of its stack (for example, caching and high availability in Automation Suite), but its agent memory and state architecture is largely platform-defined. Teams who want a shared memory layer across multiple orchestration frameworks may prefer bringing Redis as an external, application-owned memory and state layer.",
+      "age": "1 month ago"
+    },
+    {
+      "title": "GitHub - kyegomez/swarms: The Enterprise-Grade Production-Ready Multi-Agent Orchestration Framework. Website: https://swarms.ai",
+      "url": "https://github.com/kyegomez/swarms",
+      "description": "The Enterprise-Grade Production-Ready Multi-Agent Orchestration Framework. Website: https://swarms.ai - kyegomez/swarms",
+      "age": ""
+    }
+  ],
+  "agent": "@scholar",
+  "engine_version": "2.0"
+}

@@ -1,0 +1,50 @@
+{
+  "project": "JSC Contractors God-Tier Rebuild",
+  "inventory_date": "2026-02-19",
+  "agent": "@Arthur (The Librarian)",
+  "branding": {
+    "logos": [
+      "Clients/Jsc website/Logo-graphics/jsc-logo.png",
+      "Clients/Jsc website/Logo-graphics/jsc-logo-inverted-for-white-background.png"
+    ],
+    "backgrounds": ["Clients/Jsc website/Logo-graphics/background 1.png"]
+  },
+  "case_studies": [
+    {
+      "id": 1,
+      "title": "New Build North Mundham",
+      "folder": "case study 2- New buikd north mundham",
+      "assets": 6
+    },
+    {
+      "id": 2,
+      "title": "Cut & Pitch Roof Cowplain",
+      "folder": "Case Study 3 - Cut & Pitch Roof to create living space, London Road, Cowplain",
+      "assets": 7
+    },
+    {
+      "id": 3,
+      "title": "Loft Conversion Southbourne",
+      "folder": "Case Study 3- loft conversion southbourne",
+      "assets": 6
+    },
+    {
+      "id": 4,
+      "title": "Garden Room West Wittering",
+      "folder": "Case study 5 - Garden Room West wittering",
+      "assets": 1
+    }
+  ],
+  "website_photos": [
+    "Clients/Jsc website/Website photos/IMG-20260219-WA0001.jpg",
+    "Clients/Jsc website/Website photos/IMG-20260219-WA0002.jpg",
+    "Clients/Jsc website/Website photos/IMG-20260219-WA0003.jpg",
+    "Clients/Jsc website/Website photos/IMG-20260219-WA0004.jpg",
+    "Clients/Jsc website/Website photos/IMG-20260219-WA0005.jpg",
+    "Clients/Jsc website/Website photos/IMG-20260219-WA0006.jpg",
+    "Clients/Jsc website/Website photos/IMG-20260219-WA0007.jpg",
+    "Clients/Jsc website/Website photos/IMG-20260219-WA0008.jpg"
+  ],
+  "technical_requirements": "Clients/Jsc website/CSS REQUIREMENTS.txt",
+  "status": "ASSETS LOGGED"
+}

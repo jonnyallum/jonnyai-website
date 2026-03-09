@@ -1,0 +1,43 @@
+name: Content Calendar Processor
+
+on:
+  schedule:
+    # Runs at 09:55 UTC daily (just before 10:00 scheduled_for times)
+    - cron: '55 9 * * *'
+    # Also runs at 13:00 and 17:00 UTC for afternoon/evening slots
+    - cron: '0 13,17 * * *'
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: 'Dry run (generate but do not publish)'
+        required: false
+        default: 'false'
+        type: boolean
+
+jobs:
+  process-calendar:
+    name: Process Due Content
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install requests anthropic python-dotenv
+
+      - name: Process content calendar
+        env:
+          ANTIGRAVITY_BRAIN_URL: ${{ secrets.ANTIGRAVITY_BRAIN_URL }}
+          ANTIGRAVITY_BRAIN_ANON_KEY: ${{ secrets.ANTIGRAVITY_BRAIN_ANON_KEY }}
+          ANTIGRAVITY_BRAIN_SERVICE_ROLE_KEY: ${{ secrets.ANTIGRAVITY_BRAIN_SERVICE_ROLE_KEY }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          FACEBOOK_PAGE_ID: ${{ secrets.FACEBOOK_PAGE_ID }}
+          FACEBOOK_PAGE_ACCESS_TOKEN: ${{ secrets.FACEBOOK_PAGE_ACCESS_TOKEN }}
+        run: |
+          python execution/process_content_calendar.py ${{ github.event.inputs.dry_run == 'true' && '--dry-run' || '' }}

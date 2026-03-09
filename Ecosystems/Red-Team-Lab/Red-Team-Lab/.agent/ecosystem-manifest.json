@@ -1,0 +1,24 @@
+{
+  "ecosystem": {
+    "name": "Ecosystems/Red-Team-Lab Ecosystem",
+    "derived_from": "AgOS 2.0 Master",
+    "master_version": "2.0.0",
+    "created": "2026-02-01 22:16",
+    "project_type": "agency",
+    "agents": {
+      "active": "all",
+      "dormant": [
+        "bookie",
+        "gaffer",
+        "handicapper",
+        "pitwall",
+        "gynaecologist",
+        "tungsten",
+        "monte"
+      ],
+      "customized": []
+    },
+    "customizations": [],
+    "notes": "Auto-generated agency ecosystem"
+  }
+}

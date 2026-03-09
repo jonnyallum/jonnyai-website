@@ -1,0 +1,33 @@
+name: Scholar Daily Research
+
+on:
+  schedule:
+    # Runs at 06:00 UTC daily (before dreamer, so research feeds ideas)
+    - cron: '0 6 * * *'
+  workflow_dispatch:
+
+jobs:
+  research:
+    name: Daily Standing Research
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install requests anthropic
+
+      - name: Run Daily Research
+        env:
+          BRAVE_SEARCH_API_KEY: ${{ secrets.BRAVE_SEARCH_API_KEY }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          ANTIGRAVITY_BRAIN_URL: ${{ secrets.ANTIGRAVITY_BRAIN_URL }}
+          ANTIGRAVITY_BRAIN_SERVICE_ROLE_KEY: ${{ secrets.ANTIGRAVITY_BRAIN_SERVICE_ROLE_KEY }}
+          ANTIGRAVITY_BRAIN_ANON_KEY: ${{ secrets.ANTIGRAVITY_BRAIN_ANON_KEY }}
+        run: python execution/research_engine.py --daily-cron

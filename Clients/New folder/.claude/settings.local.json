@@ -1,0 +1,17 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git -C \"c:\\\\Users\\\\jonny\\\\Desktop\\\\Jonny AI\" remote -v)",
+      "Bash(git add:*)",
+      "Bash(git commit -m \"$\\(cat <<''EOF''\nfeat: AgOS 2.0 - The Antigravity Boardroom upgrade\n\nMajor system upgrade introducing:\n\n## The Boardroom \\(Orchestration Layer\\)\n- Meeting protocols for Mission Briefings, Team Talks, Sprint Reviews, Incident Response\n- Agent summoning matrix for intelligent routing\n- Meeting templates for structured collaboration\n- Culture guide with decision authority levels \\(L1-L4\\)\n\n## Agent Profiles \\(All 24 agents enhanced\\)\n- Human names and nicknames for each agent\n- Profile cards with personality and philosophy\n- Collaboration style preferences\n- Performance metrics tracking\n- Learning logs for continuous improvement\n\n## Feedback Loop System\n- Task outcome logging\n- Pattern detection \\(skill gap identification\\)\n- Agent health metrics\n- Inter-AI communication protocol\n\n## Auto-Sync & Automation\n- validate_agents.py - SKILL.md compliance checking\n- auto_commit.py - Smart commit message generation\n- feedback_engine.py - Health metrics and gap detection\n- GitHub Actions workflow for CI/CD\n\n## Ecosystem Creator\n- New agent: Genesis Nova \"The Cloner\"\n- init_workspace.py - Create projects from master template\n- sync_ecosystem.py - Sync changes across projects\n- Support for saas, ecommerce, trading, content, agency types\n\nCo-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>\nEOF\n\\)\")",
+      "Bash(git push:*)",
+      "Bash(git checkout:*)"
+    ],
+    "additionalDirectories": [
+      "C:\\Users\\jonny\\Desktop\\Jonny AI\\.agent\\skills\\parser",
+      "C:\\Users\\jonny\\Desktop\\Jonny AI\\.agent\\skills\\goldie",
+      "C:\\Users\\jonny\\Desktop\\Jonny AI\\.agent\\skills\\clippers",
+      "C:\\Users\\jonny\\Desktop\\Jonny AI\\.agent\\skills\\vaultguard"
+    ]
+  }
+}

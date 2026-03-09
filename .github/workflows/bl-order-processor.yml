@@ -1,0 +1,40 @@
+name: BL Motorcycles — Order Processor
+
+on:
+  schedule:
+    - cron: "*/30 * * * *"   # Every 30 minutes
+  workflow_dispatch:          # Manual trigger
+
+jobs:
+  process-orders:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: |
+          pip install supabase requests python-dotenv playwright
+          playwright install chromium --with-deps
+
+      - name: Run order processor
+        run: python execution/process_orders.py
+        env:
+          PYTHONIOENCODING: utf-8
+          SUPABASE_URL: ${{ secrets.BL_SUPABASE_URL }}
+          SUPABASE_SERVICE_KEY: ${{ secrets.BL_SUPABASE_SERVICE_ROLE_KEY }}
+          EBAY_CLIENT_ID: ${{ secrets.EBAY_CLIENT_ID }}
+          EBAY_CLIENT_SECRET: ${{ secrets.EBAY_CLIENT_SECRET }}
+          EBAY_DEV_ID: ${{ secrets.EBAY_DEV_ID }}
+          EBAY_REFRESH_TOKEN: ${{ secrets.EBAY_REFRESH_TOKEN }}
+          BIKEIT_EMAIL: ${{ secrets.BIKEIT_EMAIL }}
+          BIKEIT_PASSWORD: ${{ secrets.BIKEIT_PASSWORD }}
+          CMPO_EMAIL: ${{ secrets.CMPO_EMAIL }}
+          CMPO_PASSWORD: ${{ secrets.CMPO_PASSWORD }}

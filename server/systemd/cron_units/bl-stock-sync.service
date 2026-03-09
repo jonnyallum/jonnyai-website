@@ -1,0 +1,13 @@
+[Unit]
+Description=BL Motorcycles Stock Sync — FTP to Supabase
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+User=antigravity-ai
+WorkingDirectory=/home/antigravity-ai/Antigravity_Orchestra
+ExecStart=/home/antigravity-ai/Antigravity_Orchestra/run_cron.sh sync_bl_stock.py
+TimeoutStartSec=600
+StandardOutput=append:/home/antigravity-ai/Antigravity_Orchestra/logs/bl-stock-sync.log
+StandardError=append:/home/antigravity-ai/Antigravity_Orchestra/logs/bl-stock-sync.log

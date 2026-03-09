@@ -1,0 +1,408 @@
+{
+  "timestamp": "2026-03-01T16:32:04.112395",
+  "pass": 57,
+  "fail": 0,
+  "warn": 0,
+  "score_pct": 100,
+  "results": [
+    {
+      "id": "AI-01",
+      "desc": "Agent count (expect 69)",
+      "passed": true,
+      "detail": "Found 69",
+      "icon": "\u2705"
+    },
+    {
+      "id": "AI-02",
+      "desc": "All agents have YAML frontmatter (Agent Cards)",
+      "passed": true,
+      "detail": "69/69",
+      "icon": "\u2705"
+    },
+    {
+      "id": "AI-03",
+      "desc": "All agents have PERSONA.md",
+      "passed": true,
+      "detail": "69/69",
+      "icon": "\u2705"
+    },
+    {
+      "id": "AI-04",
+      "desc": "All agents have voice_config.json",
+      "passed": true,
+      "detail": "69/69",
+      "icon": "\u2705"
+    },
+    {
+      "id": "AI-05",
+      "desc": "All agents have routing metadata",
+      "passed": true,
+      "detail": "69/69",
+      "icon": "\u2705"
+    },
+    {
+      "id": "AI-06",
+      "desc": "All agents have fallback chains",
+      "passed": true,
+      "detail": "69/69",
+      "icon": "\u2705"
+    },
+    {
+      "id": "AI-07",
+      "desc": "All agents have circuit breakers",
+      "passed": true,
+      "detail": "69/69",
+      "icon": "\u2705"
+    },
+    {
+      "id": "AI-08",
+      "desc": "All agents have Self-Evolution Protocol",
+      "passed": true,
+      "detail": "69/69",
+      "icon": "\u2705"
+    },
+    {
+      "id": "AI-09",
+      "desc": "All agents have 2+ SOPs",
+      "passed": true,
+      "detail": "All pass",
+      "icon": "\u2705"
+    },
+    {
+      "id": "ES-01",
+      "desc": "Agent Router v2.0 exists",
+      "passed": true,
+      "detail": "",
+      "icon": "\u2705"
+    },
+    {
+      "id": "ES-02",
+      "desc": "Orchestra Heartbeat v2.1 exists",
+      "passed": true,
+      "detail": "",
+      "icon": "\u2705"
+    },
+    {
+      "id": "ES-03",
+      "desc": "Social Engine v2.0 exists",
+      "passed": true,
+      "detail": "",
+      "icon": "\u2705"
+    },
+    {
+      "id": "ES-04",
+      "desc": "Chatroom Listener exists",
+      "passed": true,
+      "detail": "",
+      "icon": "\u2705"
+    },
+    {
+      "id": "ES-05",
+      "desc": "Video Pipeline Orchestrator exists",
+      "passed": true,
+      "detail": "",
+      "icon": "\u2705"
+    },
+    {
+      "id": "ES-06",
+      "desc": "Client Report System exists",
+      "passed": true,
+      "detail": "",
+      "icon": "\u2705"
+    },
+    {
+      "id": "ES-07",
+      "desc": "Methodology Manager exists",
+      "passed": true,
+      "detail": "",
+      "icon": "\u2705"
+    },
+    {
+      "id": "ES-08",
+      "desc": "Methodology Upgrader exists",
+      "passed": true,
+      "detail": "",
+      "icon": "\u2705"
+    },
+    {
+      "id": "ES-09",
+      "desc": "All execution scripts pass syntax check",
+      "passed": true,
+      "detail": "114/114",
+      "icon": "\u2705"
+    },
+    {
+      "id": "R1",
+      "desc": "Video/media task routing triggers present",
+      "passed": true,
+      "detail": "",
+      "icon": "\u2705"
+    },
+    {
+      "id": "R2",
+      "desc": "Content/blog routing to @contentforge",
+      "passed": true,
+      "detail": "",
+      "icon": "\u2705"
+    },
+    {
+      "id": "R3",
+      "desc": "Low confidence score flagging",
+      "passed": true,
+      "detail": "",
+      "icon": "\u2705"
+    },
+    {
+      "id": "R4",
+      "desc": "Tier value parsing logic",
+      "passed": true,
+      "detail": "",
+      "icon": "\u2705"
+    },
+    {
+      "id": "R5",
+      "desc": "Description matching/filtering",
+      "passed": true,
+      "detail": "",
+      "icon": "\u2705"
+    },
+    {
+      "id": "T1",
+      "desc": "created_by_ai default handled in heartbeat",
+      "passed": true,
+      "detail": "",
+      "icon": "\u2705"
+    },
+    {
+      "id": "T2",
+      "desc": "Processes standard pending tasks (not just recurring)",
+      "passed": true,
+      "detail": "",
+      "icon": "\u2705"
+    },
+    {
+      "id": "T3",
+      "desc": "Task lifecycle: stuck in_progress detection",
+      "passed": true,
+      "detail": "",
+      "icon": "\u2705"
+    },
+    {
+      "id": "VP2",
+      "desc": "Weekly client report scheduling in heartbeat",
+      "passed": true,
+      "detail": "",
+      "icon": "\u2705"
+    },
+    {
+      "id": "T-VER",
+      "desc": "Heartbeat version is v2.1+",
+      "passed": true,
+      "detail": "",
+      "icon": "\u2705"
+    },
+    {
+      "id": "S1",
+      "desc": "All 10 pillar prompts present",
+      "passed": true,
+      "detail": "11/10 pillars",
+      "icon": "\u2705"
+    },
+    {
+      "id": "S2",
+      "desc": "Trigger map uses correct content type names",
+      "passed": true,
+      "detail": "",
+      "icon": "\u2705"
+    },
+    {
+      "id": "S3",
+      "desc": "Public API function for social engine",
+      "passed": true,
+      "detail": "",
+      "icon": "\u2705"
+    },
+    {
+      "id": "S4",
+      "desc": "Quality gate with configurable thresholds",
+      "passed": true,
+      "detail": "",
+      "icon": "\u2705"
+    },
+    {
+      "id": "S-DOC",
+      "desc": "Characters Not Capabilities doctrine enforced",
+      "passed": true,
+      "detail": "",
+      "icon": "\u2705"
+    },
+    {
+      "id": "C1",
+      "desc": "Content calendar field alignment in heartbeat",
+      "passed": true,
+      "detail": "",
+      "icon": "\u2705"
+    },
+    {
+      "id": "C2",
+      "desc": "Doctrine violation checking in social engine",
+      "passed": true,
+      "detail": "",
+      "icon": "\u2705"
+    },
+    {
+      "id": "C3",
+      "desc": "Calendar auto-replenishment mechanism",
+      "passed": true,
+      "detail": "",
+      "icon": "\u2705"
+    },
+    {
+      "id": "VP1-a",
+      "desc": "Video pipeline has brief command",
+      "passed": true,
+      "detail": "",
+      "icon": "\u2705"
+    },
+    {
+      "id": "VP1-b",
+      "desc": "Video pipeline has status command",
+      "passed": true,
+      "detail": "",
+      "icon": "\u2705"
+    },
+    {
+      "id": "VP1-c",
+      "desc": "Video pipeline has advance command",
+      "passed": true,
+      "detail": "",
+      "icon": "\u2705"
+    },
+    {
+      "id": "VP1-d",
+      "desc": "Video pipeline has list command",
+      "passed": true,
+      "detail": "",
+      "icon": "\u2705"
+    },
+    {
+      "id": "VP1-e",
+      "desc": "Pipeline has 9 stages defined",
+      "passed": true,
+      "detail": "",
+      "icon": "\u2705"
+    },
+    {
+      "id": "PR1",
+      "desc": "Methodology files v5.0 compliant (135/135)",
+      "passed": true,
+      "detail": "135/135 = 100%",
+      "icon": "\u2705"
+    },
+    {
+      "id": "PR2-a",
+      "desc": "Methodology manager tool exists",
+      "passed": true,
+      "detail": "",
+      "icon": "\u2705"
+    },
+    {
+      "id": "PR2-b",
+      "desc": "Manager has validate command",
+      "passed": true,
+      "detail": "",
+      "icon": "\u2705"
+    },
+    {
+      "id": "PR2-c",
+      "desc": "Manager has search command",
+      "passed": true,
+      "detail": "",
+      "icon": "\u2705"
+    },
+    {
+      "id": "PR2-d",
+      "desc": "Manager has create command",
+      "passed": true,
+      "detail": "",
+      "icon": "\u2705"
+    },
+    {
+      "id": "PR2-e",
+      "desc": "Manager has stats command",
+      "passed": true,
+      "detail": "",
+      "icon": "\u2705"
+    },
+    {
+      "id": "SB-01",
+      "desc": "Shared Brain agents table accessible",
+      "passed": true,
+      "detail": "69 agents",
+      "icon": "\u2705"
+    },
+    {
+      "id": "SB-02",
+      "desc": "Learnings table has data",
+      "passed": true,
+      "detail": "4932 learnings",
+      "icon": "\u2705"
+    },
+    {
+      "id": "SB-03",
+      "desc": "Tasks table has data",
+      "passed": true,
+      "detail": "17 tasks",
+      "icon": "\u2705"
+    },
+    {
+      "id": "SB-04",
+      "desc": "Chatroom table has data",
+      "passed": true,
+      "detail": "418 messages",
+      "icon": "\u2705"
+    },
+    {
+      "id": "SB-05",
+      "desc": "Content calendar has entries",
+      "passed": true,
+      "detail": "12 items",
+      "icon": "\u2705"
+    },
+    {
+      "id": "SB-06",
+      "desc": "Projects table has data",
+      "passed": true,
+      "detail": "18 projects",
+      "icon": "\u2705"
+    },
+    {
+      "id": "DIR-01",
+      "desc": "Characters Not Capabilities doctrine exists",
+      "passed": true,
+      "detail": "",
+      "icon": "\u2705"
+    },
+    {
+      "id": "DIR-02",
+      "desc": "Video production pipeline directive exists",
+      "passed": true,
+      "detail": "",
+      "icon": "\u2705"
+    },
+    {
+      "id": "DIR-03",
+      "desc": "Perfect Agent Template v2.0 exists",
+      "passed": true,
+      "detail": "",
+      "icon": "\u2705"
+    },
+    {
+      "id": "DIR-04",
+      "desc": "Template is v2.0",
+      "passed": true,
+      "detail": "",
+      "icon": "\u2705"
+    }
+  ]
+}

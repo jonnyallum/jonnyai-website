@@ -1,0 +1,31 @@
+{
+  "timestamp": "2026-02-23T22:58:43.968089",
+  "total_discovered": 5,
+  "leads": [
+    {
+      "source": "Reddit",
+      "niche": "Healthcare",
+      "pain_point": "Agent gave incorrect dosage advice. Legal team panicking."
+    },
+    {
+      "source": "X (Twitter)",
+      "niche": "Financial",
+      "pain_point": "Wealth manager bot leaked client balances to public channel."
+    },
+    {
+      "source": "HackerNews",
+      "niche": "SaaS",
+      "pain_point": "New 'AI Developer' agent keeps creating infinite loops in production."
+    },
+    {
+      "source": "Forum",
+      "niche": "Legal",
+      "pain_point": "AI researcher cited fake cases in a high-stakes filing."
+    },
+    {
+      "source": "Reddit",
+      "niche": "E-commerce",
+      "pain_point": "Discount bot gave away 100% discount codes due to prompt injection."
+    }
+  ]
+}

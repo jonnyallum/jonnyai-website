@@ -1,0 +1,32 @@
+{
+  "ecosystem": {
+    "name": "Ecosystems/Media-House Ecosystem",
+    "derived_from": "AgOS 2.0 Master",
+    "master_version": "2.0.0",
+    "created": "2026-02-01 22:19",
+    "project_type": "content",
+    "agents": {
+      "active": [
+        "conductor",
+        "jonny-ai",
+        "echo",
+        "goldie",
+        "clippers",
+        "scout",
+        "pixel",
+        "metric",
+        "archivist",
+        "sentinel",
+        "deploy"
+      ],
+      "dormant": [
+        "warehouse",
+        "delboy",
+        "forge"
+      ],
+      "customized": []
+    },
+    "customizations": [],
+    "notes": "Auto-generated content ecosystem"
+  }
+}

@@ -1,0 +1,40 @@
+name: Orchestra Heartbeat
+
+on:
+  schedule:
+    # Runs every 6 hours: midnight, 6am, noon, 6pm UTC
+    - cron: '0 0,6,12,18 * * *'
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: 'Dry run (no changes)'
+        required: false
+        default: 'false'
+        type: boolean
+
+jobs:
+  heartbeat:
+    name: Orchestra Heartbeat
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install requests
+
+      - name: Run Heartbeat
+        env:
+          SUPABASE_PROJECT_ID: lkwydqtfbdjhxaarelaz
+          ANTIGRAVITY_BRAIN_URL: ${{ secrets.ANTIGRAVITY_BRAIN_URL }}
+          ANTIGRAVITY_BRAIN_SERVICE_ROLE_KEY: ${{ secrets.ANTIGRAVITY_BRAIN_SERVICE_ROLE_KEY }}
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          FB_PAGE_ID: ${{ secrets.FACEBOOK_PAGE_ID }}
+          FB_ACCESS_TOKEN: ${{ secrets.FACEBOOK_PAGE_ACCESS_TOKEN }}
+        run: python execution/orchestra_heartbeat.py

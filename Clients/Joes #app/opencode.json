@@ -1,0 +1,11 @@
+{
+    "mcpServers": {
+        "notebooklm": {
+            "command": "C:\\Users\\jonny\\Anaconda3\\Scripts\\notebooklm-mcp.exe",
+            "args": [],
+            "env": {
+                "PYTHONWARNINGS": "ignore"
+            }
+        }
+    }
+}

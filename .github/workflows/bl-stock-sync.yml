@@ -1,0 +1,28 @@
+name: BL Motorcycles — Bike It Stock Sync
+
+on:
+  schedule:
+    - cron: "0 */2 * * *"   # Every 2 hours
+  workflow_dispatch:         # Manual trigger from GitHub UI
+
+jobs:
+  sync-stock:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: pip install supabase
+
+      - name: Run stock sync
+        run: python execution/sync_bl_stock.py
+        env:
+          PYTHONIOENCODING: utf-8

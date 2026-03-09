@@ -1,0 +1,37 @@
+{
+  "agent": "genesis",
+  "learnings": [
+    {
+      "learning": "Archive any reusable patterns to `.agent/library/`",
+      "timestamp": "2026-02-11T21:22:12.623897+00:00",
+      "source": "shared_brain"
+    },
+    {
+      "learning": "Remove deployment scripts or mark as archived",
+      "timestamp": "2026-02-11T21:22:12.623897+00:00",
+      "source": "shared_brain"
+    },
+    {
+      "learning": "Revoke any project-specific API keys (coordinate with @Sam)",
+      "timestamp": "2026-02-11T21:22:12.623897+00:00",
+      "source": "shared_brain"
+    },
+    {
+      "learning": "Archive Supabase project if applicable (coordinate with @Diana)",
+      "timestamp": "2026-02-11T21:22:12.623897+00:00",
+      "source": "shared_brain"
+    },
+    {
+      "learning": "Create `ARCHIVE_SUMMARY.md` with project outcomes",
+      "timestamp": "2026-02-11T21:22:12.623897+00:00",
+      "source": "shared_brain"
+    },
+    {
+      "learning": "Note what was learned and what patterns were extracted",
+      "timestamp": "2026-02-11T21:22:12.623897+00:00",
+      "source": "shared_brain"
+    }
+  ],
+  "tasks": [],
+  "patterns": {}
+}

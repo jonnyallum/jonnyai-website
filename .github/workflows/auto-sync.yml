@@ -1,0 +1,157 @@
+name: AgOS Auto-Sync
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.agent/**'
+      - 'docs/**'
+      - 'execution/**'
+      - 'CLAUDE.md'
+      - 'AGENTS.md'
+      - 'GEMINI.md'
+  workflow_dispatch:
+    inputs:
+      sync_target:
+        description: 'Sync target'
+        required: true
+        default: 'all'
+        type: choice
+        options:
+          - all
+          - validate-only
+
+jobs:
+  validate:
+    name: Validate Agent Structure
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Validate Agents
+        run: python execution/validate_agents.py --verbose
+
+      - name: Run Skill Gap Detection
+        run: |
+          python execution/feedback_engine.py gaps > skill-gaps.json
+          echo "Skill Gaps Report:"
+          cat skill-gaps.json
+
+      - name: Upload Validation Report
+        uses: actions/upload-artifact@v4
+        with:
+          name: validation-report
+          path: skill-gaps.json
+
+  sync-to-clients:
+    name: Sync to Client Workspaces
+    needs: validate
+    if: github.event.inputs.sync_target != 'validate-only'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    strategy:
+      matrix:
+        client:
+          - 'Clients/New folder'
+          # Add more client paths here as needed
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Sync Agent Skills
+        run: |
+          mkdir -p "${{ matrix.client }}/.agent/skills"
+          rsync -av --delete \
+            .agent/skills/ \
+            "${{ matrix.client }}/.agent/skills/"
+
+      - name: Sync Agent Library
+        run: |
+          mkdir -p "${{ matrix.client }}/.agent/library"
+          rsync -av --delete \
+            .agent/library/ \
+            "${{ matrix.client }}/.agent/library/"
+
+      - name: Sync Boardroom
+        run: |
+          mkdir -p "${{ matrix.client }}/.agent/boardroom"
+          rsync -av --delete \
+            .agent/boardroom/ \
+            "${{ matrix.client }}/.agent/boardroom/"
+
+      - name: Sync Memory Protocol
+        run: |
+          mkdir -p "${{ matrix.client }}/.agent/memory"
+          cp .agent/memory/FEEDBACK_PROTOCOL.md "${{ matrix.client }}/.agent/memory/" 2>/dev/null || true
+
+      - name: Sync Root Configs
+        run: |
+          cp CLAUDE.md "${{ matrix.client }}/CLAUDE.md"
+          cp AGENTS.md "${{ matrix.client }}/AGENTS.md" 2>/dev/null || true
+          cp GEMINI.md "${{ matrix.client }}/GEMINI.md" 2>/dev/null || true
+
+      - name: Check for Changes
+        id: check_changes
+        run: |
+          git add -A
+          if git diff --staged --quiet; then
+            echo "has_changes=false" >> $GITHUB_OUTPUT
+          else
+            echo "has_changes=true" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Commit Changes
+        if: steps.check_changes.outputs.has_changes == 'true'
+        run: |
+          git config user.name "AgOS Auto-Sync"
+          git config user.email "agos@antigravity.local"
+          git commit -m "sync: propagate AgOS updates to ${{ matrix.client }}
+
+          [AgOS Auto-Sync $(date +%Y-%m-%d)]"
+
+      - name: Push Changes
+        if: steps.check_changes.outputs.has_changes == 'true'
+        run: git push
+
+  generate-report:
+    name: Generate Sync Report
+    needs: [validate, sync-to-clients]
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Generate Report
+        run: |
+          echo "# AgOS Sync Report - $(date +%Y-%m-%d)" > sync-report.md
+          echo "" >> sync-report.md
+          echo "## Validation Status" >> sync-report.md
+          echo "- Validate job: ${{ needs.validate.result }}" >> sync-report.md
+          echo "- Sync job: ${{ needs.sync-to-clients.result }}" >> sync-report.md
+          echo "" >> sync-report.md
+          echo "## Recent Commits" >> sync-report.md
+          git log --oneline -10 >> sync-report.md
+
+      - name: Update Improvement Log
+        run: |
+          if [ -f docs/IMPROVEMENT_LOG.md ]; then
+            echo "" >> docs/IMPROVEMENT_LOG.md
+            echo "### $(date +%Y-%m-%d) - Auto-Sync" >> docs/IMPROVEMENT_LOG.md
+            echo "- AgOS sync completed: ${{ needs.validate.result }}" >> docs/IMPROVEMENT_LOG.md
+          fi
+
+      - name: Upload Report
+        uses: actions/upload-artifact@v4
+        with:
+          name: sync-report
+          path: sync-report.md

@@ -1,0 +1,32 @@
+{
+  "ecosystem": {
+    "name": "Ecosystems/Trading-Floor Ecosystem",
+    "derived_from": "AgOS 2.0 Master",
+    "master_version": "2.0.0",
+    "created": "2026-02-01 22:12",
+    "project_type": "trading",
+    "agents": {
+      "active": [
+        "conductor",
+        "jonny-ai",
+        "delboy",
+        "datastore",
+        "metric",
+        "vaultguard",
+        "sentinel",
+        "autoflow",
+        "archivist"
+      ],
+      "dormant": [
+        "warehouse",
+        "clippers",
+        "goldie",
+        "echo",
+        "pixel"
+      ],
+      "customized": []
+    },
+    "customizations": [],
+    "notes": "Auto-generated trading ecosystem"
+  }
+}

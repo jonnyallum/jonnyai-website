@@ -1,0 +1,42 @@
+{
+  "agent": "adrian",
+  "learnings": [
+    {
+      "learning": "**Inter-AI Communication**: Building `.tmp/message4[ai].md` communication channels",
+      "timestamp": "2026-02-11T21:22:12.623897+00:00",
+      "source": "shared_brain"
+    },
+    {
+      "learning": "**Agent Scaffolding**: Creating new agent profiles from templates with proper structure",
+      "timestamp": "2026-02-11T21:22:12.623897+00:00",
+      "source": "shared_brain"
+    },
+    {
+      "learning": "**Directive System Design**: Creating and maintaining the directive layer (SOPs, protocols, checklists)",
+      "timestamp": "2026-02-11T21:22:12.623897+00:00",
+      "source": "shared_brain"
+    },
+    {
+      "learning": "**Feature Development**: Delegates app features to @Sebastian or @Blaise",
+      "timestamp": "2026-02-11T21:22:12.623897+00:00",
+      "source": "shared_brain"
+    },
+    {
+      "learning": "**UI/UX Design**: Delegates design to @Priya",
+      "timestamp": "2026-02-11T21:22:12.623897+00:00",
+      "source": "shared_brain"
+    },
+    {
+      "learning": "**Database Schema**: Delegates to @Diana (builds tools that access databases)",
+      "timestamp": "2026-02-11T21:22:12.623897+00:00",
+      "source": "shared_brain"
+    },
+    {
+      "learning": "**Deployment**: Delegates shipping to @Owen (builds deploy tools, doesn't deploy)",
+      "timestamp": "2026-02-11T21:22:12.623897+00:00",
+      "source": "shared_brain"
+    }
+  ],
+  "tasks": [],
+  "patterns": {}
+}

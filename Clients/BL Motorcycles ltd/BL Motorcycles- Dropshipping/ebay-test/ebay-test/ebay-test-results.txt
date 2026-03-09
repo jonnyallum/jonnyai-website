@@ -1,0 +1,5 @@
+🔄 Testing eBay API Connection for BL Motorcycles...
+Token exists: YES
+✅ eBay API Connection Successful!
+Response received:
+"<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<GetUserResponse xmlns=\"urn:ebay:apis:eBLBaseComponents\"><Timestamp>2025-06-08T19:48:29.304Z</Timestamp><Ack>Failure</Ack><Errors><ShortMessage>Authorisation token is invalid.</ShortMessage><LongMessage>Validation of the authentication token in API request failed.</LongMessage><ErrorCode>931</ErrorCode><SeverityCode>Error</SeverityCode><ErrorClassification>RequestError</ErrorClassification></Errors><Version>1207</Version><Build>E1207_CORE_APISIGNIN_19151597_R1</Build></GetUserResponse>"

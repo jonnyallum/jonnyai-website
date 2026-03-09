@@ -1,0 +1,825 @@
+module "cs-folders-iam-0-computeinstanceAdminv1" {
+  source  = "terraform-google-modules/iam/google//modules/folders_iam"
+  version = "~> 8.0"
+
+  folders = [
+    local.folder_map["Department 1/Team 1/Non-Production"].id,
+  ]
+  bindings = {
+    "roles/compute.instanceAdmin.v1" = [
+      "group:gcp-developers@jonnyai.co.uk",
+    ]
+  }
+}
+
+module "cs-folders-iam-0-containeradmin" {
+  source  = "terraform-google-modules/iam/google//modules/folders_iam"
+  version = "~> 8.0"
+
+  folders = [
+    local.folder_map["Department 1/Team 1/Non-Production"].id,
+  ]
+  bindings = {
+    "roles/container.admin" = [
+      "group:gcp-developers@jonnyai.co.uk",
+    ]
+  }
+}
+
+module "cs-folders-iam-1-computeinstanceAdminv1" {
+  source  = "terraform-google-modules/iam/google//modules/folders_iam"
+  version = "~> 8.0"
+
+  folders = [
+    local.folder_map["Department 1/Team 2/Non-Production"].id,
+  ]
+  bindings = {
+    "roles/compute.instanceAdmin.v1" = [
+      "group:gcp-developers@jonnyai.co.uk",
+    ]
+  }
+}
+
+module "cs-folders-iam-1-containeradmin" {
+  source  = "terraform-google-modules/iam/google//modules/folders_iam"
+  version = "~> 8.0"
+
+  folders = [
+    local.folder_map["Department 1/Team 2/Non-Production"].id,
+  ]
+  bindings = {
+    "roles/container.admin" = [
+      "group:gcp-developers@jonnyai.co.uk",
+    ]
+  }
+}
+
+module "cs-folders-iam-2-computeinstanceAdminv1" {
+  source  = "terraform-google-modules/iam/google//modules/folders_iam"
+  version = "~> 8.0"
+
+  folders = [
+    local.folder_map["Department 1/Team 3/Non-Production"].id,
+  ]
+  bindings = {
+    "roles/compute.instanceAdmin.v1" = [
+      "group:gcp-developers@jonnyai.co.uk",
+    ]
+  }
+}
+
+module "cs-folders-iam-2-containeradmin" {
+  source  = "terraform-google-modules/iam/google//modules/folders_iam"
+  version = "~> 8.0"
+
+  folders = [
+    local.folder_map["Department 1/Team 3/Non-Production"].id,
+  ]
+  bindings = {
+    "roles/container.admin" = [
+      "group:gcp-developers@jonnyai.co.uk",
+    ]
+  }
+}
+
+module "cs-folders-iam-3-computeinstanceAdminv1" {
+  source  = "terraform-google-modules/iam/google//modules/folders_iam"
+  version = "~> 8.0"
+
+  folders = [
+    local.folder_map["Department 1/Team 4/Non-Production"].id,
+  ]
+  bindings = {
+    "roles/compute.instanceAdmin.v1" = [
+      "group:gcp-developers@jonnyai.co.uk",
+    ]
+  }
+}
+
+module "cs-folders-iam-3-containeradmin" {
+  source  = "terraform-google-modules/iam/google//modules/folders_iam"
+  version = "~> 8.0"
+
+  folders = [
+    local.folder_map["Department 1/Team 4/Non-Production"].id,
+  ]
+  bindings = {
+    "roles/container.admin" = [
+      "group:gcp-developers@jonnyai.co.uk",
+    ]
+  }
+}
+
+module "cs-folders-iam-4-computeinstanceAdminv1" {
+  source  = "terraform-google-modules/iam/google//modules/folders_iam"
+  version = "~> 8.0"
+
+  folders = [
+    local.folder_map["Department 2/Team 1/Non-Production"].id,
+  ]
+  bindings = {
+    "roles/compute.instanceAdmin.v1" = [
+      "group:gcp-developers@jonnyai.co.uk",
+    ]
+  }
+}
+
+module "cs-folders-iam-4-containeradmin" {
+  source  = "terraform-google-modules/iam/google//modules/folders_iam"
+  version = "~> 8.0"
+
+  folders = [
+    local.folder_map["Department 2/Team 1/Non-Production"].id,
+  ]
+  bindings = {
+    "roles/container.admin" = [
+      "group:gcp-developers@jonnyai.co.uk",
+    ]
+  }
+}
+
+module "cs-folders-iam-5-computeinstanceAdminv1" {
+  source  = "terraform-google-modules/iam/google//modules/folders_iam"
+  version = "~> 8.0"
+
+  folders = [
+    local.folder_map["Department 2/Team 2/Non-Production"].id,
+  ]
+  bindings = {
+    "roles/compute.instanceAdmin.v1" = [
+      "group:gcp-developers@jonnyai.co.uk",
+    ]
+  }
+}
+
+module "cs-folders-iam-5-containeradmin" {
+  source  = "terraform-google-modules/iam/google//modules/folders_iam"
+  version = "~> 8.0"
+
+  folders = [
+    local.folder_map["Department 2/Team 2/Non-Production"].id,
+  ]
+  bindings = {
+    "roles/container.admin" = [
+      "group:gcp-developers@jonnyai.co.uk",
+    ]
+  }
+}
+
+module "cs-folders-iam-6-computeinstanceAdminv1" {
+  source  = "terraform-google-modules/iam/google//modules/folders_iam"
+  version = "~> 8.0"
+
+  folders = [
+    local.folder_map["Department 2/Team 3/Non-Production"].id,
+  ]
+  bindings = {
+    "roles/compute.instanceAdmin.v1" = [
+      "group:gcp-developers@jonnyai.co.uk",
+    ]
+  }
+}
+
+module "cs-folders-iam-6-containeradmin" {
+  source  = "terraform-google-modules/iam/google//modules/folders_iam"
+  version = "~> 8.0"
+
+  folders = [
+    local.folder_map["Department 2/Team 3/Non-Production"].id,
+  ]
+  bindings = {
+    "roles/container.admin" = [
+      "group:gcp-developers@jonnyai.co.uk",
+    ]
+  }
+}
+
+module "cs-folders-iam-7-computeinstanceAdminv1" {
+  source  = "terraform-google-modules/iam/google//modules/folders_iam"
+  version = "~> 8.0"
+
+  folders = [
+    local.folder_map["Department 2/Team 4/Non-Production"].id,
+  ]
+  bindings = {
+    "roles/compute.instanceAdmin.v1" = [
+      "group:gcp-developers@jonnyai.co.uk",
+    ]
+  }
+}
+
+module "cs-folders-iam-7-containeradmin" {
+  source  = "terraform-google-modules/iam/google//modules/folders_iam"
+  version = "~> 8.0"
+
+  folders = [
+    local.folder_map["Department 2/Team 4/Non-Production"].id,
+  ]
+  bindings = {
+    "roles/container.admin" = [
+      "group:gcp-developers@jonnyai.co.uk",
+    ]
+  }
+}
+
+module "cs-folders-iam-8-computeinstanceAdminv1" {
+  source  = "terraform-google-modules/iam/google//modules/folders_iam"
+  version = "~> 8.0"
+
+  folders = [
+    local.folder_map["Department 3/Team 1/Non-Production"].id,
+  ]
+  bindings = {
+    "roles/compute.instanceAdmin.v1" = [
+      "group:gcp-developers@jonnyai.co.uk",
+    ]
+  }
+}
+
+module "cs-folders-iam-8-containeradmin" {
+  source  = "terraform-google-modules/iam/google//modules/folders_iam"
+  version = "~> 8.0"
+
+  folders = [
+    local.folder_map["Department 3/Team 1/Non-Production"].id,
+  ]
+  bindings = {
+    "roles/container.admin" = [
+      "group:gcp-developers@jonnyai.co.uk",
+    ]
+  }
+}
+
+module "cs-folders-iam-9-computeinstanceAdminv1" {
+  source  = "terraform-google-modules/iam/google//modules/folders_iam"
+  version = "~> 8.0"
+
+  folders = [
+    local.folder_map["Department 3/Team 2/Non-Production"].id,
+  ]
+  bindings = {
+    "roles/compute.instanceAdmin.v1" = [
+      "group:gcp-developers@jonnyai.co.uk",
+    ]
+  }
+}
+
+module "cs-folders-iam-9-containeradmin" {
+  source  = "terraform-google-modules/iam/google//modules/folders_iam"
+  version = "~> 8.0"
+
+  folders = [
+    local.folder_map["Department 3/Team 2/Non-Production"].id,
+  ]
+  bindings = {
+    "roles/container.admin" = [
+      "group:gcp-developers@jonnyai.co.uk",
+    ]
+  }
+}
+
+module "cs-folders-iam-10-computeinstanceAdminv1" {
+  source  = "terraform-google-modules/iam/google//modules/folders_iam"
+  version = "~> 8.0"
+
+  folders = [
+    local.folder_map["Department 3/Team 3/Non-Production"].id,
+  ]
+  bindings = {
+    "roles/compute.instanceAdmin.v1" = [
+      "group:gcp-developers@jonnyai.co.uk",
+    ]
+  }
+}
+
+module "cs-folders-iam-10-containeradmin" {
+  source  = "terraform-google-modules/iam/google//modules/folders_iam"
+  version = "~> 8.0"
+
+  folders = [
+    local.folder_map["Department 3/Team 3/Non-Production"].id,
+  ]
+  bindings = {
+    "roles/container.admin" = [
+      "group:gcp-developers@jonnyai.co.uk",
+    ]
+  }
+}
+
+module "cs-folders-iam-11-computeinstanceAdminv1" {
+  source  = "terraform-google-modules/iam/google//modules/folders_iam"
+  version = "~> 8.0"
+
+  folders = [
+    local.folder_map["Department 3/Team 4/Non-Production"].id,
+  ]
+  bindings = {
+    "roles/compute.instanceAdmin.v1" = [
+      "group:gcp-developers@jonnyai.co.uk",
+    ]
+  }
+}
+
+module "cs-folders-iam-11-containeradmin" {
+  source  = "terraform-google-modules/iam/google//modules/folders_iam"
+  version = "~> 8.0"
+
+  folders = [
+    local.folder_map["Department 3/Team 4/Non-Production"].id,
+  ]
+  bindings = {
+    "roles/container.admin" = [
+      "group:gcp-developers@jonnyai.co.uk",
+    ]
+  }
+}
+
+module "cs-folders-iam-12-computeinstanceAdminv1" {
+  source  = "terraform-google-modules/iam/google//modules/folders_iam"
+  version = "~> 8.0"
+
+  folders = [
+    local.folder_map["Department 1/Team 1/Development"].id,
+  ]
+  bindings = {
+    "roles/compute.instanceAdmin.v1" = [
+      "group:gcp-developers@jonnyai.co.uk",
+    ]
+  }
+}
+
+module "cs-folders-iam-12-containeradmin" {
+  source  = "terraform-google-modules/iam/google//modules/folders_iam"
+  version = "~> 8.0"
+
+  folders = [
+    local.folder_map["Department 1/Team 1/Development"].id,
+  ]
+  bindings = {
+    "roles/container.admin" = [
+      "group:gcp-developers@jonnyai.co.uk",
+    ]
+  }
+}
+
+module "cs-folders-iam-13-computeinstanceAdminv1" {
+  source  = "terraform-google-modules/iam/google//modules/folders_iam"
+  version = "~> 8.0"
+
+  folders = [
+    local.folder_map["Department 1/Team 2/Development"].id,
+  ]
+  bindings = {
+    "roles/compute.instanceAdmin.v1" = [
+      "group:gcp-developers@jonnyai.co.uk",
+    ]
+  }
+}
+
+module "cs-folders-iam-13-containeradmin" {
+  source  = "terraform-google-modules/iam/google//modules/folders_iam"
+  version = "~> 8.0"
+
+  folders = [
+    local.folder_map["Department 1/Team 2/Development"].id,
+  ]
+  bindings = {
+    "roles/container.admin" = [
+      "group:gcp-developers@jonnyai.co.uk",
+    ]
+  }
+}
+
+module "cs-folders-iam-14-computeinstanceAdminv1" {
+  source  = "terraform-google-modules/iam/google//modules/folders_iam"
+  version = "~> 8.0"
+
+  folders = [
+    local.folder_map["Department 1/Team 3/Development"].id,
+  ]
+  bindings = {
+    "roles/compute.instanceAdmin.v1" = [
+      "group:gcp-developers@jonnyai.co.uk",
+    ]
+  }
+}
+
+module "cs-folders-iam-14-containeradmin" {
+  source  = "terraform-google-modules/iam/google//modules/folders_iam"
+  version = "~> 8.0"
+
+  folders = [
+    local.folder_map["Department 1/Team 3/Development"].id,
+  ]
+  bindings = {
+    "roles/container.admin" = [
+      "group:gcp-developers@jonnyai.co.uk",
+    ]
+  }
+}
+
+module "cs-folders-iam-15-computeinstanceAdminv1" {
+  source  = "terraform-google-modules/iam/google//modules/folders_iam"
+  version = "~> 8.0"
+
+  folders = [
+    local.folder_map["Department 1/Team 4/Development"].id,
+  ]
+  bindings = {
+    "roles/compute.instanceAdmin.v1" = [
+      "group:gcp-developers@jonnyai.co.uk",
+    ]
+  }
+}
+
+module "cs-folders-iam-15-containeradmin" {
+  source  = "terraform-google-modules/iam/google//modules/folders_iam"
+  version = "~> 8.0"
+
+  folders = [
+    local.folder_map["Department 1/Team 4/Development"].id,
+  ]
+  bindings = {
+    "roles/container.admin" = [
+      "group:gcp-developers@jonnyai.co.uk",
+    ]
+  }
+}
+
+module "cs-folders-iam-16-computeinstanceAdminv1" {
+  source  = "terraform-google-modules/iam/google//modules/folders_iam"
+  version = "~> 8.0"
+
+  folders = [
+    local.folder_map["Department 2/Team 1/Development"].id,
+  ]
+  bindings = {
+    "roles/compute.instanceAdmin.v1" = [
+      "group:gcp-developers@jonnyai.co.uk",
+    ]
+  }
+}
+
+module "cs-folders-iam-16-containeradmin" {
+  source  = "terraform-google-modules/iam/google//modules/folders_iam"
+  version = "~> 8.0"
+
+  folders = [
+    local.folder_map["Department 2/Team 1/Development"].id,
+  ]
+  bindings = {
+    "roles/container.admin" = [
+      "group:gcp-developers@jonnyai.co.uk",
+    ]
+  }
+}
+
+module "cs-folders-iam-17-computeinstanceAdminv1" {
+  source  = "terraform-google-modules/iam/google//modules/folders_iam"
+  version = "~> 8.0"
+
+  folders = [
+    local.folder_map["Department 2/Team 2/Development"].id,
+  ]
+  bindings = {
+    "roles/compute.instanceAdmin.v1" = [
+      "group:gcp-developers@jonnyai.co.uk",
+    ]
+  }
+}
+
+module "cs-folders-iam-17-containeradmin" {
+  source  = "terraform-google-modules/iam/google//modules/folders_iam"
+  version = "~> 8.0"
+
+  folders = [
+    local.folder_map["Department 2/Team 2/Development"].id,
+  ]
+  bindings = {
+    "roles/container.admin" = [
+      "group:gcp-developers@jonnyai.co.uk",
+    ]
+  }
+}
+
+module "cs-folders-iam-18-computeinstanceAdminv1" {
+  source  = "terraform-google-modules/iam/google//modules/folders_iam"
+  version = "~> 8.0"
+
+  folders = [
+    local.folder_map["Department 2/Team 3/Development"].id,
+  ]
+  bindings = {
+    "roles/compute.instanceAdmin.v1" = [
+      "group:gcp-developers@jonnyai.co.uk",
+    ]
+  }
+}
+
+module "cs-folders-iam-18-containeradmin" {
+  source  = "terraform-google-modules/iam/google//modules/folders_iam"
+  version = "~> 8.0"
+
+  folders = [
+    local.folder_map["Department 2/Team 3/Development"].id,
+  ]
+  bindings = {
+    "roles/container.admin" = [
+      "group:gcp-developers@jonnyai.co.uk",
+    ]
+  }
+}
+
+module "cs-folders-iam-19-computeinstanceAdminv1" {
+  source  = "terraform-google-modules/iam/google//modules/folders_iam"
+  version = "~> 8.0"
+
+  folders = [
+    local.folder_map["Department 2/Team 4/Development"].id,
+  ]
+  bindings = {
+    "roles/compute.instanceAdmin.v1" = [
+      "group:gcp-developers@jonnyai.co.uk",
+    ]
+  }
+}
+
+module "cs-folders-iam-19-containeradmin" {
+  source  = "terraform-google-modules/iam/google//modules/folders_iam"
+  version = "~> 8.0"
+
+  folders = [
+    local.folder_map["Department 2/Team 4/Development"].id,
+  ]
+  bindings = {
+    "roles/container.admin" = [
+      "group:gcp-developers@jonnyai.co.uk",
+    ]
+  }
+}
+
+module "cs-folders-iam-20-computeinstanceAdminv1" {
+  source  = "terraform-google-modules/iam/google//modules/folders_iam"
+  version = "~> 8.0"
+
+  folders = [
+    local.folder_map["Department 3/Team 1/Development"].id,
+  ]
+  bindings = {
+    "roles/compute.instanceAdmin.v1" = [
+      "group:gcp-developers@jonnyai.co.uk",
+    ]
+  }
+}
+
+module "cs-folders-iam-20-containeradmin" {
+  source  = "terraform-google-modules/iam/google//modules/folders_iam"
+  version = "~> 8.0"
+
+  folders = [
+    local.folder_map["Department 3/Team 1/Development"].id,
+  ]
+  bindings = {
+    "roles/container.admin" = [
+      "group:gcp-developers@jonnyai.co.uk",
+    ]
+  }
+}
+
+module "cs-folders-iam-21-computeinstanceAdminv1" {
+  source  = "terraform-google-modules/iam/google//modules/folders_iam"
+  version = "~> 8.0"
+
+  folders = [
+    local.folder_map["Department 3/Team 2/Development"].id,
+  ]
+  bindings = {
+    "roles/compute.instanceAdmin.v1" = [
+      "group:gcp-developers@jonnyai.co.uk",
+    ]
+  }
+}
+
+module "cs-folders-iam-21-containeradmin" {
+  source  = "terraform-google-modules/iam/google//modules/folders_iam"
+  version = "~> 8.0"
+
+  folders = [
+    local.folder_map["Department 3/Team 2/Development"].id,
+  ]
+  bindings = {
+    "roles/container.admin" = [
+      "group:gcp-developers@jonnyai.co.uk",
+    ]
+  }
+}
+
+module "cs-folders-iam-22-computeinstanceAdminv1" {
+  source  = "terraform-google-modules/iam/google//modules/folders_iam"
+  version = "~> 8.0"
+
+  folders = [
+    local.folder_map["Department 3/Team 3/Development"].id,
+  ]
+  bindings = {
+    "roles/compute.instanceAdmin.v1" = [
+      "group:gcp-developers@jonnyai.co.uk",
+    ]
+  }
+}
+
+module "cs-folders-iam-22-containeradmin" {
+  source  = "terraform-google-modules/iam/google//modules/folders_iam"
+  version = "~> 8.0"
+
+  folders = [
+    local.folder_map["Department 3/Team 3/Development"].id,
+  ]
+  bindings = {
+    "roles/container.admin" = [
+      "group:gcp-developers@jonnyai.co.uk",
+    ]
+  }
+}
+
+module "cs-folders-iam-23-computeinstanceAdminv1" {
+  source  = "terraform-google-modules/iam/google//modules/folders_iam"
+  version = "~> 8.0"
+
+  folders = [
+    local.folder_map["Department 3/Team 4/Development"].id,
+  ]
+  bindings = {
+    "roles/compute.instanceAdmin.v1" = [
+      "group:gcp-developers@jonnyai.co.uk",
+    ]
+  }
+}
+
+module "cs-folders-iam-23-containeradmin" {
+  source  = "terraform-google-modules/iam/google//modules/folders_iam"
+  version = "~> 8.0"
+
+  folders = [
+    local.folder_map["Department 3/Team 4/Development"].id,
+  ]
+  bindings = {
+    "roles/container.admin" = [
+      "group:gcp-developers@jonnyai.co.uk",
+    ]
+  }
+}
+
+module "cs-projects-iam-24-loggingviewer" {
+  source  = "terraform-google-modules/iam/google//modules/projects_iam"
+  version = "~> 8.0"
+
+  projects = [
+    module.cs-project-logging-monitoring.project_id,
+  ]
+  bindings = {
+    "roles/logging.viewer" = [
+      "group:gcp-logging-monitoring-viewers@jonnyai.co.uk",
+    ]
+  }
+}
+
+module "cs-projects-iam-24-loggingprivateLogViewer" {
+  source  = "terraform-google-modules/iam/google//modules/projects_iam"
+  version = "~> 8.0"
+
+  projects = [
+    module.cs-project-logging-monitoring.project_id,
+  ]
+  bindings = {
+    "roles/logging.privateLogViewer" = [
+      "group:gcp-logging-monitoring-viewers@jonnyai.co.uk",
+    ]
+  }
+}
+
+module "cs-projects-iam-24-bigquerydataViewer" {
+  source  = "terraform-google-modules/iam/google//modules/projects_iam"
+  version = "~> 8.0"
+
+  projects = [
+    module.cs-project-logging-monitoring.project_id,
+  ]
+  bindings = {
+    "roles/bigquery.dataViewer" = [
+      "group:gcp-logging-monitoring-viewers@jonnyai.co.uk",
+    ]
+  }
+}
+
+module "cs-projects-iam-24-pubsubviewer" {
+  source  = "terraform-google-modules/iam/google//modules/projects_iam"
+  version = "~> 8.0"
+
+  projects = [
+    module.cs-project-logging-monitoring.project_id,
+  ]
+  bindings = {
+    "roles/pubsub.viewer" = [
+      "group:gcp-logging-monitoring-viewers@jonnyai.co.uk",
+    ]
+  }
+}
+
+module "cs-projects-iam-24-monitoringviewer" {
+  source  = "terraform-google-modules/iam/google//modules/projects_iam"
+  version = "~> 8.0"
+
+  projects = [
+    module.cs-project-logging-monitoring.project_id,
+  ]
+  bindings = {
+    "roles/monitoring.viewer" = [
+      "group:gcp-logging-monitoring-viewers@jonnyai.co.uk",
+    ]
+  }
+}
+
+module "cs-projects-iam-25-bigquerydataViewer" {
+  source  = "terraform-google-modules/iam/google//modules/projects_iam"
+  version = "~> 8.0"
+
+  projects = [
+    module.cs-project-logging-monitoring.project_id,
+  ]
+  bindings = {
+    "roles/bigquery.dataViewer" = [
+      "group:gcp-security-admins@jonnyai.co.uk",
+    ]
+  }
+}
+
+module "cs-projects-iam-25-pubsubviewer" {
+  source  = "terraform-google-modules/iam/google//modules/projects_iam"
+  version = "~> 8.0"
+
+  projects = [
+    module.cs-project-logging-monitoring.project_id,
+  ]
+  bindings = {
+    "roles/pubsub.viewer" = [
+      "group:gcp-security-admins@jonnyai.co.uk",
+    ]
+  }
+}
+
+module "cs-service-projects-iam-26-computeinstanceAdminv1" {
+  source  = "terraform-google-modules/iam/google//modules/projects_iam"
+  version = "~> 8.0"
+
+  projects = [
+    module.cs-svc-depart-team-1-prod-svc-e8mp.project_id,
+  ]
+  bindings = {
+    "roles/compute.instanceAdmin.v1" = [
+      "group:${module.cs-gg-departmen-team-1-prod-svc.id}",
+    ]
+  }
+}
+
+module "cs-service-projects-iam-27-computeinstanceAdminv1" {
+  source  = "terraform-google-modules/iam/google//modules/projects_iam"
+  version = "~> 8.0"
+
+  projects = [
+    module.cs-svc-depart-team-1-nonprod-svc-e8mp.project_id,
+  ]
+  bindings = {
+    "roles/compute.instanceAdmin.v1" = [
+      "group:${module.cs-gg-departmen-team-1-nonprod-svc.id}",
+    ]
+  }
+}
+
+module "cs-service-projects-iam-28-computeinstanceAdminv1" {
+  source  = "terraform-google-modules/iam/google//modules/projects_iam"
+  version = "~> 8.0"
+
+  projects = [
+    module.cs-svc-depart-team-2-prod-svc-e8mp.project_id,
+  ]
+  bindings = {
+    "roles/compute.instanceAdmin.v1" = [
+      "group:${module.cs-gg-departmen-team-2-prod-svc.id}",
+    ]
+  }
+}
+
+module "cs-service-projects-iam-29-computeinstanceAdminv1" {
+  source  = "terraform-google-modules/iam/google//modules/projects_iam"
+  version = "~> 8.0"
+
+  projects = [
+    module.cs-svc-depart-team-2-nonprod-svc-e8mp.project_id,
+  ]
+  bindings = {
+    "roles/compute.instanceAdmin.v1" = [
+      "group:${module.cs-gg-departmen-team-2-nonprod-svc.id}",
+    ]
+  }
+}

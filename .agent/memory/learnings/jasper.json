@@ -1,0 +1,47 @@
+{
+  "agent": "jasper",
+  "learnings": [
+    {
+      "learning": "Check if both packages support the same version range",
+      "timestamp": "2026-02-11T21:22:12.623897+00:00",
+      "source": "shared_brain"
+    },
+    {
+      "learning": "Use `overrides` in `package.json` as last resort",
+      "timestamp": "2026-02-11T21:22:12.623897+00:00",
+      "source": "shared_brain"
+    },
+    {
+      "learning": "NEVER use `--force` or `--legacy-peer-deps` without understanding why",
+      "timestamp": "2026-02-11T21:22:12.623897+00:00",
+      "source": "shared_brain"
+    },
+    {
+      "learning": "Check if module has an Expo config plugin",
+      "timestamp": "2026-02-11T21:22:12.623897+00:00",
+      "source": "shared_brain"
+    },
+    {
+      "learning": "If not, may need `expo prebuild` (coordinate with @Blaise)",
+      "timestamp": "2026-02-11T21:22:12.623897+00:00",
+      "source": "shared_brain"
+    },
+    {
+      "learning": "iOS: Xcode \u2192 Window \u2192 Devices \u2192 View Device Logs",
+      "timestamp": "2026-02-11T21:22:12.623897+00:00",
+      "source": "shared_brain"
+    },
+    {
+      "learning": "Android: `adb logcat` or Android Studio Logcat",
+      "timestamp": "2026-02-11T21:22:12.623897+00:00",
+      "source": "shared_brain"
+    },
+    {
+      "learning": "EAS: Check EAS Insights dashboard",
+      "timestamp": "2026-02-11T21:22:12.623897+00:00",
+      "source": "shared_brain"
+    }
+  ],
+  "tasks": [],
+  "patterns": {}
+}

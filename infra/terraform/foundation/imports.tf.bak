@@ -1,0 +1,49 @@
+import {
+  id = "organizations/504480014851/policies/storage.publicAccessPrevention"
+  to = module.cs-org-policy-storage_publicAccessPrevention.google_org_policy_policy.org_policy_boolean[0]
+}
+
+import {
+  id = "organizations/504480014851/policies/compute.requireOsLogin"
+  to = module.cs-org-policy-compute_requireOsLogin.google_org_policy_policy.org_policy_boolean[0]
+}
+
+import {
+  id = "organizations/504480014851/policies/compute.vmExternalIpAccess"
+  to = module.cs-org-policy-compute_vmExternalIpAccess.google_org_policy_policy.organization_policy[0]
+}
+
+import {
+  id = "organizations/504480014851/policies/compute.disableNestedVirtualization"
+  to = module.cs-org-policy-compute_disableNestedVirtualization.google_org_policy_policy.org_policy_boolean[0]
+}
+
+import {
+  id = "organizations/504480014851/policies/compute.disableSerialPortAccess"
+  to = module.cs-org-policy-compute_disableSerialPortAccess.google_org_policy_policy.org_policy_boolean[0]
+}
+
+import {
+  id = "organizations/504480014851/policies/sql.restrictAuthorizedNetworks"
+  to = module.cs-org-policy-sql_restrictAuthorizedNetworks.google_org_policy_policy.org_policy_boolean[0]
+}
+
+import {
+  id = "organizations/504480014851/policies/sql.restrictPublicIp"
+  to = module.cs-org-policy-sql_restrictPublicIp.google_org_policy_policy.org_policy_boolean[0]
+}
+
+import {
+  id = "organizations/504480014851/policies/compute.restrictXpnProjectLienRemoval"
+  to = module.cs-org-policy-compute_restrictXpnProjectLienRemoval.google_org_policy_policy.org_policy_boolean[0]
+}
+
+import {
+  id = "organizations/504480014851/policies/compute.skipDefaultNetworkCreation"
+  to = module.cs-org-policy-compute_skipDefaultNetworkCreation.google_org_policy_policy.org_policy_boolean[0]
+}
+
+import {
+  id = "organizations/504480014851/policies/compute.disableVpcExternalIpv6"
+  to = module.cs-org-policy-compute_disableVpcExternalIpv6.google_org_policy_policy.org_policy_boolean[0]
+}

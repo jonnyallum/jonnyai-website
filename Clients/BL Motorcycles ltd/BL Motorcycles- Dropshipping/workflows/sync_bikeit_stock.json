@@ -1,0 +1,149 @@
+{
+  "name": "Sync BikeIt Stock to Supabase & Sheets",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "1",
+      "name": "Trigger",
+      "type": "n8n-nodes-base.cron",
+      "typeVersion": 1,
+      "position": [250, 300],
+      "parameters": {
+        "triggerTimes": [
+          {
+            "hour": 3,
+            "minute": 0
+          }
+        ]
+      }
+    },
+    {
+      "parameters": {
+        "protocol": "sftp",
+        "host": "ftp.bikeitinternational.com",
+        "port": 22,
+        "username": "B&L",
+        "password": "gFDSPu9sIbK0UFioCwMy",
+        "path": "/UK/01_All_Products_CSV.csv",
+        "binaryPropertyName": "data"
+      },
+      "id": "2",
+      "name": "Download CSV",
+      "type": "n8n-nodes-base.ftp",
+      "typeVersion": 1,
+      "position": [450, 300],
+      "credentials": {
+        "ftp": {
+          "id": "your-ftp-credential-id",
+          "name": "BikeIt FTP"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "3",
+      "name": "Convert Binary",
+      "type": "n8n-nodes-base.moveBinaryData",
+      "typeVersion": 1,
+      "position": [650, 300]
+    },
+    {
+      "parameters": {
+        "dataPropertyName": "data",
+        "options": {
+          "delimiter": ","
+        }
+      },
+      "id": "4",
+      "name": "CSV to JSON",
+      "type": "n8n-nodes-base.csvToJson",
+      "typeVersion": 1,
+      "position": [850, 300]
+    },
+    {
+      "parameters": {
+        "functionCode": "return items.map(item => ({ json: {
+  sku: item.json['sku'],
+  title: item.json['item_title'],
+  trade_price: parseFloat(item.json['trade']),
+  retail_price: parseFloat(item.json['srp']),
+  source_category: 'Bike It'
+}}));"
+      },
+      "id": "5",
+      "name": "Format Data",
+      "type": "n8n-nodes-base.function",
+      "typeVersion": 1,
+      "position": [1050, 300]
+    },
+    {
+      "parameters": {
+        "resource": "database",
+        "operation": "upsert",
+        "table": "product_inventory",
+        "columns": [
+          "sku",
+          "title",
+          "trade_price",
+          "retail_price",
+          "source_category"
+        ],
+        "onConflict": "sku"
+      },
+      "id": "6",
+      "name": "Update Supabase",
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [1250, 300],
+      "credentials": {
+        "supabaseApi": {
+          "id": "your-supabase-credential-id",
+          "name": "Supabase API"
+        }
+      },
+      "authentication": "serviceAccount",
+      "url": "https://kenaardqwnpeqtwukdnb.supabase.co",
+      "apiKey": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtlbmFhcmRxd25wZXF0d3VrZG5iIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc0NzEzOTAzNywiZXhwIjoyMDYyNzE1MDM3fQ.oZvqA-Z1Gvrajgamp-QDSl74MyLpYsN2QPER--7Pekw"
+    },
+    {
+      "parameters": {
+        "sheetId": "1BbYvXIbycx5I89k5jbHs7mjQStL8-RtjORChD7_foqU",
+        "range": "Live Inventory!A:E",
+        "valueInputMode": "USER_ENTERED"
+      },
+      "id": "7",
+      "name": "Update Google Sheet",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 2,
+      "position": [1450, 300],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "your-google-credential-id",
+          "name": "Google Sheets"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Trigger": {
+      "main": [[{"node": "Download CSV", "type": "main", "index": 0}]]
+    },
+    "Download CSV": {
+      "main": [[{"node": "Convert Binary", "type": "main", "index": 0}]]
+    },
+    "Convert Binary": {
+      "main": [[{"node": "CSV to JSON", "type": "main", "index": 0}]]
+    },
+    "CSV to JSON": {
+      "main": [[{"node": "Format Data", "type": "main", "index": 0}]]
+    },
+    "Format Data": {
+      "main": [
+        [{"node": "Update Supabase", "type": "main", "index": 0}],
+        [{"node": "Update Google Sheet", "type": "main", "index": 0}]
+      ]
+    }
+  }
+}

@@ -1,0 +1,324 @@
+Construct Fm Website
+
+home page
+
+
+new address, please replace old address with new: Unit 37, Basepoint, Havant, Po9 1hs
+{
+  "site": {
+    "url": "https://construct-fm.co.uk/",
+    "title": "Home - Construct FM - Local Construction Services",
+    "brand_name": "Construct Facilities Management",
+    "contact": {
+      "phone": "02394 353333",
+      "email": "Info@construct-fm.co.uk",
+      "address": {
+        "line_1": "Unit 37, Basepoint,",
+        "line_2": "Havant",
+        "city": "Portsmouth",
+        "postcode": "PO9 1HS",
+        "country": "United Kingdom"
+      }
+    },
+    "navigation": {
+      "primary": [
+        {
+          "label": "Our Services",
+          "url": "#0"
+        },
+        {
+          "label": "Service Locations",
+          "url": "#0"
+        },
+        {
+          "label": "Case Studies",
+          "url": "https://construct-fm.co.uk/case-studies/"
+        },
+        {
+          "label": "About Us",
+          "url": "https://construct-fm.co.uk/about/"
+        },
+        {
+          "label": "Blog",
+          "url": "https://construct-fm.co.uk/help-advice/"
+        }
+      ],
+      "cta": {
+        "label": "Enquire Today",
+        "url": "https://construct-fm.co.uk/contact/"
+      }
+    },
+    "hero": {
+      "slides": [
+        "Rooft frame work",
+        "People working on laptops",
+        "Rooft frame work",
+        "People working on laptops",
+        "Rooft frame work"
+      ],
+      "headline": "Extensive Property Development Experience",
+      "body": "We provide specialist solutions for all of our clients with our main focus being to provide an excellent, efficient service from planning to completion. Our team of highly skilled builders are trusted throughout Hampshire & West Sussex to provide reliable building services. Our experienced and qualified contractors are able to design and build in all areas of construction. This includes small domestic extensions, commercial refits and large industrial new builds.",
+      "secondary_section": {
+        "title": "Facilities Management",
+        "body": "Construct FM can provide complete or partial facilities management services to shopping centres, retail parks, offices, hospitals, hotels, convention centres and public areas. We use our extensive experience and knowledge to develop new techniques, processes and infrastructures to assist our clients to maximise their services budgets."
+      },
+      "welcome_section": {
+        "title": "Welcome To Construct FM",
+        "subtitle": "A Hampshire-based building contractor and facilities management provider.",
+        "primary_cta": {
+          "label": "Find Out More",
+          "url": "https://construct-fm.co.uk/about/"
+        },
+        "secondary_cta": {
+          "label": "Enquire Today",
+          "url": "https://construct-fm.co.uk/contact/"
+        },
+        "rating": {
+          "source": "Checkatrade",
+          "score": 9.5,
+          "reviews_count": 2
+        }
+      }
+    },
+    "sections": {
+      "why_choose_us": {
+        "title": "Why Choose Us?",
+        "items": [
+          {
+            "title": "Professional Local Services",
+            "body": "Based in Hampshire, our professional building and facilities management services can help make your construction project a reality."
+          },
+          {
+            "title": "Expert Facilities Management",
+            "body": "With extensive experience in facilities management, the services and expertise we can offer our customers clearly demonstrate knowledge and value."
+          },
+          {
+            "title": "Complete Building Solutions",
+            "body": "Construct FM’s team of experienced and professional contractors have the knowledge and expertise to complete any construction project, from building a brand-new home to refurbishing an office space."
+          }
+        ]
+      },
+      "building_services_summary": {
+        "title": "Building Services",
+        "intro": "Construct FM is a leading Hampshire-based, PQS Health & Safety Approved, construction company that specialises in both residential and commercial construction projects of all sizes. Whether you are planning to build your dream home, add an extension, or renovate your home, we are here to help.",
+        "body": "Our Hampshire building services can cover the surrounding areas including Havant, Waterlooville, Portsmouth, Fareham and more! Find out more about our building services below.",
+        "pqs_link": "https://www.pqscheme.com/services/ssip-health-safety-assessment/",
+        "areas_links": [
+          {
+            "label": "Hampshire",
+            "url": "https://construct-fm.co.uk/builders-hampshire/"
+          },
+          {
+            "label": "Havant",
+            "url": "https://construct-fm.co.uk/builders-havant/"
+          },
+          {
+            "label": "Waterlooville",
+            "url": "https://construct-fm.co.uk/builders-waterlooville/"
+          },
+          {
+            "label": "Portsmouth",
+            "url": "https://construct-fm.co.uk/builders-portsmouth/"
+          },
+          {
+            "label": "Fareham",
+            "url": "https://construct-fm.co.uk/builders-fareham/"
+          }
+        ],
+        "main_cta": {
+          "label": "Building Services",
+          "url": "https://construct-fm.co.uk/building-services/"
+        }
+      },
+      "building_services_cards": {
+        "group_title": "Construct FM Building Services",
+        "cards": [
+          {
+            "title": "Building Your Dream Place",
+            "body": "If you are ready for the home or office you have always dreamed of, our expert team at Construct FM can make this a reality for you.",
+            "url": "https://construct-fm.co.uk/building-services/hampshire-home-builders-house-extentions/"
+          },
+          {
+            "title": "Adding an Extension",
+            "body": "If you want to make some improvements to your home or your public building, our expert extension building services can help.",
+            "url": "https://construct-fm.co.uk/building-services/hampshire-home-builders-house-extentions/"
+          },
+          {
+            "title": "Renovating Your Building",
+            "body": "Our experienced construction team specialises in renovations, offering a wide range of services from individual room, kitchen and bathroom upgrades to complete remodels.",
+            "url": "https://construct-fm.co.uk/building-services/building-renovations-hampshire/"
+          },
+          {
+            "title": "Painting and Finishing",
+            "body": "In order to give your residential or commercial area a fresh look and polished appearance, we offer painting and finishing as part of our building services.",
+            "url": "https://construct-fm.co.uk/building-services/"
+          }
+        ],
+        "find_out_more": {
+          "label": "Find out more about Construct FM Building Services",
+          "url": "https://construct-fm.co.uk/building-services/"
+        }
+      },
+      "facilities_management_summary": {
+        "title": "Facilities Management Services",
+        "intro": "Through our multi-disciplined approach, we provide high-quality facilities management and maintenance services for properties across the South-East. Our services cover all aspects of facilities management, including energy efficiency upgrades, maintenance, compliance services, and much more.",
+        "main_cta": {
+          "label": "Facilities Management Services",
+          "url": "https://construct-fm.co.uk/facilities-management-services/"
+        }
+      },
+      "facilities_management_cards": {
+        "group_title": "Construct FM Facilities Management Services",
+        "cards": [
+          {
+            "title": "Building/Home Maintenance and Repairs",
+            "body": "We provide regular inspections, preventative maintenance, and repairs to the building’s systems, including HVAC, electrical, and plumbing to keep your property running smoothly and to maximise its lifespan and value.",
+            "url": "https://construct-fm.co.uk/facilities-management-services/"
+          },
+          {
+            "title": "Energy Efficiency Upgrades",
+            "body": "In order to make your space as energy efficient as possible, we can offer energy-efficient solutions for your home or building. These services include insulation, energy-saving lighting, HVAC system upgrades, and renewable energy integration.",
+            "url": "https://construct-fm.co.uk/facilities-management-services/"
+          },
+          {
+            "title": "Spatial Planning and Optimisation",
+            "body": "We understand how important it is to have a functional and productive area where you can complete your daily tasks without interruption, so we assess space requirements, analyse workflows, and provide meaningful recommendations for your facility.",
+            "url": "https://construct-fm.co.uk/facilities-management-services/"
+          },
+          {
+            "title": "Safety and Compliance Services",
+            "body": "Our experienced team ensures adherence to safety regulations, by conducting risk assessments, implementing emergency protocols, offering safety training and overseeing regulatory compliance. You can trust Construct FM to create a secure environment for your facility.",
+            "url": "https://construct-fm.co.uk/facilities-management-services/"
+          }
+        ],
+        "find_out_more": {
+          "label": "Find out more about Construct FM Facilities Management Services",
+          "url": "https://construct-fm.co.uk/facilities-management-services/"
+        }
+      },
+      "about_construct_fm": {
+        "title": "About Construct FM",
+        "body": "We are an experienced Construction and Facilities Management company, offering expertise in all things construction and facility management. We are situated a short drive from Havant and our construction services extend through most of the Hampshire & West Sussex area, including Hayling Island, Chichester, Petersfield, Portsmouth, and more.",
+        "areas_links": [
+          {
+            "label": "Havant",
+            "url": "https://construct-fm.co.uk/builders-havant/"
+          },
+          {
+            "label": "Hampshire",
+            "url": "https://construct-fm.co.uk/builders-hampshire/"
+          },
+          {
+            "label": "Hayling Island",
+            "url": "https://construct-fm.co.uk/hayling-island-builders/"
+          },
+          {
+            "label": "Chichester",
+            "url": "https://construct-fm.co.uk/builders-chichester/"
+          },
+          {
+            "label": "Petersfield",
+            "url": "https://construct-fm.co.uk/builders-petersfield/"
+          },
+          {
+            "label": "Portsmouth",
+            "url": "https://construct-fm.co.uk/builders-portsmouth/"
+          }
+        ],
+        "cta": {
+          "label": "About Us",
+          "url": "https://construct-fm.co.uk/about/"
+        }
+      },
+      "accreditations": {
+        "title": "Our Accreditation Certificates",
+        "items": []
+      }
+    },
+    "footer": {
+      "contact": {
+        "title": "Contact Us",
+        "phone": "02394 353333",
+        "email": "Info@construct-fm.co.uk",
+        "address": {
+          "line_1": "Portsmouth Technopole",
+          "line_2": "Kingston Crescent",
+          "city": "Portsmouth",
+          "postcode": "PO2 8FA",
+          "country": "United Kingdom"
+        }
+      },
+      "legal": {
+        "title": "Legal",
+        "links": [
+          {
+            "label": "Terms and Conditions",
+            "url": "https://construct-fm.co.uk/terms-and-conditions/"
+          },
+          {
+            "label": "Privacy Policy",
+            "url": "https://construct-fm.co.uk/privacy-policy/"
+          }
+        ]
+      },
+      "areas_we_cover": {
+        "title": "Areas we cover",
+        "links": [
+          {
+            "label": "Alton Builders",
+            "url": "https://construct-fm.co.uk/alton-builders/"
+          },
+          {
+            "label": "Builders in Chichester",
+            "url": "https://construct-fm.co.uk/builders-chichester/"
+          },
+          {
+            "label": "Builders Fareham",
+            "url": "https://construct-fm.co.uk/builders-fareham/"
+          },
+          {
+            "label": "Builders Havant",
+            "url": "https://construct-fm.co.uk/builders-havant/"
+          },
+          {
+            "label": "Hayling Island Builders",
+            "url": "https://construct-fm.co.uk/hayling-island-builders/"
+          },
+          {
+            "label": "Builders Petersfield",
+            "url": "https://construct-fm.co.uk/builders-petersfield/"
+          },
+          {
+            "label": "Builders Portsmouth",
+            "url": "https://construct-fm.co.uk/builders-portsmouth/"
+          },
+          {
+            "label": "Builders Waterlooville",
+            "url": "https://construct-fm.co.uk/builders-waterlooville/"
+          }
+        ]
+      },
+      "meta": {
+        "copyright": "Construct FM © 2026",
+        "developer_credit": {
+          "text": "Designed and Developed with by boxChilli",
+          "url": "https://www.boxchilli.com/"
+        }
+      },
+      "cookies": {
+        "message": "This website uses cookies to ensure you get the best experience on our website.",
+        "actions": [
+          "Accept cookies on this site.",
+          "Learn More about cookies on this site."
+        ],
+        "policy_url": "https://construct-fm.co.uk/privacy-policy/"
+      }
+    },
+    "misc": {
+      "skip_to_content_label": "Skip to content",
+      "repeat_blocks_present": true
+    }
+  }
+}
+
+

@@ -1,0 +1,39 @@
+.env
+.tmp/
+credentials.json
+token.json
+__pycache__/
+*.pyc
+.claude/
+imageresults*.txt
+all_images_history*.txt
+build_matrix.py
+node_modules/
+.DS_Store
+
+# Next.js build artifacts
+.next/
+out/
+*.pack
+*.pack.old
+crm_deploy.tar.gz
+*.tar.gz
+
+# VM key
+execution/antigravity_vm_key
+.mcp.json
+execution/mcp-google/tokens.json
+execution/mcp-jonnyai-google/tokens.json
+
+# Terraform
+.terraform/
+*.tfstate
+*.tfstate.backup
+.terraform.lock.hcl
+
+# SSH Keys
+execution/vps_key
+execution/vps_key.pub
+
+# GCP tokens
+execution/gcp_compute_token.json

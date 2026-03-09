@@ -1,0 +1,94 @@
+{
+  "name": "BL: Dispatch Email to Customer",
+  "nodes": [
+    {
+      "parameters": { "rule": { "interval": [{ "field": "minutes", "minutesInterval": 5 }] } },
+      "name": "Poll Every 5min",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "position": [240, 300],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "https://ddjuoeyaoxllockcusgf.supabase.co/rest/v1/orders",
+        "qs": {
+          "select": "*",
+          "status": "eq.dispatched",
+          "dispatch_email_sent": "eq.false",
+          "tracking_number": "not.is.null"
+        },
+        "headerParameters": {
+          "parameters": [
+            { "name": "apikey", "value": "={{$env.BL_SUPABASE_SERVICE_KEY}}" },
+            { "name": "Authorization", "value": "Bearer {{$env.BL_SUPABASE_SERVICE_KEY}}" }
+          ]
+        }
+      },
+      "name": "Get Dispatched Orders Without Email",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [460, 300],
+      "typeVersion": 3
+    },
+    {
+      "parameters": { "conditions": { "number": [{ "value1": "={{$json.length}}", "operation": "larger", "value2": 0 }] } },
+      "name": "Has Orders?",
+      "type": "n8n-nodes-base.if",
+      "position": [680, 300],
+      "typeVersion": 1
+    },
+    {
+      "parameters": { "fieldToSplitOut": "" },
+      "name": "Split Orders",
+      "type": "n8n-nodes-base.splitInBatches",
+      "position": [900, 200],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.resend.com/emails",
+        "headerParameters": {
+          "parameters": [
+            { "name": "Authorization", "value": "Bearer {{$env.RESEND_API_KEY}}" }
+          ]
+        },
+        "body": {
+          "from": "BL Motorcycles <brett@blmotorcycles.co.uk>",
+          "to": ["={{$json.customer_email}}"],
+          "subject": "Your BL Motorcycles order has been dispatched! 🏍️",
+          "html": "={{`<div style='font-family:Arial;max-width:600px;margin:auto;background:#0a0a0c;padding:40px;'><h2 style='color:#f97316;'>Your order is on its way!</h2><p style='color:#ddd;'>Hi ${($json.customer_name || '').split(' ')[0]},</p><p style='color:#ddd;'>Great news! Your order (${$json.ebay_order_id}) has been dispatched.</p><p style='color:#ddd;'>📦 Tracking: <strong>${$json.tracking_number}</strong></p><p style='color:#ddd;'>🚚 Carrier: ${$json.tracking_carrier || 'Royal Mail'}</p><p style='color:#666;font-size:12px;margin-top:30px;'>BL Motorcycles Ltd — Fareham, Hampshire</p></div>`}}",
+          "reply_to": "brett@blmotorcycles.co.uk"
+        }
+      },
+      "name": "Send Dispatch Email",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [1120, 200],
+      "typeVersion": 3
+    },
+    {
+      "parameters": {
+        "method": "PATCH",
+        "url": "={{`https://ddjuoeyaoxllockcusgf.supabase.co/rest/v1/orders?id=eq.${$json.id}`}}",
+        "headerParameters": {
+          "parameters": [
+            { "name": "apikey", "value": "={{$env.BL_SUPABASE_SERVICE_KEY}}" },
+            { "name": "Authorization", "value": "Bearer {{$env.BL_SUPABASE_SERVICE_KEY}}" }
+          ]
+        },
+        "body": { "dispatch_email_sent": true }
+      },
+      "name": "Mark Email Sent",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [1340, 200],
+      "typeVersion": 3
+    }
+  ],
+  "connections": {
+    "Poll Every 5min": { "main": [[{ "node": "Get Dispatched Orders Without Email", "type": "main", "index": 0 }]] },
+    "Get Dispatched Orders Without Email": { "main": [[{ "node": "Has Orders?", "type": "main", "index": 0 }]] },
+    "Has Orders?": { "main": [[{ "node": "Split Orders", "type": "main", "index": 0 }], []] },
+    "Split Orders": { "main": [[{ "node": "Send Dispatch Email", "type": "main", "index": 0 }]] },
+    "Send Dispatch Email": { "main": [[{ "node": "Mark Email Sent", "type": "main", "index": 0 }]] }
+  }
+}

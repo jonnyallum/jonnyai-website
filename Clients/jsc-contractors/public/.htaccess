@@ -1,0 +1,24 @@
+# Force directory index
+DirectoryIndex index.html
+
+# Prevent directory listing
+Options -Indexes
+
+# Handle trailingSlash: true
+RewriteEngine On
+RewriteBase /
+
+# Force trailing slash for directories
+RewriteCond %{REQUEST_FILENAME} -d
+RewriteRule ^(.+?[^/])$ %{REQUEST_URI}/ [L,R=301]
+
+# If it's a directory or has an index.html, serve it
+RewriteCond %{REQUEST_FILENAME} -d
+RewriteCond %{REQUEST_FILENAME}/index.html -f
+RewriteRule ^(.*)$ $1/index.html [L]
+
+# Custom 404
+ErrorDocument 404 /404/index.html
+
+# Security
+Header set X-Content-Type-Options "nosniff"

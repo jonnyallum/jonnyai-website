@@ -1,0 +1,207 @@
+{
+    "$schema": "https://raw.githubusercontent.com/modelcontextprotocol/servers/main/schemas/mcp-config.json",
+    "description": "The Antigravity Orchestra - Universal MCP Configuration",
+
+    "mcpServers": {
+
+        "_comment_core": "=== CORE INFRASTRUCTURE ===",
+
+        "shared-brain": {
+            "command": "npx",
+            "args": [
+                "-y",
+                "@modelcontextprotocol/server-postgres",
+                "${ANTIGRAVITY_BRAIN_CONNECTION_STRING}"
+            ],
+            "description": "The Shared Brain - Central CRM/Memory for all agents",
+            "enabled": true
+        },
+
+        "sequential-thinking": {
+            "command": "npx",
+            "args": ["-y", "@modelcontextprotocol/server-sequential-thinking"],
+            "description": "Deep reasoning for complex problems",
+            "enabled": true
+        },
+
+        "memory": {
+            "command": "npx",
+            "args": ["-y", "@modelcontextprotocol/server-memory"],
+            "description": "Persistent memory across sessions",
+            "enabled": true
+        },
+
+        "_comment_filesystem": "=== FILE & CODE ACCESS ===",
+
+        "filesystem": {
+            "command": "npx",
+            "args": [
+                "-y",
+                "@modelcontextprotocol/server-filesystem",
+                "c:/Users/jonny/Desktop/AgOS 3.0 template"
+            ],
+            "description": "Workspace file access",
+            "enabled": true
+        },
+
+        "git": {
+            "command": "npx",
+            "args": [
+                "-y",
+                "@modelcontextprotocol/server-git",
+                "--repository",
+                "c:/Users/jonny/Desktop/AgOS 3.0 template"
+            ],
+            "description": "Git operations",
+            "enabled": true
+        },
+
+        "github": {
+            "command": "npx",
+            "args": ["-y", "@modelcontextprotocol/server-github"],
+            "env": {
+                "GITHUB_PERSONAL_ACCESS_TOKEN": "${GITHUB_TOKEN}"
+            },
+            "description": "GitHub API access for all repos",
+            "enabled": true
+        },
+
+        "_comment_web": "=== WEB & RESEARCH ===",
+
+        "fetch": {
+            "command": "npx",
+            "args": ["-y", "@modelcontextprotocol/server-fetch"],
+            "description": "Web fetching for research",
+            "enabled": true
+        },
+
+        "brave-search": {
+            "command": "npx",
+            "args": ["-y", "@modelcontextprotocol/server-brave-search"],
+            "env": {
+                "BRAVE_API_KEY": "${BRAVE_API_KEY}"
+            },
+            "description": "Brave search for web research",
+            "enabled": true
+        },
+
+        "exa": {
+            "command": "npx",
+            "args": ["-y", "exa-mcp-server"],
+            "env": {
+                "EXA_API_KEY": "${EXA_API_KEY}"
+            },
+            "description": "Exa AI-powered search",
+            "enabled": true
+        },
+
+        "puppeteer": {
+            "command": "npx",
+            "args": ["-y", "@modelcontextprotocol/server-puppeteer"],
+            "description": "Browser automation for testing and scraping",
+            "enabled": true
+        },
+
+        "_comment_data": "=== DATABASES ===",
+
+        "postgres-kwizz": {
+            "command": "npx",
+            "args": [
+                "-y",
+                "@modelcontextprotocol/server-postgres",
+                "${KWIZZ_DATABASE_URL}"
+            ],
+            "description": "Kwizz project database",
+            "enabled": true
+        },
+
+        "sqlite-workspace": {
+            "command": "npx",
+            "args": [
+                "-y",
+                "@modelcontextprotocol/server-sqlite",
+                "--db-path",
+                "c:/Users/jonny/Desktop/AgOS 3.0 template/.tmp/workspace.db"
+            ],
+            "description": "Local workspace database",
+            "enabled": true
+        },
+
+        "_comment_productivity": "=== PRODUCTIVITY & INTEGRATIONS ===",
+
+        "google-drive": {
+            "command": "npx",
+            "args": ["-y", "@modelcontextprotocol/server-gdrive"],
+            "env": {
+                "GDRIVE_CLIENT_ID": "${GDRIVE_CLIENT_ID}",
+                "GDRIVE_CLIENT_SECRET": "${GDRIVE_CLIENT_SECRET}"
+            },
+            "description": "Google Drive access",
+            "enabled": true
+        },
+
+        "google-maps": {
+            "command": "npx",
+            "args": ["-y", "@modelcontextprotocol/server-google-maps"],
+            "env": {
+                "GOOGLE_MAPS_API_KEY": "${GOOGLE_MAPS_API_KEY}"
+            },
+            "description": "Google Maps for location services",
+            "enabled": true
+        },
+
+        "linear": {
+            "command": "npx",
+            "args": ["-y", "@modelcontextprotocol/server-linear"],
+            "env": {
+                "LINEAR_API_KEY": "${LINEAR_API_KEY}"
+            },
+            "description": "Linear project management",
+            "enabled": true
+        },
+
+        "time": {
+            "command": "npx",
+            "args": ["-y", "@modelcontextprotocol/server-time"],
+            "description": "Time and timezone utilities",
+            "enabled": true
+        },
+
+        "notebooklm": {
+            "command": "npx",
+            "args": ["-y", "notebooklm-mcp"],
+            "description": "NotebookLM integration",
+            "enabled": true
+        },
+        "mcp-ebay-bl": {
+            "command": "node",
+            "args": ["c:/Users/jonny/Desktop/JonnyAI_JaiOS_4.0/execution/mcp-ebay-bl/dist/index.js"],
+            "env": {
+                "EBAY_CLIENT_ID": "${EBAY_CLIENT_ID}",
+                "EBAY_CLIENT_SECRET": "${EBAY_CLIENT_SECRET}",
+                "EBAY_ENVIRONMENT": "production"
+            },
+            "description": "eBay API for BL Motorcycles dropshipping",
+            "enabled": true
+        },
+        "mcp-bl-supabase": {
+            "command": "node",
+            "args": ["c:/Users/jonny/Desktop/JonnyAI_JaiOS_4.0/execution/mcp-bl-supabase/dist/index.js"],
+            "env": {
+                "SUPABASE_URL": "${SUPABASE_URL}",
+                "SUPABASE_SERVICE_ROLE_KEY": "${SUPABASE_SERVICE_ROLE_KEY}"
+            },
+            "description": "Supabase MCP for BL Motorcycles Enterprise",
+            "enabled": true
+        }
+    },
+
+    "_project_databases": {
+        "_comment": "Add these as projects get Supabase instances",
+        "dj-waste-db": "postgresql://...",
+        "cd-waste-db": "postgresql://...",
+        "poundtrades-db": "postgresql://...",
+        "insydetradar-db": "postgresql://...",
+        "jonnyai-db": "postgresql://..."
+    }
+}

@@ -1,0 +1,170 @@
+{
+  "generated": "2026-02-19T12:00:00Z",
+  "period": "2026-W08",
+  "system_status": "operational",
+  "health_score": 9.5,
+  "note": "Backfilled 2026-02-19. Metrics estimated from task-history and audit reports.",
+  "agents": {
+    "conductor": {
+      "handle": "marcus",
+      "status": "active",
+      "tasks_completed": 5,
+      "success_rate": 1.0,
+      "last_active": "2026-02-19",
+      "training_needs": ["memory automation hook"]
+    },
+    "deploy": {
+      "handle": "owen",
+      "status": "active",
+      "tasks_completed": 3,
+      "success_rate": 0.95,
+      "last_active": "2026-02-18",
+      "training_needs": []
+    },
+    "jonny-ai": {
+      "handle": "sebastian",
+      "status": "active",
+      "tasks_completed": 2,
+      "success_rate": 1.0,
+      "last_active": "2026-02-18",
+      "training_needs": []
+    },
+    "sentinel": {
+      "handle": "sam",
+      "status": "active",
+      "tasks_completed": 1,
+      "success_rate": 1.0,
+      "last_active": "2026-02-06",
+      "training_needs": ["validate_agents.py Jai.OS 5.0 format upgrade"]
+    },
+    "pixel": {
+      "handle": "priya",
+      "status": "active",
+      "tasks_completed": 2,
+      "success_rate": 1.0,
+      "last_active": "2026-02-06",
+      "training_needs": []
+    },
+    "datastore": {
+      "handle": "diana",
+      "status": "active",
+      "tasks_completed": 1,
+      "success_rate": 1.0,
+      "last_active": "2026-02-06",
+      "training_needs": []
+    },
+    "watcher": {
+      "handle": "vigil",
+      "status": "active",
+      "tasks_completed": 1,
+      "success_rate": 1.0,
+      "last_active": "2026-02-18",
+      "training_needs": []
+    },
+    "devops": {
+      "handle": "derek",
+      "status": "active",
+      "tasks_completed": 0,
+      "success_rate": 0,
+      "last_active": null,
+      "training_needs": []
+    },
+    "vaultguard": {
+      "handle": "victor",
+      "status": "active",
+      "tasks_completed": 0,
+      "success_rate": 0,
+      "last_active": null,
+      "training_needs": []
+    },
+    "autoflow": {
+      "handle": "alex",
+      "status": "active",
+      "tasks_completed": 0,
+      "success_rate": 0,
+      "last_active": null,
+      "training_needs": []
+    },
+    "forge": {
+      "handle": "felix",
+      "status": "active",
+      "tasks_completed": 0,
+      "success_rate": 0,
+      "last_active": null,
+      "training_needs": []
+    },
+    "goldie": {
+      "handle": "grace",
+      "status": "active",
+      "tasks_completed": 0,
+      "success_rate": 0,
+      "last_active": null,
+      "training_needs": []
+    },
+    "echo": {
+      "handle": "elena",
+      "status": "active",
+      "tasks_completed": 0,
+      "success_rate": 0,
+      "last_active": null,
+      "training_needs": []
+    },
+    "archivist": {
+      "handle": "arthur",
+      "status": "active",
+      "tasks_completed": 0,
+      "success_rate": 0,
+      "last_active": null,
+      "training_needs": ["update docs and runbooks — weekly task overdue"]
+    },
+    "manus": {
+      "handle": "mason",
+      "status": "active",
+      "tasks_completed": 0,
+      "success_rate": 0,
+      "last_active": null,
+      "training_needs": []
+    },
+    "adapter": {
+      "handle": "adrian",
+      "status": "active",
+      "tasks_completed": 0,
+      "success_rate": 0,
+      "last_active": null,
+      "training_needs": []
+    },
+    "scout": {
+      "handle": "sophie",
+      "status": "active",
+      "tasks_completed": 0,
+      "success_rate": 0,
+      "last_active": null,
+      "training_needs": []
+    },
+    "counsel": {
+      "handle": "luna",
+      "status": "active",
+      "tasks_completed": 0,
+      "success_rate": 0,
+      "last_active": null,
+      "training_needs": []
+    }
+  },
+  "gaps_detected": [
+    "Memory automation: no post-session write hook exists",
+    "validate_agents.py: expects AgOS 2.0 format, 27 of 41 agents are Jai.OS 5.0",
+    "supabase-shared-brain MCP: historically deleted during config syncs — monitor",
+    "brain_sync.py: 14 learnings from Feb 18 not yet pushed to Supabase"
+  ],
+  "next_training_day": "2026-02-26",
+  "pending_actions": [
+    "Run brain_sync.py — push 14 learnings from 2026-02-18",
+    "Kwizz Phase 4: public deploy, audio, PWA",
+    "Kwizz Phase 5: Stripe integration, credit gate",
+    "Village Bakery god-tier upgrade",
+    "LA Aesthetician Instagram embeds",
+    "Antigravity footer on all client sites",
+    "Implement session_logger.py as post-task hook",
+    "Construct FM chatbot — migrate to Vercel"
+  ]
+}

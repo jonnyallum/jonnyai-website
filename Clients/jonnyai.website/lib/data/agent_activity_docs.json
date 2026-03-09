@@ -1,0 +1,32 @@
+﻿[
+  {
+    "sha": "d24ee430f9dc3aae3ca32d5473f99d65f700b0f3",
+    "author": "Jonny Allum",
+    "date": "2026-02-23T18:35:36Z",
+    "message": "docs: add full_sync.py to sync.md + mirror workspace commands to all docs\n\nCo-Authored-By: Claude Sonnet 4.6 <noreply@anthropic.com>"
+  },
+  {
+    "sha": "ee61f36171b024b8635bf1c8ea36ba0a82da1dce",
+    "author": "Test User",
+    "date": "2026-02-19T19:28:46Z",
+    "message": "docs: update documentation\n\n- Updated 5 documentation file(s)\n\n[AgOS Auto-Sync 2026-02-19 19:28]"
+  },
+  {
+    "sha": "a1e7334d5a00803bbacd45f1e63a9ff9e8c89230",
+    "author": "Jonny Allum",
+    "date": "2026-02-23T10:59:02Z",
+    "message": "feat: Jai.OS 5.0 full system alignment ??? new README, 73 legacy scripts purged, all docs updated\n\nAGENT SYSTEM:\n- 59/59 agents at Jai.OS 5.0 Gold Standard (0 legacy, 0 partial)\n- AGENT_REGISTRY.md: @successbot + @coursewright added, Total 59/59, Build Queue closed\n\nDOCS:\n- README.md: full rewrite ??? 59-agent roster, architecture, active scripts, tech stack\n- CLAUDE.md/AGENTS.md/GEMINI.md: workspace commands updated to reflect actual scripts\n- All 57???59 agent count refs updated across all mirror files\n\nEXECUTION ENGINE:\n- Pruned from 103 scripts to 30 active core scripts\n- Deleted: AgOS 2.0/3.0 duplicates, one-off fixers, client-specific junk (kwizz/HACCP), migration scripts\n- Kept: validate_agents, sync_all_skills_full, brain_sync, ralph_loop, orchestra_heartbeat, deploy_ssh, onboard_project, + 23 others\n\nAGENT SKILL.MD UPDATES:\n- All modified SKILL.md files committed (multi-author audit batch)\n- @marcus: platinum upgrade (8 SOPs)\n- @coursewright: full gold-standard rewrite\n- @successbot, @alex, @mason, @arthur, @sophie: upgraded/fixed\n\nCo-Authored-By: Claude Sonnet 4.6 <noreply@anthropic.com>"
+  },
+  {
+    "sha": "a8f2d685323ab911998938b8cddf27d3e6938ffe",
+    "author": "Jonny Allum",
+    "date": "2026-02-23T10:49:38Z",
+    "message": "chore: full legacy alignment ??? 59-Agent Orchestra, AGENT_REGISTRY complete, protocol docs updated to Jai.OS 5.0\n\n- CLAUDE.md, AGENTS.md, GEMINI.md: 57???59 agent count across all 4 occurrences each\n- AGENT_REGISTRY.md: @successbot + @coursewright added to completed table, Total 57???59, Legacy section cleared (0 remaining), Batch 3 marked complete\n- QUALITY_GATES_PROTOCOL.md: footer AgOS 3.0 ??? Jai.OS 5.0\n- DECISION_LOG.md: title updated to Jai.OS 5.0 Decision Log\n- build_skills_matrix.py: comment updated 57???59 agents\n\nAll 59 agents at Jai.OS 5.0 Gold Standard. Zero legacy stubs.\n\nCo-Authored-By: Claude Sonnet 4.6 <noreply@anthropic.com>"
+  },
+  {
+    "sha": "ddf609841f5b90c2f1b2f807d68003a2e49aa38e",
+    "author": "Jonny Allum",
+    "date": "2026-02-23T11:44:10Z",
+    "message": "feat(agent): @dashboard ??? Mila-Honey \"The Dashboard Architect\" live at gold standard\n\nNew 60th agent ??? Business Intelligence & Dashboard Architecture:\n- Philosophy Quote: \"Every pixel earns its place or it costs a decision...\"\n- 4 SOPs: Intake & Spec, Data Modeling, Visual Architecture Handoff, Post-Launch Review\n- 5 Can Do (KPI mapping, pipeline design, visual architecture, cross-domain BI, embedded portals)\n- 4 Cannot Do with routing (sebastian/priya/diana+victor/patrick+sophie)\n- Performance metrics: 5-second clarity 100%, queries <2s, mobile >90 Lighthouse\n- Restrictions: 7-panel cap enforced, pie chart blacklist, undefined KPIs banned\n- Inner Circle: @sebastian, @priya, @diana, @maya, @nina, @victor\n\nRegistry: 59???60, all docs updated (README, CLAUDE, AGENTS, GEMINI)\nbrain_sync.py: @dashboard added to agent_meta (now 60 agents)\nSupabase: 60/60 agents synced (heartbeat + full philosophy)\n\nCo-Authored-By: Claude Sonnet 4.6 <noreply@anthropic.com>"
+  }
+]

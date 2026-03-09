@@ -1,0 +1,21 @@
+{
+  "name": "ebay-api-test",
+  "version": "1.0.0",
+  "description": "eBay API connection and testing",
+  "main": "get-user.js",
+  "scripts": {
+    "test": "node get-user.js",
+    "start": "node get-user.js"
+  },
+  "keywords": [
+    "ebay",
+    "api",
+    "testing"
+  ],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^1.6.0",
+    "dotenv": "^16.3.0"
+  }
+}

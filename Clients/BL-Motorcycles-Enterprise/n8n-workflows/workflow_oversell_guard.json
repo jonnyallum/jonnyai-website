@@ -1,0 +1,56 @@
+{
+  "name": "BL: Oversell Guard (Out of Stock Alert)",
+  "nodes": [
+    {
+      "parameters": { "rule": { "interval": [{ "field": "hours", "hoursInterval": 2 }] } },
+      "name": "Every 2 Hours",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "position": [240, 300],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "https://ddjuoeyaoxllockcusgf.supabase.co/rest/v1/products",
+        "qs": { "select": "sku,title,supplier_id,stock_level,is_active_on_ebay", "stock_level": "eq.0", "is_active_on_ebay": "eq.true", "limit": "50" },
+        "headerParameters": { "parameters": [
+          { "name": "apikey", "value": "={{$env.BL_SUPABASE_SERVICE_KEY}}" },
+          { "name": "Authorization", "value": "Bearer {{$env.BL_SUPABASE_SERVICE_KEY}}" }
+        ]}
+      },
+      "name": "Get OOS Products Still Active",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [460, 300],
+      "typeVersion": 3
+    },
+    {
+      "parameters": { "conditions": { "number": [{ "value1": "={{$json.length}}", "operation": "larger", "value2": 0 }] } },
+      "name": "Any OOS?",
+      "type": "n8n-nodes-base.if",
+      "position": [680, 300],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.resend.com/emails",
+        "headerParameters": { "parameters": [{ "name": "Authorization", "value": "Bearer {{$env.RESEND_API_KEY}}" }] },
+        "body": {
+          "from": "BL Ops Alert <reports@jonnyai.co.uk>",
+          "to": ["brett@blmotorcycles.co.uk"],
+          "subject": "={{`🔴 ${$json.length} Products OUT OF STOCK but still LIVE on eBay`}}",
+          "html": "={{`<div style='font-family:Arial;max-width:600px;margin:auto;background:#0a0a0c;padding:40px;'><h2 style='color:#ef4444;'>🔴 Oversell Risk Alert</h2><p style='color:#ddd;'>These products have 0 stock but are still active on eBay. Risk of overselling!</p><table style='width:100%;border-collapse:collapse;margin:20px 0;'><tr style='border-bottom:1px solid #222;'><th style='text-align:left;padding:8px;color:#888;font-size:12px;'>SKU</th><th style='text-align:left;padding:8px;color:#888;font-size:12px;'>Product</th><th style='text-align:left;padding:8px;color:#888;font-size:12px;'>Supplier</th></tr>${$json.map(p => '<tr style=\"border-bottom:1px solid #111;\"><td style=\"padding:8px;color:#f97316;font-size:13px;\">' + p.sku + '</td><td style=\"padding:8px;color:#ddd;font-size:13px;\">' + (p.title||'').substring(0,40) + '</td><td style=\"padding:8px;color:#ddd;font-size:13px;\">' + p.supplier_id + '</td></tr>').join('')}</table><p style='color:#888;font-size:12px;'>Action: End these eBay listings or restock ASAP</p></div>`}}"
+        }
+      },
+      "name": "Email Oversell Alert",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [900, 200],
+      "typeVersion": 3
+    }
+  ],
+  "connections": {
+    "Every 2 Hours": { "main": [[{ "node": "Get OOS Products Still Active", "type": "main", "index": 0 }]] },
+    "Get OOS Products Still Active": { "main": [[{ "node": "Any OOS?", "type": "main", "index": 0 }]] },
+    "Any OOS?": { "main": [[{ "node": "Email Oversell Alert", "type": "main", "index": 0 }], []] }
+  }
+}

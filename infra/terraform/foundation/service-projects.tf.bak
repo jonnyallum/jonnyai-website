@@ -1,0 +1,87 @@
+module "cs-svc-depart-team-1-prod-svc-e8mp" {
+  source  = "terraform-google-modules/project-factory/google//modules/svpc_service_project"
+  version = "~> 18.0"
+
+  name            = "departmen-team-1-prod-svc"
+  project_id      = "depart-team-1-prod-svc-e8mp"
+  org_id          = var.org_id
+  billing_account = var.billing_account
+  folder_id       = local.folder_map["Department 1/Team 1/Production"].id
+
+  shared_vpc = module.cs-vpc-prod-shared.project_id
+  shared_vpc_subnets = [
+    try(module.cs-vpc-prod-shared.subnets["europe-west2/subnet-prod-1"].self_link, ""),
+    try(module.cs-vpc-prod-shared.subnets["europe-west1/subnet-prod-2"].self_link, ""),
+  ]
+
+  domain     = data.google_organization.org.domain
+  group_name = module.cs-gg-departmen-team-1-prod-svc.name
+  group_role = "roles/viewer"
+  depends_on = [
+    module.cs-org-policy-compute_skipDefaultNetworkCreation,
+  ]
+}
+
+module "cs-svc-depart-team-1-nonprod-svc-e8mp" {
+  source  = "terraform-google-modules/project-factory/google//modules/svpc_service_project"
+  version = "~> 18.0"
+
+  name            = "departmen-team-1-nonprod-svc"
+  project_id      = "depart-team-1-nonprod-svc-e8mp"
+  org_id          = var.org_id
+  billing_account = var.billing_account
+  folder_id       = local.folder_map["Department 1/Team 1/Non-Production"].id
+
+  shared_vpc = module.cs-vpc-nonprod-shared.project_id
+  shared_vpc_subnets = [
+    try(module.cs-vpc-nonprod-shared.subnets["europe-west2/subnet-non-prod-1"].self_link, ""),
+    try(module.cs-vpc-nonprod-shared.subnets["europe-west1/subnet-non-prod-2"].self_link, ""),
+  ]
+
+  domain     = data.google_organization.org.domain
+  group_name = module.cs-gg-departmen-team-1-nonprod-svc.name
+  group_role = "roles/viewer"
+  depends_on = [
+    module.cs-org-policy-compute_skipDefaultNetworkCreation,
+  ]
+}
+
+module "cs-svc-depart-team-2-prod-svc-e8mp" {
+  source  = "terraform-google-modules/project-factory/google//modules/svpc_service_project"
+  version = "~> 18.0"
+
+  name            = "departmen-team-2-prod-svc"
+  project_id      = "depart-team-2-prod-svc-e8mp"
+  org_id          = var.org_id
+  billing_account = var.billing_account
+  folder_id       = local.folder_map["Department 1/Team 2/Production"].id
+
+  shared_vpc = module.cs-project-vpc-host-prod.project_id
+
+  domain     = data.google_organization.org.domain
+  group_name = module.cs-gg-departmen-team-2-prod-svc.name
+  group_role = "roles/viewer"
+  depends_on = [
+    module.cs-org-policy-compute_skipDefaultNetworkCreation,
+  ]
+}
+
+module "cs-svc-depart-team-2-nonprod-svc-e8mp" {
+  source  = "terraform-google-modules/project-factory/google//modules/svpc_service_project"
+  version = "~> 18.0"
+
+  name            = "departmen-team-2-nonprod-svc"
+  project_id      = "depart-team-2-nonprod-svc-e8mp"
+  org_id          = var.org_id
+  billing_account = var.billing_account
+  folder_id       = local.folder_map["Department 1/Team 2/Non-Production"].id
+
+  shared_vpc = module.cs-project-vpc-host-nonprod.project_id
+
+  domain     = data.google_organization.org.domain
+  group_name = module.cs-gg-departmen-team-2-nonprod-svc.name
+  group_role = "roles/viewer"
+  depends_on = [
+    module.cs-org-policy-compute_skipDefaultNetworkCreation,
+  ]
+}

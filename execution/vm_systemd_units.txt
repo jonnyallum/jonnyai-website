@@ -1,0 +1,53 @@
+# --- bl-stock-sync.service ---
+[Unit]
+Description=BL Motorcycles Universal Stock Sync (Bike It + CMPO)
+After=network.target
+
+[Service]
+Type=oneshot
+User=antigravity-ai
+WorkingDirectory=/home/antigravity-ai/Antigravity_Orchestra
+EnvironmentFile=/home/antigravity-ai/Antigravity_Orchestra/.env
+ExecStart=/usr/bin/python3 execution/sync_bl_stock.py
+
+[Install]
+WantedBy=multi-user.target
+
+# --- bl-stock-sync.timer ---
+[Unit]
+Description=Run BL Stock Sync every 15 minutes
+
+[Timer]
+OnBootSec=5min
+OnUnitActiveSec=15min
+Unit=bl-stock-sync.service
+
+[Install]
+WantedBy=timers.target
+
+# --- ais-branch-listener.service ---
+[Unit]
+Description=Listen for AI Branch Updates (ChatGPT, Perplexity, Manus)
+After=network.target
+
+[Service]
+Type=oneshot
+User=antigravity-ai
+WorkingDirectory=/home/antigravity-ai/Antigravity_Orchestra
+EnvironmentFile=/home/antigravity-ai/Antigravity_Orchestra/.env
+ExecStart=/usr/bin/python3 execution/ais_branch_listener.py
+
+[Install]
+WantedBy=multi-user.target
+
+# --- ais-branch-listener.timer ---
+[Unit]
+Description=Daily scan of AI branch and repo health
+
+[Timer]
+OnCalendar=daily
+Persistent=true
+Unit=ais-branch-listener.service
+
+[Install]
+WantedBy=timers.target

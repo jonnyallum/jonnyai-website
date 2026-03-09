@@ -1,0 +1,14 @@
+{
+  "name": "ebay-oauth-flow",
+  "version": "1.0.0",
+  "description": "eBay OAuth 2.0 flow for BL Motorcycles",
+  "main": "oauth-init.js",
+  "scripts": {
+    "auth": "node oauth-init.js",
+    "complete": "node oauth-complete.js"
+  },
+  "dependencies": {
+    "axios": "^1.6.0",
+    "dotenv": "^16.3.0"
+  }
+}

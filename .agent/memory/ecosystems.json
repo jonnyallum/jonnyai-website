@@ -1,0 +1,42 @@
+{
+  "ecosystems": [
+    {
+      "name": "Betting",
+      "path": "Ecosystems/Betting",
+      "type": "agency",
+      "description": "Sports betting, odds analysis, and gambling systems",
+      "created": "2026-02-01T20:52:00Z",
+      "last_sync": "2026-02-01T00:00:00Z",
+      "status": "active"
+    },
+    {
+      "name": "Trading-Floor",
+      "path": "Ecosystems/Trading-Floor",
+      "type": "trading",
+      "description": "Financial trading, market analysis, and algorithmic strategies",
+      "created": "2026-02-01T22:12:00Z",
+      "last_sync": "2026-02-01T00:00:00Z",
+      "status": "active"
+    },
+    {
+      "name": "Red-Team-Lab",
+      "path": "Ecosystems/Red-Team-Lab",
+      "type": "security",
+      "description": "Security testing, vulnerability research, and defensive strategies",
+      "created": "2026-02-01T22:16:00Z",
+      "last_sync": "2026-02-01T00:00:00Z",
+      "status": "active"
+    },
+    {
+      "name": "Media-House",
+      "path": "Ecosystems/Media-House",
+      "type": "content",
+      "description": "Content creation, video production, and media campaigns",
+      "created": "2026-02-01T22:19:00Z",
+      "last_sync": "2026-02-01T00:00:00Z",
+      "status": "active"
+    }
+  ],
+  "default_ecosystem": null,
+  "hotswap_history": []
+}

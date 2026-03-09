@@ -1,0 +1,102 @@
+{
+  "agent": "steve",
+  "learnings": [
+    {
+      "learning": "Use `SECURITY DEFINER` for elevated privileges",
+      "timestamp": "2026-02-11T21:22:12.623897+00:00",
+      "source": "shared_brain"
+    },
+    {
+      "learning": "Set explicit `search_path` to prevent ambiguity",
+      "timestamp": "2026-02-11T21:22:12.623897+00:00",
+      "source": "shared_brain"
+    },
+    {
+      "learning": "Include `ON CONFLICT` handling for idempotency",
+      "timestamp": "2026-02-11T21:22:12.623897+00:00",
+      "source": "shared_brain"
+    },
+    {
+      "learning": "[ ] All tables accessible via REST API",
+      "timestamp": "2026-02-11T21:22:12.623897+00:00",
+      "source": "shared_brain"
+    },
+    {
+      "learning": "[ ] All RPC functions callable",
+      "timestamp": "2026-02-11T21:22:12.623897+00:00",
+      "source": "shared_brain"
+    },
+    {
+      "learning": "[ ] RLS policies active on sensitive tables",
+      "timestamp": "2026-02-11T21:22:12.623897+00:00",
+      "source": "shared_brain"
+    },
+    {
+      "learning": "[ ] Schema cache is fresh (no stale entries)",
+      "timestamp": "2026-02-11T21:22:12.623897+00:00",
+      "source": "shared_brain"
+    },
+    {
+      "learning": "[ ] Connection pool not exhausted",
+      "timestamp": "2026-02-11T21:22:12.623897+00:00",
+      "source": "shared_brain"
+    },
+    {
+      "learning": "[ ] No orphaned triggers or functions",
+      "timestamp": "2026-02-11T21:22:12.623897+00:00",
+      "source": "shared_brain"
+    },
+    {
+      "learning": "Broadcast: One-to-many messages (chat, notifications)",
+      "timestamp": "2026-02-11T21:22:12.623897+00:00",
+      "source": "shared_brain"
+    },
+    {
+      "learning": "Presence: Who's online (game lobbies, collaboration)",
+      "timestamp": "2026-02-11T21:22:12.623897+00:00",
+      "source": "shared_brain"
+    },
+    {
+      "learning": "Postgres Changes: Database change notifications (live updates)",
+      "timestamp": "2026-02-11T21:22:12.623897+00:00",
+      "source": "shared_brain"
+    },
+    {
+      "learning": "[ ] All new tables have RLS enabled",
+      "timestamp": "2026-02-11T21:22:12.623897+00:00",
+      "source": "shared_brain"
+    },
+    {
+      "learning": "[ ] All new functions are in the correct schema",
+      "timestamp": "2026-02-11T21:22:12.623897+00:00",
+      "source": "shared_brain"
+    },
+    {
+      "learning": "[ ] Schema cache has been reloaded",
+      "timestamp": "2026-02-11T21:22:12.623897+00:00",
+      "source": "shared_brain"
+    },
+    {
+      "learning": "[ ] All endpoints tested via REST API",
+      "timestamp": "2026-02-11T21:22:12.623897+00:00",
+      "source": "shared_brain"
+    },
+    {
+      "learning": "[ ] No service_role keys exposed to client",
+      "timestamp": "2026-02-11T21:22:12.623897+00:00",
+      "source": "shared_brain"
+    },
+    {
+      "learning": "[ ] Realtime subscriptions tested (if applicable)",
+      "timestamp": "2026-02-11T21:22:12.623897+00:00",
+      "source": "shared_brain"
+    },
+    {
+      "learning": "[ ] Migration is reversible",
+      "timestamp": "2026-02-11T21:22:12.623897+00:00",
+      "source": "shared_brain"
+    }
+  ],
+  "tasks": [],
+  "patterns": {}
+}

@@ -1,0 +1,21 @@
+2025-05-23 02:44:15,450 | INFO | [OK] Supabase config loaded: https://kenaardqwnpeqtwukdnb.s...
+2025-05-23 02:44:15,450 | INFO | [START] QUICK FIX UPLOAD - NO BATCH_ID
+2025-05-23 02:44:15,450 | INFO | ==================================================
+2025-05-23 02:44:15,450 | INFO | [LOAD] Loading 01_All_Products_CSV.csv...
+2025-05-23 02:44:15,614 | INFO | [OK] Loaded 10,286 total records
+2025-05-23 02:44:15,614 | INFO | [TEST] Selected 10 records for testing
+2025-05-23 02:44:15,614 | INFO | [TRANSFORM] Converting records to eBay format...
+2025-05-23 02:44:15,616 | INFO | [OK] Transformed 10 records successfully
+2025-05-23 02:44:16,045 | WARNING | [WARNING] Batch 1 failed (400), trying individual uploads...
+2025-05-23 02:44:16,045 | WARNING | Error: {"code":"PGRST204","details":null,"hint":null,"message":"Could not find the 'brand' column of 'ebay_listings' in the schema cache"}
+2025-05-23 02:44:16,330 | ERROR | Individual upload failed: {"code":"PGRST204","details":null,"hint":null,"message":"Could not find the 'brand' column of 'ebay_listings' in the schema cache"}
+2025-05-23 02:44:16,652 | ERROR | Individual upload failed: {"code":"PGRST204","details":null,"hint":null,"message":"Could not find the 'brand' column of 'ebay_listings' in the schema cache"}
+2025-05-23 02:44:16,975 | ERROR | Individual upload failed: {"code":"PGRST204","details":null,"hint":null,"message":"Could not find the 'brand' column of 'ebay_listings' in the schema cache"}
+2025-05-23 02:44:17,237 | ERROR | Individual upload failed: {"code":"PGRST204","details":null,"hint":null,"message":"Could not find the 'brand' column of 'ebay_listings' in the schema cache"}
+2025-05-23 02:44:17,562 | ERROR | Individual upload failed: {"code":"PGRST204","details":null,"hint":null,"message":"Could not find the 'brand' column of 'ebay_listings' in the schema cache"}
+2025-05-23 02:44:17,839 | ERROR | Individual upload failed: {"code":"PGRST204","details":null,"hint":null,"message":"Could not find the 'brand' column of 'ebay_listings' in the schema cache"}
+2025-05-23 02:44:18,117 | ERROR | Individual upload failed: {"code":"PGRST204","details":null,"hint":null,"message":"Could not find the 'brand' column of 'ebay_listings' in the schema cache"}
+2025-05-23 02:44:18,398 | ERROR | Individual upload failed: {"code":"PGRST204","details":null,"hint":null,"message":"Could not find the 'brand' column of 'ebay_listings' in the schema cache"}
+2025-05-23 02:44:18,704 | ERROR | Individual upload failed: {"code":"PGRST204","details":null,"hint":null,"message":"Could not find the 'brand' column of 'ebay_listings' in the schema cache"}
+2025-05-23 02:44:18,963 | ERROR | Individual upload failed: {"code":"PGRST204","details":null,"hint":null,"message":"Could not find the 'brand' column of 'ebay_listings' in the schema cache"}
+2025-05-23 02:44:18,963 | INFO | [RETRY] Batch 1: 0 success, 10 failed in 3.34s

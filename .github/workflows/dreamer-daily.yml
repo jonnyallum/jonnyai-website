@@ -1,0 +1,32 @@
+name: Dreamer Daily Feed
+
+on:
+  schedule:
+    # Runs at 07:00 UTC every day (before the working day starts)
+    - cron: '0 7 * * *'
+  workflow_dispatch:
+
+jobs:
+  dreamer:
+    name: Daily Empire Feed
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install requests anthropic
+
+      - name: Run Dreamer Daily
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          ANTIGRAVITY_BRAIN_URL: ${{ secrets.ANTIGRAVITY_BRAIN_URL }}
+          ANTIGRAVITY_BRAIN_SERVICE_ROLE_KEY: ${{ secrets.ANTIGRAVITY_BRAIN_SERVICE_ROLE_KEY }}
+          ANTIGRAVITY_BRAIN_ANON_KEY: ${{ secrets.ANTIGRAVITY_BRAIN_ANON_KEY }}
+        run: python execution/dreamer_daily_serverside.py

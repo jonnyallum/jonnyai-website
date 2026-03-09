@@ -1,0 +1,304 @@
+{
+  "website": {
+    "domain": "construct-fm.co.uk",
+    "company": {
+      "name": "Construct Facilities Management",
+      "registration": "Company registered in United Kingdom at 21a Picton House, Waterlooville PO7 7SQ",
+      "copyright": "© 2026",
+      "developer": {
+        "name": "boxChilli",
+        "url": "https://www.boxchilli.com/"
+      }
+    },
+    "contact": {
+      "phone": "02394 353333",
+      "email": "Info@construct-fm.co.uk",
+      "address": {
+        "line_1": "Portsmouth Technopole",
+        "line_2": "Kingston Crescent",
+        "city": "Portsmouth",
+        "postcode": "PO2 8FA",
+        "country": "United Kingdom"
+      }
+    },
+    "pages": {
+      "main": [
+        {
+          "title": "Home",
+          "url": "/",
+          "type": "homepage",
+          "sections": [
+            "hero_carousel",
+            "welcome_section",
+            "why_choose_us",
+            "building_services_summary",
+            "facilities_management_summary",
+            "about_section",
+            "accreditations"
+          ]
+        },
+        {
+          "title": "Building Services",
+          "url": "/building-services/",
+          "type": "main_service_page",
+          "includes_form": true
+        },
+        {
+          "title": "Facilities Management Services",
+          "url": "/facilities-management-services/",
+          "type": "main_service_page",
+          "includes_form": true
+        },
+        {
+          "title": "Case Studies",
+          "url": "/case-studies/",
+          "type": "portfolio_page",
+          "sub_pages": [
+            "/case-studies/butlins-communal-shower-refurbishment/",
+            "/case-studies/kitchen-dining-room-refurbishment-in-portsmouth/",
+            "/case-studies/external-updates-at-portsmouth-academy-school/"
+          ]
+        },
+        {
+          "title": "About Us",
+          "url": "/about/",
+          "type": "about_page",
+          "features": [
+            "company_description",
+            "accreditations_list",
+            "team_approach",
+            "services_overview"
+          ]
+        },
+        {
+          "title": "Blog / Help & Advice",
+          "url": "/help-advice/",
+          "type": "blog_listing",
+          "articles": [
+            "/diy-home-energy-efficiency/",
+            "/essential-tools-for-diy/"
+          ]
+        },
+        {
+          "title": "Contact Us",
+          "url": "/contact/",
+          "type": "contact_page",
+          "features": [
+            "contact_form",
+            "embedded_map",
+            "contact_details"
+          ],
+          "includes_form": true
+        }
+      ],
+      "building_services_specializations": [
+        {
+          "title": "Home Builders & House Extensions",
+          "url": "/building-services/hampshire-home-builders-house-extentions/",
+          "includes_form": true
+        },
+        {
+          "title": "Building & Home Renovations",
+          "url": "/building-services/building-renovations-hampshire/",
+          "includes_form": true
+        },
+        {
+          "title": "Flooring & Tilers",
+          "url": "/building-services/tilers-hampshire/"
+        },
+        {
+          "title": "Roofers",
+          "url": "/building-services/roofers-in-hampshire/"
+        },
+        {
+          "title": "Painter & Decorators",
+          "url": "/building-services/painter-decorators-in-hampshire/"
+        }
+      ],
+      "location_pages": [
+        "/alton-builders/",
+        "/builders-chichester/",
+        "/builders-fareham/",
+        "/builders-havant/",
+        "/hayling-island-builders/",
+        "/builders-petersfield/",
+        "/builders-portsmouth/",
+        "/builders-waterlooville/",
+        "/builders-hampshire/"
+      ],
+      "legal": [
+        {
+          "title": "Terms and Conditions",
+          "url": "/terms-and-conditions/",
+          "last_updated": "September 29, 2023"
+        },
+        {
+          "title": "Privacy Policy",
+          "url": "/privacy-policy/"
+        }
+      ]
+    },
+    "navigation": {
+      "primary_menu": [
+        {
+          "label": "Our Services",
+          "url": "#0",
+          "type": "dropdown"
+        },
+        {
+          "label": "Service Locations",
+          "url": "#0",
+          "type": "dropdown"
+        },
+        {
+          "label": "Case Studies",
+          "url": "/case-studies/"
+        },
+        {
+          "label": "About Us",
+          "url": "/about/",
+          "type": "dropdown"
+        },
+        {
+          "label": "Blog",
+          "url": "/help-advice/"
+        }
+      ],
+      "cta_button": {
+        "label": "Enquire Today",
+        "url": "/contact/"
+      }
+    },
+    "services": {
+      "building_services": {
+        "description": "Residential and commercial construction projects of all sizes",
+        "specializations": [
+          "Building Your Dream Place",
+          "Adding an Extension",
+          "Renovating Your Building",
+          "Flooring and Tiling",
+          "Painting and Finishing",
+          "Roofing"
+        ],
+        "coverage_areas": [
+          "Hampshire",
+          "Havant",
+          "Waterlooville",
+          "Portsmouth",
+          "Fareham",
+          "Chichester",
+          "Petersfield",
+          "Hayling Island",
+          "Alton",
+          "West Sussex"
+        ]
+      },
+      "facilities_management": {
+        "description": "Comprehensive facilities management and maintenance services",
+        "services": [
+          "Consultancy & Customer Partnerships",
+          "Maintenance & Repairs",
+          "Upgrades & Compliances",
+          "Building/Home Maintenance and Repairs",
+          "Energy Efficiency Upgrades",
+          "Spatial Planning and Optimisation",
+          "Safety and Compliance Services",
+          "Interior Design Services"
+        ]
+      }
+    },
+    "accreditations": [
+      {
+        "name": "PQS – Health & Safety Approved",
+        "url": "https://www.pqscheme.com/services/ssip-health-safety-assessment/"
+      },
+      {
+        "name": "Acclaim Accreditation – Certificate of Health and Safety"
+      },
+      {
+        "name": "Constructionline – Gold Member",
+        "url": "https://www.constructionline.co.uk/products-services/memberships/sub-contractor-memberships/"
+      },
+      {
+        "name": "CHAS Certificate of accreditation"
+      },
+      {
+        "name": "Social Value Certificate"
+      }
+    ],
+    "forms": [
+      {
+        "name": "Enquiry Form",
+        "pages": [
+          "/building-services/",
+          "/facilities-management-services/",
+          "/building-services/hampshire-home-builders-house-extentions/",
+          "/building-services/building-renovations-hampshire/",
+          "/contact/"
+        ],
+        "fields": [
+          "First Name (required)",
+          "Last Name",
+          "Subject",
+          "Email (required)",
+          "Tell us about your project (required)",
+          "I agree to Construct FM Terms and Conditions (required checkbox)"
+        ]
+      },
+      {
+        "name": "Contact Form",
+        "pages": [
+          "/contact/"
+        ],
+        "additional_features": [
+          "Embedded Google Map"
+        ]
+      }
+    ],
+    "footer": {
+      "columns": [
+        {
+          "title": "Contact Us",
+          "links": [
+            "Phone",
+            "Email",
+            "Address"
+          ]
+        },
+        {
+          "title": "Legal",
+          "links": [
+            "Terms and Conditions",
+            "Privacy Policy"
+          ]
+        },
+        {
+          "title": "Areas we cover",
+          "links": [
+            "Alton Builders",
+            "Builders in Chichester",
+            "Builders Fareham",
+            "Builders Havant",
+            "Hayling Island Builders",
+            "Builders Petersfield",
+            "Builders Portsmouth",
+            "Builders Waterlooville"
+          ]
+        }
+      ],
+      "meta": {
+        "copyright": "Construct FM © 2026",
+        "developed_by": "boxChilli"
+      }
+    },
+    "special_features": [
+      "Checkatrade Rating: 9.5/10 (2 reviews)",
+      "Mobile responsive navigation",
+      "Cookie consent banner",
+      "Search Engine Optimized (SEO) landing pages for each location",
+      "Embedded Google Map on contact page",
+      "Hero carousel with multiple slides",
+      "Contact forms on service pages"
+    ]
+  }
+}

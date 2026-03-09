@@ -1,0 +1,14 @@
+﻿[
+  {
+    "sha": "e36fc20ad4cdb3dea4254ed953961e517246dd27",
+    "author": "Jonny Allum",
+    "date": "2026-02-23T10:41:43Z",
+    "message": "feat: @coursewright rewritten to gold standard + @successbot feedback loop fix + AGENTS/GEMINI @parser sync\n\n- @coursewright: full rewrite ??? modern YAML tools, 4 SOPs, Quality Gates, Feedback Loop code blocks, correct section order\n- @successbot: Feedback Loop converted to code blocks\n- AGENTS.md + GEMINI.md: Intelligence & Research Tier (5???6), @parser row added\n\nCo-Authored-By: Claude Sonnet 4.6 <noreply@anthropic.com>"
+  },
+  {
+    "sha": "a1e7334d5a00803bbacd45f1e63a9ff9e8c89230",
+    "author": "Jonny Allum",
+    "date": "2026-02-23T10:59:02Z",
+    "message": "feat: Jai.OS 5.0 full system alignment ??? new README, 73 legacy scripts purged, all docs updated\n\nAGENT SYSTEM:\n- 59/59 agents at Jai.OS 5.0 Gold Standard (0 legacy, 0 partial)\n- AGENT_REGISTRY.md: @successbot + @coursewright added, Total 59/59, Build Queue closed\n\nDOCS:\n- README.md: full rewrite ??? 59-agent roster, architecture, active scripts, tech stack\n- CLAUDE.md/AGENTS.md/GEMINI.md: workspace commands updated to reflect actual scripts\n- All 57???59 agent count refs updated across all mirror files\n\nEXECUTION ENGINE:\n- Pruned from 103 scripts to 30 active core scripts\n- Deleted: AgOS 2.0/3.0 duplicates, one-off fixers, client-specific junk (kwizz/HACCP), migration scripts\n- Kept: validate_agents, sync_all_skills_full, brain_sync, ralph_loop, orchestra_heartbeat, deploy_ssh, onboard_project, + 23 others\n\nAGENT SKILL.MD UPDATES:\n- All modified SKILL.md files committed (multi-author audit batch)\n- @marcus: platinum upgrade (8 SOPs)\n- @coursewright: full gold-standard rewrite\n- @successbot, @alex, @mason, @arthur, @sophie: upgraded/fixed\n\nCo-Authored-By: Claude Sonnet 4.6 <noreply@anthropic.com>"
+  }
+]

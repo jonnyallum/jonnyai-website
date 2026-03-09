@@ -1,0 +1,118 @@
+{
+  "version": "4.0",
+  "created": "2026-02-01T00:00:00Z",
+  "last_updated": "2026-02-19T12:00:00Z",
+  "note": "Backfilled 2026-02-19. 15-day memory gap recovered. Going forward: log every task.",
+  "tasks": [
+    {
+      "id": "TSK-2026-02-03-001",
+      "date": "2026-02-03",
+      "title": "DJ Waste Premium UI Upgrade + Hostinger Deployment",
+      "agents": ["owen", "pixel"],
+      "type": "deploy",
+      "status": "completed",
+      "outcome": "DJ Waste live at dj-waste.co.uk. GitHub Actions FTP pipeline operational.",
+      "learnings": ["FTP deploy with SamKirkland/FTP-Deploy-Action@v4.3.5 works reliably"]
+    },
+    {
+      "id": "TSK-2026-02-06-001",
+      "date": "2026-02-06",
+      "title": "Kwizz Cline Sync + Monetization Strategy",
+      "agents": ["conductor", "sebastian", "diana", "pixel"],
+      "type": "feature",
+      "status": "partial",
+      "outcome": "Phase 1-3 complete. Phase 5 schema done. Stripe/credit gate pending.",
+      "learnings": ["Free-tier Supabase pauses direct DB — use REST API", "validate_agents.py needs Jai.OS 5.0 format upgrade"]
+    },
+    {
+      "id": "TSK-2026-02-11-001",
+      "date": "2026-02-11",
+      "title": "Shared Brain Sync — 47 Agents + 60 Learnings",
+      "agents": ["conductor"],
+      "type": "brain-sync",
+      "status": "completed",
+      "outcome": "47 agents registered in Supabase. 60 learnings synced. Health 9.5/10.",
+      "learnings": []
+    },
+    {
+      "id": "TSK-2026-02-18-001",
+      "date": "2026-02-18",
+      "title": "Construct FM Sprint 2 — Static Site Delivery",
+      "agents": ["sebastian", "owen", "vigil"],
+      "type": "deploy",
+      "status": "completed",
+      "outcome": "7 case studies live. Prices removed and verified. Commit c1fe0c9 on construct.fm main.",
+      "learnings": [
+        "Deploy script was reading from server — fixed to use local out/ only",
+        "Next.js static: output export + trailingSlash + images unoptimized",
+        "API routes don't work in static export — use Vercel for chatbot",
+        "Remove sensitive data from source, not just UI"
+      ]
+    },
+    {
+      "id": "TSK-2026-02-19-001",
+      "date": "2026-02-19",
+      "title": "Marcus Conductor SKILL.md — Full Jai.OS 5.0 Profile",
+      "agents": ["conductor"],
+      "type": "skill-update",
+      "status": "completed",
+      "outcome": "12.4KB SKILL.md written. GitHub commit 677dd95. Supabase sync pending (MCP restart required).",
+      "learnings": []
+    },
+    {
+      "id": "TSK-2026-02-19-002",
+      "date": "2026-02-19",
+      "title": "MCP Config Audit — supabase-shared-brain Restoration",
+      "agents": ["conductor"],
+      "type": "infra",
+      "status": "completed",
+      "outcome": "supabase-shared-brain (lkwydqtfbdjhxaarelaz) restored to mcp_servers.json and config.json.",
+      "learnings": ["Multiple Supabase projects need distinct named MCP entries. Never use generic key 'supabase'."]
+    },
+    {
+      "id": "TSK-2026-02-19-003",
+      "date": "2026-02-19",
+      "title": "15-Day Memory Backfill",
+      "agents": ["conductor"],
+      "type": "memory",
+      "status": "completed",
+      "outcome": "chatroom.md, IMPROVEMENT_LOG.md, task-history.json, agent-health.json all updated.",
+      "learnings": ["Memory system existed but had zero automation writing to it. Manual backfill required."]
+    }
+  ],
+  "summary": {
+    "total_tasks": 7,
+    "completed": 6,
+    "partial": 1,
+    "failed": 0,
+    "in_progress": 0,
+    "by_agent": {
+      "conductor": 5,
+      "owen": 3,
+      "sebastian": 2,
+      "vigil": 1,
+      "pixel": 2,
+      "diana": 1
+    },
+    "by_type": {
+      "deploy": 2,
+      "feature": 1,
+      "brain-sync": 1,
+      "skill-update": 1,
+      "infra": 1,
+      "memory": 1
+    }
+  },
+  "recent_learnings": [
+    "Deploy scripts must ALWAYS use local out/ — server is write-only",
+    "Multiple Supabase projects need distinct named MCP entries",
+    "Memory system needs automation — manual writes are unreliable",
+    "Free-tier Supabase pauses direct DB connections — use REST API",
+    "Next.js static export: output+trailingSlash+unoptimized images required for Hostinger"
+  ],
+  "recurring_blockers": [
+    "Memory system not being written to — no post-session hook",
+    "supabase-shared-brain MCP keeps getting lost from config",
+    "validate_agents.py needs Jai.OS 5.0 schema upgrade"
+  ]
+}

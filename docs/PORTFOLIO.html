@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jonny Allum | The Architect's Console</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700&family=Outfit:wght@300;600;800&display=swap');
+
+        :root {
+            --bg: #0a0a0a;
+            --accent: #d97757; /* Citrus Orange */
+            --accent-glow: rgba(217, 119, 87, 0.4);
+            --text-main: #faf9f5;
+            --text-dim: #a0a0a0;
+            --card-bg: #141413;
+            --border: #222;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text-main);
+            font-family: 'Inter', sans-serif;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        h1, h2, h3 {
+            font-family: 'Outfit', sans-serif;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        /* --- Layout --- */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        /* --- Hero Section --- */
+        header {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: flex-start;
+            position: relative;
+            background: radial-gradient(circle at 10% 20%, rgba(217, 119, 87, 0.05) 0%, transparent 50%);
+        }
+
+        .hero-title {
+            font-size: 5rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+            line-height: 0.9;
+        }
+
+        .hero-title span {
+            color: var(--accent);
+            text-shadow: 0 0 20px var(--accent-glow);
+        }
+
+        .hero-tagline {
+            font-size: 1.5rem;
+            color: var(--text-dim);
+            max-width: 600px;
+            margin-bottom: 2rem;
+        }
+
+        /* --- Grid Section --- */
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            padding: 4rem 0;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            padding: 2rem;
+            border-radius: 4px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 2px;
+            height: 0;
+            background: var(--accent);
+            transition: height 0.3s ease;
+        }
+
+        .card:hover {
+            border-color: var(--accent);
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+
+        .card:hover::before {
+            height: 100%;
+        }
+
+        .card-label {
+            color: var(--accent);
+            font-size: 0.8rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .card h3 {
+            margin-bottom: 1rem;
+        }
+
+        /* --- Nav --- */
+        nav {
+            position: fixed;
+            top: 2rem;
+            right: 2rem;
+            z-index: 100;
+            display: flex;
+            gap: 2rem;
+        }
+
+        nav a {
+            color: var(--text-main);
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 600;
+            transition: color 0.3s;
+        }
+
+        nav a:hover {
+            color: var(--accent);
+        }
+
+        /* --- Buttons --- */
+        .btn {
+            display: inline-block;
+            padding: 1rem 2rem;
+            background: var(--accent);
+            color: white;
+            text-decoration: none;
+            font-weight: 700;
+            border-radius: 2px;
+            transition: all 0.3s;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn:hover {
+            background: #f08a6a;
+            box-shadow: 0 0 15px var(--accent-glow);
+            transform: scale(1.05);
+        }
+
+    </style>
+</head>
+<body>
+
+    <nav>
+        <a href="#projects">PROJECTS</a>
+        <a href="#contact">CONTACT</a>
+    </nav>
+
+    <div class="container">
+        <header>
+            <p style="color:var(--accent); letter-spacing: 5px; margin-bottom: 1rem;">ARCHITECT CONSOLE V2.0</p>
+            <h1 class="hero-title">JONNY<br><span>ALLUM</span></h1>
+            <p class="hero-tagline">
+                Founder of KLIQT Media. Orchestrating autonomous intelligence, high-end culinary craft, and high-velocity systems.
+            </p>
+            <a href="mailto:jonnyallum@gmail.com" class="btn">SECURE CONNECTION</a>
+        </header>
+
+        <section id="projects">
+            <h2 style="margin-bottom: 3rem; font-size: 2.5rem;">The Ecosystem</h2>
+            <div class="grid">
+                <div class="card">
+                    <div class="card-label">AI INFRASTRUCTURE</div>
+                    <h3>KLIQT MEDIA</h3>
+                    <p style="color: var(--text-dim);">Automated 'Honeytrap' networks for digital discovery and scaling. Precision OSINT at an autonomous level.</p>
+                </div>
+                <div class="card">
+                    <div class="card-label">SIGNAL INTELLIGENCE</div>
+                    <h3>INSYDETRADAR</h3>
+                    <p style="color: var(--text-dim);">Financial edge engineering. Statistical analysis of high-conviction signals across global markets.</p>
+                </div>
+                <div class="card">
+                    <div class="card-label">RETAIL TRANSFORMATION</div>
+                    <h3>WASTE MGMT 2.0</h3>
+                    <p style="color: var(--text-dim);">Automated logistics for Spinnaker Tower, Debenhams, and more. Turning operational chaos into deterministic profit.</p>
+                </div>
+                <div class="card">
+                    <div class="card-label">GASTRONOMY & TECH</div>
+                    <h3>LITTLE JONNYS</h3>
+                    <p style="color: var(--text-dim);">High-end street food logistics augmented with AI voice cloning and automated customer nurture flows.</p>
+                </div>
+            </div>
+        </section>
+
+        <footer style="padding: 10rem 0 5rem; border-top: 1px solid var(--border); text-align: center;">
+            <p style="color: var(--text-dim); font-size: 0.8rem; letter-spacing: 2px;">
+                ENGINEERED WITH AGOS 2.0 | © 2026 JONNYAI
+            </p>
+        </footer>
+    </div>
+
+</body>
+</html>
