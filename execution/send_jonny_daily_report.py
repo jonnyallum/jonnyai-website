@@ -1,100 +1,262 @@
-import os, sys, requests
+# -*- coding: utf-8 -*-
+"""
+send_jonny_daily_report.py — Dynamic daily operations briefing for Jonny.
+Pulls live data from Antigravity Brain + BL Motorcycles Supabase.
+Cron: 0 7 * * * (7am UTC daily)
+"""
+import os, sys, json, urllib.request, requests
+from datetime import datetime, timezone, timedelta
+from pathlib import Path
 from dotenv import load_dotenv
 
-sys.stdout.reconfigure(encoding='utf-8', errors='replace')
-sys.stderr.reconfigure(encoding='utf-8', errors='replace')
-load_dotenv()
+sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+sys.stderr.reconfigure(encoding="utf-8", errors="replace")
 
-RESEND_API_KEY = os.getenv("RESEND_API_KEY")
+load_dotenv(dotenv_path=Path(__file__).parent.parent / ".env")
 
-html = """
-<div style="font-family:'Inter',Arial,sans-serif;background-color:#0a0a0f;color:#ffffff;max-width:750px;margin:auto;padding:0;border:1px solid #1a1a2e;">
-    <div style="background:linear-gradient(135deg,#0a0a1a,#1a0a2e);padding:40px 40px 30px;border-bottom:2px solid #d97757;">
-        <h1 style="margin:0;font-size:28px;color:#d97757;letter-spacing:3px;text-transform:uppercase;font-weight:800;">Daily Operations Report</h1>
-        <p style="margin:8px 0 0;font-size:13px;color:#666;letter-spacing:1px;">ANTIGRAVITY ORCHESTRA | MARCH 5, 2026 | EVENING SESSION</p>
+RESEND_API_KEY = os.getenv("RESEND_API_KEY", "")
+BRAIN_URL      = os.getenv("ANTIGRAVITY_BRAIN_URL", "https://lkwydqtfbdjhxaarelaz.supabase.co")
+BRAIN_KEY      = os.getenv("ANTIGRAVITY_BRAIN_SERVICE_ROLE_KEY", "")
+BL_URL         = os.getenv("SUPABASE_URL", "")
+BL_KEY         = os.getenv("SUPABASE_SERVICE_ROLE_KEY", "")
+
+NOW          = datetime.now(timezone.utc)
+TODAY        = NOW.strftime("%Y-%m-%d")
+YESTERDAY    = (NOW - timedelta(days=1)).strftime("%Y-%m-%d")
+DATE_DISPLAY = NOW.strftime("%A %d %B %Y")
+
+
+# ── Supabase helpers ──────────────────────────────────────────────────────────
+
+def sb_get(base_url, key, table, params=""):
+    if not base_url or not key:
+        return []
+    try:
+        req = urllib.request.Request(
+            f"{base_url}/rest/v1/{table}?{params}",
+            headers={"apikey": key, "Authorization": f"Bearer {key}"}
+        )
+        with urllib.request.urlopen(req, timeout=10) as r:
+            return json.loads(r.read())
+    except Exception as e:
+        print(f"  [WARN] {table}: {e}")
+        return []
+
+
+def sb_count(base_url, key, table, params=""):
+    if not base_url or not key:
+        return 0
+    try:
+        req = urllib.request.Request(
+            f"{base_url}/rest/v1/{table}?{params}&select=id",
+            headers={
+                "apikey": key, "Authorization": f"Bearer {key}",
+                "Prefer": "count=exact", "Range": "0-0"
+            }
+        )
+        with urllib.request.urlopen(req, timeout=10) as r:
+            cr = r.headers.get("Content-Range", "0/0")
+            total = cr.split("/")[-1]
+            return int(total) if total.isdigit() else 0
+    except Exception as e:
+        print(f"  [WARN] count {table}: {e}")
+        return 0
+
+
+# ── Data fetchers ─────────────────────────────────────────────────────────────
+
+def get_agent_activity():
+    msgs  = sb_get(BRAIN_URL, BRAIN_KEY, "chatroom",
+                   f"created_at=gte.{TODAY}T00:00:00Z&order=created_at.desc&limit=5")
+    count = sb_count(BRAIN_URL, BRAIN_KEY, "chatroom",
+                     f"created_at=gte.{TODAY}T00:00:00Z")
+    latest = []
+    for m in msgs[:3]:
+        agent = m.get("agent_id", "?")
+        msg   = (m.get("message") or "")[:120].replace("<", "&lt;")
+        latest.append(f"<li><strong>@{agent}:</strong> {msg}</li>")
+    return {"count": count, "latest": latest}
+
+
+def get_learnings_today():
+    items = sb_get(BRAIN_URL, BRAIN_KEY, "learnings",
+                   f"created_at=gte.{TODAY}T00:00:00Z&order=created_at.desc&limit=5")
+    lines = []
+    for l in items[:3]:
+        content = (l.get("content") or l.get("learning") or "")[:100].replace("<", "&lt;")
+        agent   = l.get("agent_id", "")
+        lines.append(f"<li>{content}{' <em>— @' + agent + '</em>' if agent else ''}</li>")
+    return {"count": len(items), "lines": lines}
+
+
+def get_social_posts_today():
+    return sb_count(BRAIN_URL, BRAIN_KEY, "social_posts",
+                    f"created_at=gte.{TODAY}T00:00:00Z")
+
+
+def get_calendar_pending():
+    return sb_count(BRAIN_URL, BRAIN_KEY, "content_calendar", "status=eq.scheduled")
+
+
+def get_bl_orders():
+    if not BL_URL or not BL_KEY:
+        return {"count": 0, "revenue": 0.0, "rows": []}
+    rows    = sb_get(BL_URL, BL_KEY, "orders",
+                     f"created_at=gte.{YESTERDAY}T07:00:00Z&order=created_at.desc&limit=10")
+    revenue = sum(float(r.get("total_price", 0) or 0) for r in rows)
+    return {"count": len(rows), "revenue": round(revenue, 2), "rows": rows}
+
+
+def get_bl_inventory():
+    if not BL_URL or not BL_KEY:
+        return {"total": 0, "low_stock": 0}
+    return {
+        "total":     sb_count(BL_URL, BL_KEY, "products"),
+        "low_stock": sb_count(BL_URL, BL_KEY, "products", "stock_quantity=lt.3")
+    }
+
+
+def get_active_projects():
+    return len(sb_get(BRAIN_URL, BRAIN_KEY, "projects", "status=eq.active"))
+
+
+# ── HTML builder ──────────────────────────────────────────────────────────────
+
+def stat_block(label, value, sub="", color="#d97757"):
+    sub_html = f'<div style="font-size:11px;color:#555;margin-top:3px">{sub}</div>' if sub else ""
+    return f"""<div style="background:#0d0d18;border:1px solid #1a1a2e;border-left:3px solid {color};
+                padding:18px 22px;border-radius:4px;flex:1;min-width:130px">
+        <div style="font-size:26px;font-weight:800;color:{color}">{value}</div>
+        <div style="font-size:11px;color:#666;text-transform:uppercase;letter-spacing:1px;margin-top:4px">{label}</div>
+        {sub_html}
+    </div>"""
+
+
+def section_head(title, color="#d97757"):
+    return (f'<h2 style="font-size:13px;color:#fff;letter-spacing:2px;text-transform:uppercase;'
+            f'border-left:3px solid {color};padding-left:12px;margin:0 0 12px">{title}</h2>')
+
+
+def build_html(activity, learnings, social_count, calendar_pending,
+               bl_orders, bl_inv, active_projects):
+
+    order_rows = ""
+    for o in bl_orders["rows"][:5]:
+        sku    = (o.get("sku") or o.get("item_sku") or "—")[:20]
+        buyer  = (o.get("buyer_name") or o.get("shipping_name") or "—")[:25].replace("<", "&lt;")
+        val    = f"&pound;{float(o.get('total_price', 0) or 0):.2f}"
+        status = o.get("status") or o.get("fulfillment_status") or "new"
+        order_rows += (f"<tr><td style='padding:8px 12px;border-bottom:1px solid #111;color:#ccc'>{sku}</td>"
+                       f"<td style='padding:8px 12px;border-bottom:1px solid #111;color:#ccc'>{buyer}</td>"
+                       f"<td style='padding:8px 12px;border-bottom:1px solid #111;color:#d97757;font-weight:600'>{val}</td>"
+                       f"<td style='padding:8px 12px;border-bottom:1px solid #111;color:#555;font-size:11px'>{status}</td></tr>")
+
+    orders_section = (
+        f"""<table style="width:100%;border-collapse:collapse;background:#0d0d18;margin-bottom:28px">
+          <tr style="background:#111">
+            <th style="padding:8px 12px;text-align:left;color:#444;font-size:11px">SKU</th>
+            <th style="padding:8px 12px;text-align:left;color:#444;font-size:11px">BUYER</th>
+            <th style="padding:8px 12px;text-align:left;color:#444;font-size:11px">VALUE</th>
+            <th style="padding:8px 12px;text-align:left;color:#444;font-size:11px">STATUS</th>
+          </tr>{order_rows}</table>"""
+        if order_rows else
+        '<p style="color:#555;margin-bottom:28px;font-size:13px">No orders in the last 24h.</p>'
+    )
+
+    low_color      = "#ef4444" if bl_inv["low_stock"] > 10 else "#4ade80"
+    activity_html  = "".join(activity["latest"])  or "<li style='color:#555'>No messages today</li>"
+    learnings_html = "".join(learnings["lines"])   or "<li style='color:#555'>No learnings logged today</li>"
+
+    return f"""
+<div style="font-family:'Inter',Arial,sans-serif;background:#0a0a0f;color:#fff;
+            max-width:720px;margin:auto;border:1px solid #1a1a2e;">
+  <div style="background:linear-gradient(135deg,#0a0a1a,#1a0a2e);padding:36px 40px;
+              border-bottom:2px solid #d97757;">
+    <h1 style="margin:0;font-size:24px;color:#d97757;letter-spacing:3px;
+               text-transform:uppercase;font-weight:800;">Daily Operations Brief</h1>
+    <p style="margin:8px 0 0;font-size:12px;color:#444;letter-spacing:1px;">
+      ANTIGRAVITY ORCHESTRA &bull; {DATE_DISPLAY} &bull; 07:00 UTC
+    </p>
+  </div>
+  <div style="padding:32px 40px">
+    <div style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:32px">
+      {stat_block("BL Orders (24h)", bl_orders['count'], f"&pound;{bl_orders['revenue']:.2f} revenue")}
+      {stat_block("Social Posts", social_count, f"{calendar_pending} queued", "#4ade80")}
+      {stat_block("Agent Messages", activity['count'], "today in chatroom", "#60a5fa")}
+      {stat_block("Active Projects", active_projects, "", "#a78bfa")}
     </div>
-
-    <div style="padding:35px 40px;font-size:15px;line-height:1.9;color:#bbb;">
-        <p style="font-size:17px;color:#fff;">Evening Jonny,</p>
-        <p>Here is your full operational report for today's session. Three major areas of progress, one critical bug squashed, and the foundation is stronger than yesterday.</p>
-
-        <h2 style="color:#fff;margin-top:35px;font-size:20px;border-left:4px solid #d97757;padding-left:15px;">1. MCP Sequential Thinking Server</h2>
-        <p>Installed and configured the <strong>Sequential Thinking MCP Server</strong> from the official ModelContextProtocol repository. This gives us a structured, step-by-step reasoning tool for complex problem-solving directly inside our AI workflow. It supports branching logic, thought revision, and dynamic scope adjustment. Configured in <code style="background:#1a1a2e;padding:2px 8px;border-radius:4px;color:#d97757;">cline_mcp_settings.json</code> and ready for use.</p>
-
-        <h2 style="color:#fff;margin-top:35px;font-size:20px;border-left:4px solid #d97757;padding-left:15px;">2. Critical Bug Fix: Email Delivery Failure</h2>
-        <table style="width:100%;border-collapse:collapse;margin:15px 0;background:#0d0d15;border:1px solid #1a1a2e;">
-            <tr><td style="padding:15px;border-bottom:1px solid #1a1a2e;">
-                <strong style="color:#ef4444;">THE PROBLEM:</strong><br/>
-                All three email reports requested today (Brett's BL report + your daily standup) silently failed. No emails were delivered despite the Resend API being healthy and the jonnyai.co.uk domain fully verified.
-            </td></tr>
-            <tr><td style="padding:15px;">
-                <strong style="color:#10b981;">ROOT CAUSE:</strong><br/>
-                Emoji characters in Python <code style="background:#1a1a2e;padding:2px 6px;border-radius:4px;">print()</code> statements crash on Windows cp1252 encoding. The scripts died on the very first print line before ever reaching the Resend API call. This was a silent killer that affected <strong>12 scripts</strong> across the execution directory.
-            </td></tr>
-            <tr><td style="padding:15px;background:#0a1a0a;border-top:1px solid #1a1a2e;">
-                <strong style="color:#10b981;">THE FIX:</strong><br/>
-                Patched all 12 affected scripts with <code style="background:#1a1a2e;padding:2px 6px;border-radius:4px;">sys.stdout.reconfigure(encoding='utf-8', errors='replace')</code> at the top of each file. This is a permanent, one-line fix. Also corrected Brett's email address to <strong>blmotorcyclesltd@gmail.com</strong>.
-            </td></tr>
-        </table>
-        <p><strong>Result:</strong> All emails now delivering successfully. Brett has received his full operational intelligence report at the correct address.</p>
-
-        <h2 style="color:#fff;margin-top:35px;font-size:20px;border-left:4px solid #d97757;padding-left:15px;">3. BL Motorcycles Repository Architecture</h2>
-        <p>Investigated the relationship between the GitHub <code style="background:#1a1a2e;padding:2px 8px;border-radius:4px;">jonnyallum/blwebsite</code> repo and the local <code style="background:#1a1a2e;padding:2px 8px;border-radius:4px;">BL-Motorcycles-Enterprise</code> codebase:</p>
-        <ul style="padding-left:20px;">
-            <li><strong>blwebsite repo</strong> contains the original Vite-based site (client/server/shared architecture). This is already synced with the local copy and represents Brett's preferred design.</li>
-            <li><strong>BL-Motorcycles-Enterprise</strong> is the new Next.js App Router rebuild &mdash; a completely different framework and file structure.</li>
-            <li>Created a <strong>legacy-vite-backup</strong> branch on GitHub to preserve Brett's preferred gold-and-black industrial design before any migration work.</li>
-            <li>Documented every design detail in <strong>BL_STYLE_REFERENCE.md</strong>: the gold (#d3c065) and asphalt black (#050505) palette, Oswald typography, chamfered clip-path shapes, tech-style borders, grayscale image filters, and the full component architecture.</li>
-        </ul>
-        <p>Brett prefers the original site's look. The next session will port that styling faithfully into the Enterprise Next.js rebuild.</p>
-
-        <h2 style="color:#fff;margin-top:35px;font-size:20px;border-left:4px solid #d97757;padding-left:15px;">4. Git Commits Today</h2>
-        <table style="width:100%;border-collapse:collapse;margin:15px 0;">
-            <tr style="background:#0d0d15;">
-                <td style="padding:10px 15px;color:#d97757;font-family:monospace;font-size:13px;border:1px solid #1a1a2e;">b3618fa</td>
-                <td style="padding:10px 15px;border:1px solid #1a1a2e;">153 files &mdash; BL admin ops, n8n workflows, MCP sequential thinking, CRM deploy, daily scripts</td>
-            </tr>
-            <tr style="background:#0a0a15;">
-                <td style="padding:10px 15px;color:#d97757;font-family:monospace;font-size:13px;border:1px solid #1a1a2e;">c1919fd</td>
-                <td style="padding:10px 15px;border:1px solid #1a1a2e;">Work log update + BL style reference document for Brett</td>
-            </tr>
-            <tr style="background:#0d0d15;">
-                <td style="padding:10px 15px;color:#d97757;font-family:monospace;font-size:13px;border:1px solid #1a1a2e;">147c5fd</td>
-                <td style="padding:10px 15px;border:1px solid #1a1a2e;">Patched 12 execution scripts with UTF-8 encoding fix</td>
-            </tr>
-        </table>
-        <p>Push to <code style="background:#1a1a2e;padding:2px 8px;border-radius:4px;">jonnyallum/Antigravity_Orchestra</code> was initiated and is uploading in the background.</p>
-
-        <h2 style="color:#fff;margin-top:35px;font-size:20px;border-left:4px solid #d97757;padding-left:15px;">Outstanding Items for Next Session</h2>
-        <ul style="padding-left:20px;">
-            <li>Port Brett's gold/black styling into the Enterprise Next.js rebuild</li>
-            <li>Apply Supabase migration <code style="background:#1a1a2e;padding:2px 6px;border-radius:4px;">001_admin_ops_hub.sql</code> to the BL production database</li>
-            <li>Deploy 4 n8n workflows (dispatch email, overdue escalator, oversell guard, weekly summary)</li>
-            <li>Verify all 70 agents are reflected in the Supabase Shared Brain</li>
-        </ul>
-
-        <div style="margin-top:40px;padding:20px;background:#1a0a0a;border:1px solid #d97757;">
-            <p style="margin:0;font-size:14px;color:#d97757;font-weight:bold;text-transform:uppercase;letter-spacing:1px;">Key Learning of the Day</p>
-            <p style="margin:10px 0 0;color:#fff;">Windows cp1252 encoding silently kills Python scripts that use emoji in print() statements. Always add <code style="background:#1a1a2e;padding:2px 6px;border-radius:4px;">sys.stdout.reconfigure(encoding='utf-8')</code> at the top of every execution script. This single line would have prevented all three email failures today.</p>
-        </div>
-
-        <p style="margin-top:30px;color:#666;font-size:13px;">Report compiled by the Antigravity Orchestra | @Arthur (The Librarian) &amp; @Nathan (The Automation)</p>
+    {section_head("BL Motorcycles — Recent Orders")}
+    {orders_section}
+    <div style="background:#0d0d18;border:1px solid #1a1a2e;padding:16px 20px;
+                border-radius:4px;margin-bottom:28px;display:flex;gap:32px">
+      <div>
+        <div style="font-size:11px;color:#555;text-transform:uppercase;letter-spacing:1px">Total Products</div>
+        <div style="font-size:22px;font-weight:700;color:#fff;margin-top:4px">{bl_inv['total']:,}</div>
+      </div>
+      <div>
+        <div style="font-size:11px;color:#555;text-transform:uppercase;letter-spacing:1px">Low Stock (&lt;3 units)</div>
+        <div style="font-size:22px;font-weight:700;color:{low_color};margin-top:4px">{bl_inv['low_stock']}</div>
+      </div>
     </div>
+    {section_head("Orchestra Activity", "#60a5fa")}
+    <ul style="font-size:13px;line-height:1.9;color:#aaa;padding-left:20px;margin-bottom:28px">
+      {activity_html}
+    </ul>
+    {section_head(f"Learnings Logged Today ({learnings['count']})", "#a78bfa")}
+    <ul style="font-size:13px;line-height:1.9;color:#aaa;padding-left:20px;margin-bottom:16px">
+      {learnings_html}
+    </ul>
+  </div>
+  <div style="padding:18px 40px;border-top:1px solid #111;font-size:11px;color:#333;text-align:center">
+    Antigravity Orchestra &bull; {NOW.strftime("%Y-%m-%d %H:%M")} UTC
+    &bull; <a href="https://jonnyai.co.uk" style="color:#444">jonnyai.co.uk</a>
+  </div>
+</div>"""
 
-    <div style="padding:25px 40px;background:#050508;border-top:1px solid #1a1a2e;text-align:center;">
-        <p style="font-size:11px;color:#333;margin:0;letter-spacing:1px;">Jai.OS 5.0 | 70 AGENTS | SHARED BRAIN: ONLINE | ANTIGRAVITY.AI</p>
-    </div>
-</div>
-"""
 
-resp = requests.post("https://api.resend.com/emails",
-    headers={"Authorization": f"Bearer {RESEND_API_KEY}", "Content-Type": "application/json"},
-    json={
-        "from": "Antigravity Orchestra <reports@jonnyai.co.uk>",
-        "to": "jonnyallum@gmail.com",
-        "subject": "Daily Operations Report - March 5, 2026 | Evening Session",
-        "html": html
-    })
+# ── Main ──────────────────────────────────────────────────────────────────────
 
-print(f"Status: {resp.status_code}")
-print(f"Response: {resp.text}")
+def main():
+    print(f"[{NOW.strftime('%H:%M')}] Building Jonny daily report...")
+
+    if not RESEND_API_KEY:
+        print("  ERROR: RESEND_API_KEY not set")
+        return False
+
+    activity         = get_agent_activity()
+    learnings        = get_learnings_today()
+    social_count     = get_social_posts_today()
+    calendar_pending = get_calendar_pending()
+    bl_orders        = get_bl_orders()
+    bl_inv           = get_bl_inventory()
+    active_projects  = get_active_projects()
+
+    html = build_html(activity, learnings, social_count, calendar_pending,
+                      bl_orders, bl_inv, active_projects)
+
+    resp = requests.post(
+        "https://api.resend.com/emails",
+        headers={"Authorization": f"Bearer {RESEND_API_KEY}", "Content-Type": "application/json"},
+        json={
+            "from": "Antigravity Orchestra <reports@jonnyai.co.uk>",
+            "to": "jonnyallum@gmail.com",
+            "subject": (
+                f"Daily Brief | {DATE_DISPLAY} | "
+                f"{bl_orders['count']} orders | {activity['count']} msgs"
+            ),
+            "html": html
+        },
+        timeout=20
+    )
+
+    if resp.status_code in (200, 201):
+        print(f"  Sent. Orders={bl_orders['count']} Revenue=£{bl_orders['revenue']:.2f} "
+              f"Social={social_count} Learnings={learnings['count']}")
+        return True
+    else:
+        print(f"  ERROR {resp.status_code}: {resp.text[:200]}")
+        return False
+
+
+if __name__ == "__main__":
+    main()

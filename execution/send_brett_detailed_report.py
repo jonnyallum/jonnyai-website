@@ -1,111 +1,254 @@
-import os
-import sys
-import requests
-from datetime import datetime
+# -*- coding: utf-8 -*-
+"""
+send_brett_detailed_report.py — Dynamic daily report for Brett (BL Motorcycles).
+Pulls live orders, inventory, and stock data from BL Supabase.
+Cron: 30 7 * * * (7:30am UTC daily)
+"""
+import os, sys, json, urllib.request, requests
+from datetime import datetime, timezone, timedelta
+from pathlib import Path
 from dotenv import load_dotenv
 
-# Fix Windows cp1252 encoding crash with emoji
-sys.stdout.reconfigure(encoding='utf-8', errors='replace')
-sys.stderr.reconfigure(encoding='utf-8', errors='replace')
+sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+sys.stderr.reconfigure(encoding="utf-8", errors="replace")
 
-load_dotenv()
+load_dotenv(dotenv_path=Path(__file__).parent.parent / ".env")
 
-RESEND_API_KEY = os.getenv("RESEND_API_KEY")
-RESEND_URL = "https://api.resend.com/emails"
+RESEND_API_KEY = os.getenv("RESEND_API_KEY", "")
+BL_URL         = os.getenv("SUPABASE_URL", "")
+BL_KEY         = os.getenv("SUPABASE_SERVICE_ROLE_KEY", "")
+
+NOW          = datetime.now(timezone.utc)
+TODAY        = NOW.strftime("%Y-%m-%d")
+YESTERDAY    = (NOW - timedelta(days=1)).strftime("%Y-%m-%d")
+WEEK_AGO     = (NOW - timedelta(days=7)).strftime("%Y-%m-%d")
+DATE_DISPLAY = NOW.strftime("%A %d %B %Y")
+
+
+# ── Supabase helpers ──────────────────────────────────────────────────────────
+
+def sb_get(table, params=""):
+    if not BL_URL or not BL_KEY:
+        return []
+    try:
+        req = urllib.request.Request(
+            f"{BL_URL}/rest/v1/{table}?{params}",
+            headers={"apikey": BL_KEY, "Authorization": f"Bearer {BL_KEY}"}
+        )
+        with urllib.request.urlopen(req, timeout=10) as r:
+            return json.loads(r.read())
+    except Exception as e:
+        print(f"  [WARN] {table}: {e}")
+        return []
+
+
+def sb_count(table, params=""):
+    if not BL_URL or not BL_KEY:
+        return 0
+    try:
+        req = urllib.request.Request(
+            f"{BL_URL}/rest/v1/{table}?{params}&select=id",
+            headers={
+                "apikey": BL_KEY, "Authorization": f"Bearer {BL_KEY}",
+                "Prefer": "count=exact", "Range": "0-0"
+            }
+        )
+        with urllib.request.urlopen(req, timeout=10) as r:
+            cr = r.headers.get("Content-Range", "0/0")
+            total = cr.split("/")[-1]
+            return int(total) if total.isdigit() else 0
+    except Exception as e:
+        print(f"  [WARN] count {table}: {e}")
+        return 0
+
+
+# ── Data fetchers ─────────────────────────────────────────────────────────────
+
+def get_orders_24h():
+    rows    = sb_get("orders",
+                     f"created_at=gte.{YESTERDAY}T07:00:00Z&order=created_at.desc&limit=20")
+    revenue = sum(float(r.get("total_price", 0) or 0) for r in rows)
+    return {"count": len(rows), "revenue": round(revenue, 2), "rows": rows}
+
+
+def get_orders_7d():
+    count   = sb_count("orders", f"created_at=gte.{WEEK_AGO}T00:00:00Z")
+    rows    = sb_get("orders", f"created_at=gte.{WEEK_AGO}T00:00:00Z")
+    revenue = sum(float(r.get("total_price", 0) or 0) for r in rows)
+    return {"count": count, "revenue": round(revenue, 2)}
+
+
+def get_inventory():
+    total     = sb_count("products")
+    active    = sb_count("products", "status=eq.active")
+    low_stock = sb_count("products", "stock_quantity=lt.3")
+    out_stock = sb_count("products", "stock_quantity=eq.0")
+    return {"total": total, "active": active, "low_stock": low_stock, "out_stock": out_stock}
+
+
+def get_pending_orders():
+    return sb_get("orders", "status=eq.pending&order=created_at.asc&limit=10")
+
+
+# ── HTML builder ──────────────────────────────────────────────────────────────
+
+def stat_block(label, value, sub="", color="#2563eb"):
+    sub_html = f'<div style="font-size:11px;color:#555;margin-top:3px">{sub}</div>' if sub else ""
+    return f"""<div style="background:#f8faff;border:1px solid #e2e8f0;border-left:3px solid {color};
+                padding:16px 20px;border-radius:4px;flex:1;min-width:130px">
+        <div style="font-size:24px;font-weight:800;color:{color}">{value}</div>
+        <div style="font-size:11px;color:#888;text-transform:uppercase;letter-spacing:1px;margin-top:4px">{label}</div>
+        {sub_html}
+    </div>"""
+
+
+def build_html(orders_24h, orders_7d, inventory, pending):
+
+    order_rows = ""
+    for o in orders_24h["rows"][:8]:
+        sku    = (o.get("sku") or o.get("item_sku") or "—")[:20]
+        buyer  = (o.get("buyer_name") or o.get("shipping_name") or "—")[:30].replace("<", "&lt;")
+        val    = f"&pound;{float(o.get('total_price', 0) or 0):.2f}"
+        status = o.get("status") or o.get("fulfillment_status") or "new"
+        created = (o.get("created_at") or "")[:10]
+        s_color = "#16a34a" if status == "fulfilled" else ("#d97706" if status == "pending" else "#3b82f6")
+        order_rows += (f"<tr>"
+                       f"<td style='padding:9px 12px;border-bottom:1px solid #f1f5f9;color:#374151'>{sku}</td>"
+                       f"<td style='padding:9px 12px;border-bottom:1px solid #f1f5f9;color:#374151'>{buyer}</td>"
+                       f"<td style='padding:9px 12px;border-bottom:1px solid #f1f5f9;font-weight:600;color:#1d4ed8'>{val}</td>"
+                       f"<td style='padding:9px 12px;border-bottom:1px solid #f1f5f9;font-size:11px'>"
+                       f"<span style='background:{s_color}20;color:{s_color};padding:2px 8px;border-radius:10px'>{status}</span></td>"
+                       f"<td style='padding:9px 12px;border-bottom:1px solid #f1f5f9;color:#9ca3af;font-size:11px'>{created}</td>"
+                       f"</tr>")
+
+    orders_table = (
+        f"""<table style="width:100%;border-collapse:collapse;margin-bottom:28px">
+          <tr style="background:#f8faff">
+            <th style="padding:9px 12px;text-align:left;color:#9ca3af;font-size:11px;text-transform:uppercase">SKU</th>
+            <th style="padding:9px 12px;text-align:left;color:#9ca3af;font-size:11px;text-transform:uppercase">Buyer</th>
+            <th style="padding:9px 12px;text-align:left;color:#9ca3af;font-size:11px;text-transform:uppercase">Value</th>
+            <th style="padding:9px 12px;text-align:left;color:#9ca3af;font-size:11px;text-transform:uppercase">Status</th>
+            <th style="padding:9px 12px;text-align:left;color:#9ca3af;font-size:11px;text-transform:uppercase">Date</th>
+          </tr>{order_rows}</table>"""
+        if order_rows else
+        '<p style="color:#9ca3af;margin-bottom:28px;font-size:14px">No orders in the last 24 hours.</p>'
+    )
+
+    # Pending orders alert
+    pending_html = ""
+    if pending:
+        pending_rows = ""
+        for o in pending[:5]:
+            sku   = (o.get("sku") or o.get("item_sku") or "—")[:20]
+            buyer = (o.get("buyer_name") or "—")[:25].replace("<", "&lt;")
+            age   = ""
+            if o.get("created_at"):
+                try:
+                    created = datetime.fromisoformat(o["created_at"].replace("Z", "+00:00"))
+                    age = f"{(NOW - created).days}d ago"
+                except Exception:
+                    pass
+            pending_rows += (f"<tr>"
+                             f"<td style='padding:8px 12px;border-bottom:1px solid #fef3c7;color:#374151'>{sku}</td>"
+                             f"<td style='padding:8px 12px;border-bottom:1px solid #fef3c7;color:#374151'>{buyer}</td>"
+                             f"<td style='padding:8px 12px;border-bottom:1px solid #fef3c7;color:#92400e;font-size:12px'>{age}</td>"
+                             f"</tr>")
+        pending_html = f"""
+        <div style="background:#fffbeb;border:1px solid #fcd34d;border-radius:4px;padding:16px 20px;margin-bottom:28px">
+          <div style="font-size:13px;font-weight:700;color:#92400e;margin-bottom:10px">
+            Action Required: {len(pending)} Pending Order(s)
+          </div>
+          <table style="width:100%;border-collapse:collapse">
+            <tr><th style="text-align:left;font-size:11px;color:#b45309;padding:0 12px 6px 0">SKU</th>
+                <th style="text-align:left;font-size:11px;color:#b45309;padding:0 12px 6px 0">Buyer</th>
+                <th style="text-align:left;font-size:11px;color:#b45309;padding:0 0 6px">Age</th></tr>
+            {pending_rows}
+          </table>
+        </div>"""
+
+    low_stock_alert = ""
+    if inventory["low_stock"] > 5:
+        low_stock_alert = f"""
+        <div style="background:#fef2f2;border:1px solid #fca5a5;border-radius:4px;padding:12px 16px;margin-bottom:16px;font-size:13px;color:#991b1b">
+          Warning: {inventory['low_stock']} SKUs have fewer than 3 units in stock. Check your Bike It feed.
+        </div>"""
+
+    return f"""
+<div style="font-family:'Inter',Arial,sans-serif;background:#ffffff;color:#111;
+            max-width:720px;margin:auto;border:1px solid #e2e8f0;">
+  <div style="background:#1e3a8a;padding:32px 40px;border-bottom:3px solid #2563eb;">
+    <h1 style="margin:0;font-size:22px;color:#ffffff;letter-spacing:2px;
+               text-transform:uppercase;font-weight:800;">BL Motorcycles — Daily Report</h1>
+    <p style="margin:8px 0 0;font-size:12px;color:#93c5fd;letter-spacing:1px;">
+      {DATE_DISPLAY} &bull; Prepared by Antigravity Orchestra
+    </p>
+  </div>
+  <div style="padding:32px 40px">
+    {pending_html}
+    {low_stock_alert}
+    <div style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:28px">
+      {stat_block("Orders (24h)", orders_24h['count'], f"&pound;{orders_24h['revenue']:.2f} revenue")}
+      {stat_block("Orders (7 days)", orders_7d['count'], f"&pound;{orders_7d['revenue']:.2f} revenue", "#7c3aed")}
+      {stat_block("Active Listings", inventory['active'], f"{inventory['total']:,} total products", "#059669")}
+      {stat_block("Low / Out of Stock", f"{inventory['low_stock']} / {inventory['out_stock']}", "requires attention", "#dc2626")}
+    </div>
+    <h2 style="font-size:13px;color:#374151;letter-spacing:2px;text-transform:uppercase;
+               border-left:3px solid #2563eb;padding-left:12px;margin:0 0 12px">
+      Orders in Last 24 Hours
+    </h2>
+    {orders_table}
+    <div style="background:#f0f9ff;border:1px solid #bae6fd;border-radius:4px;padding:16px 20px;font-size:13px;color:#0c4a6e">
+      <strong>Need help?</strong> Reply to this email or contact Jonny at
+      <a href="mailto:jonny@jonnyai.co.uk" style="color:#2563eb">jonny@jonnyai.co.uk</a>
+    </div>
+  </div>
+  <div style="padding:16px 40px;border-top:1px solid #e2e8f0;font-size:11px;color:#9ca3af;text-align:center">
+    BL Motorcycles Ltd &bull; Powered by Antigravity Orchestra &bull; {NOW.strftime("%Y-%m-%d %H:%M")} UTC
+  </div>
+</div>"""
+
+
+# ── Main ──────────────────────────────────────────────────────────────────────
 
 def send_brett_report():
-    print("🚀 Preparing detailed report for Brett (BL Motorcycles)...")
-    
-    html_content = """
-    <div style="font-family:'Inter',Arial,sans-serif;background-color:#050508;color:#ffffff;max-width:750px;margin:auto;padding:0;border:1px solid #111;">
-        <!-- Header -->
-        <div style="background:linear-gradient(135deg,#000000,#221a0f);padding:40px;border-bottom:2px solid #f97316;">
-            <h1 style="margin:0;font-size:24px;color:#f97316;letter-spacing:2px;text-transform:uppercase;">Operational Intelligence Report</h1>
-            <p style="margin:10px 0 0;font-size:14px;color:#888;">BL MOTORCYCLES | FAREHAM HUB | INFRASTRUCTURE RECONSTRUCTION</p>
-        </div>
-        
-        <!-- Content -->
-        <div style="padding:40px;font-size:16px;line-height:1.8;color:#ccc;">
-            <p>Hi Brett,</p>
-            
-            <p>I am sending this detailed update again to ensure you have the full picture of the major reconstruction we have just completed on the <strong>BL Motorcycles</strong> digital infrastructure. We have officially cut the cord on local dependencies and moved to a 100% autonomous server-side ecosystem.</p>
-            
-            <h3 style="color:#fff;margin-top:30px;border-left:3px solid #f97316;padding-left:15px;">1. Admin Intelligence Hub: Rebuilt from Source</h3>
-            <p>During our migration to Hostinger, we discovered a significant "rogue" element in the previous setup that was causing the admin portal to fail.</p>
-            
-            <table style="width:100%; border-collapse: collapse; margin: 20px 0; background: #0a0a0c; border: 1px solid #1a1a1f;">
-                <tr>
-                    <td style="padding:15px; border-bottom: 1px solid #1a1a1f;">
-                        <strong style="color:#ef4444;">THE PROBLEM:</strong><br/>
-                        The `/admin` page existed only as "orphaned" compiled files on the server. There was no actual source code in our codebase, and critical credentials were <strong>hardcoded in plain text</strong> within the JavaScript bundle—meaning anyone inspecting the site could see them.
-                    </td>
-                </tr>
-                <tr>
-                    <td style="padding:15px;">
-                        <strong style="color:#10b981;">THE FIX:</strong><br/>
-                        We have completely reconstructed the admin architecture tonight:
-                        <ul style="margin:10px 0; padding-left:20px;">
-                            <li><strong>Source Logic:</strong> Created a proper Next.js source file (`page.tsx`) so we now "own" the logic.</li>
-                            <li><strong>Secure Auth:</strong> Replaced hardcoded keys with individual Supabase <code>email + password</code> authentication.</li>
-                            <li><strong>Session Persistence:</strong> Integrated <code>onAuthStateChange</code> and secure sign-out flows.</li>
-                            <li><strong>Fresh Deploy:</strong> Recompiled the entire site and deployed 55 clean files via SFTP, wiping out the old rogue artifacts.</li>
-                        </ul>
-                    </td>
-                </tr>
-            </table>
+    print(f"[{NOW.strftime('%H:%M')}] Building Brett daily report...")
 
-            <p><strong>LIVE RESULT:</strong> The <a href="https://blmotorcyclesltd.co.uk/admin" style="color:#f97316; text-decoration:none;">Intelligence Hub</a> is now fully operational. You will see the <strong>B&L DIRECT</strong> terminal aesthetic, a live clock, and a real-time Order Matrix showing all 15 recent orders (13 rejected, 1 processing) with the correct "Trace" data for troubleshooting.</p>
-
-            <h3 style="color:#fff;margin-top:30px;border-left:3px solid #f97316;padding-left:15px;">2. 24/7 Autonomous Server (n8n Migration)</h3>
-            <p>Previously, all the "heavy lifting"—scraping supplier stock from <strong>LL Exeter</strong> and <strong>Bike It</strong>, recalculating pricing, and pushing to eBay—was running on my local computer. This created a bottleneck where the system went "dark" if my computer was off.</p>
-            
-            <ul style="list-style-type:none;padding-left:0;">
-                <li>⚡ <strong>Full Spec n8n:</strong> We have migrated all these processes to a dedicated high-performance Linux server running n8n.</li>
-                <li>🔄 <strong>Eternal Monitoring:</strong> These workflows now run autonomously 24/7. The inventory sync and order routing are always "listening," even when we are asleep.</li>
-                <li>📈 <strong>Scalability:</strong> This new architecture is built to handle thousands of SKUs without manual intervention.</li>
-            </ul>
-
-            <h3 style="color:#fff;margin-top:30px;border-left:3px solid #f97316;padding-left:15px;">3. Local Intelligence Cluster (Ollama)</h3>
-            <p>To power the "decision making" of our routing agents, we have also brought our local <strong>Ollama Cluster</strong> online on the server. This node is currently operational and running a <code>llama3</code> model to help classify order errors and route alerts to the correct channels instantly.</p>
-
-            <p style="margin-top:40px;">The foundation is now rock-solid. We have moved from a "local setup" to a "SaaS-grade infrastructure."</p>
-            
-            <p style="margin-top:30px;font-weight:bold;color:#f97316;">Best regards,</p>
-            <p style="margin:0;color:#fff;">Jonny (The Boss) & The Antigravity Orchestra</p>
-        </div>
-        
-        <!-- Footer -->
-        <div style="padding:30px 40px;background:#000;border-top:1px solid #111;text-align:center;">
-            <p style="font-size:12px;color:#444;margin:0;">Jai.OS 5.0 | Antigravity AI Cluster | NODE_ACTIVE</p>
-        </div>
-    </div>
-    """
-
-    
-    payload = {
-        "from": "Antigravity Orchestra <reports@jonnyai.co.uk>",
-        "to": "blmotorcyclesltd@gmail.com",
-        "subject": f"Operational Update: BL Motorcycles Intelligence Hub & Automation Migration",
-        "html": html_content,
-        "reply_to": "jonny@jonnyai.co.uk"
-    }
-    
-    headers = {
-        "Authorization": f"Bearer {RESEND_API_KEY}",
-        "Content-Type": "application/json"
-    }
-    
-    try:
-        resp = requests.post(RESEND_URL, headers=headers, json=payload, timeout=15)
-        if resp.status_code in (200, 201):
-            print(f"✅ Report sent successfully to Brett!")
-            return True
-        else:
-            print(f"❌ Resend error ({resp.status_code}): {resp.text}")
-            return False
-    except Exception as e:
-        print(f"❌ Connection error: {e}")
+    if not RESEND_API_KEY:
+        print("  ERROR: RESEND_API_KEY not set")
         return False
+
+    orders_24h = get_orders_24h()
+    orders_7d  = get_orders_7d()
+    inventory  = get_inventory()
+    pending    = get_pending_orders()
+
+    html = build_html(orders_24h, orders_7d, inventory, pending)
+
+    resp = requests.post(
+        "https://api.resend.com/emails",
+        headers={"Authorization": f"Bearer {RESEND_API_KEY}", "Content-Type": "application/json"},
+        json={
+            "from": "Antigravity Orchestra <reports@jonnyai.co.uk>",
+            "to": "blmotorcyclesltd@gmail.com",
+            "reply_to": "jonny@jonnyai.co.uk",
+            "subject": (
+                f"BL Motorcycles Daily | {DATE_DISPLAY} | "
+                f"{orders_24h['count']} orders"
+                + (f" | {len(pending)} PENDING" if pending else "")
+            ),
+            "html": html
+        },
+        timeout=20
+    )
+
+    if resp.status_code in (200, 201):
+        print(f"  Sent to Brett. Orders={orders_24h['count']} Revenue=£{orders_24h['revenue']:.2f} "
+              f"Pending={len(pending)}")
+        return True
+    else:
+        print(f"  ERROR {resp.status_code}: {resp.text[:200]}")
+        return False
+
 
 if __name__ == "__main__":
     send_brett_report()

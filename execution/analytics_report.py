@@ -3,25 +3,37 @@
 KPIs: Orders, revenue, agent activity, Supabase health, cron run rates
 Saves report to Supabase + commits to GitHub
 """
-import os, json, urllib.request, urllib.parse
+import os, sys, json, urllib.request, urllib.parse
 from datetime import datetime, timezone, timedelta
 from pathlib import Path
+from dotenv import load_dotenv
 
-REPO = Path("/home/antigravity-ai/Antigravity_Orchestra")
+sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+sys.stderr.reconfigure(encoding="utf-8", errors="replace")
+
+# Resolve repo root whether running from execution/ or repo root
+_script_dir = Path(__file__).resolve().parent
+REPO = _script_dir.parent if _script_dir.name == "execution" else _script_dir
+load_dotenv(dotenv_path=REPO / ".env")
+
+# Antigravity Brain (agent activity, learnings, chatroom, projects)
+BRAIN_URL = os.environ.get("ANTIGRAVITY_BRAIN_URL", "https://lkwydqtfbdjhxaarelaz.supabase.co")
+BRAIN_KEY = os.environ.get("ANTIGRAVITY_BRAIN_SERVICE_ROLE_KEY", "")
+# BL Motorcycles (orders, inventory)
 SUPABASE_URL = os.environ.get("SUPABASE_URL", "")
-SUPABASE_KEY = os.environ.get("SUPABASE_SERVICE_KEY", os.environ.get("SUPABASE_KEY", ""))
+SUPABASE_KEY = os.environ.get("SUPABASE_SERVICE_ROLE_KEY", "")
 NOW = datetime.now(timezone.utc)
 TODAY = NOW.strftime("%Y-%m-%d")
 YESTERDAY = (NOW - timedelta(days=1)).strftime("%Y-%m-%d")
 
-def sb_get(table, params=""):
-    if not SUPABASE_URL or not SUPABASE_KEY:
+def sb_get(base_url, key, table, params=""):
+    if not base_url or not key:
         return []
     try:
-        url = f"{SUPABASE_URL}/rest/v1/{table}?{params}"
+        url = f"{base_url}/rest/v1/{table}?{params}"
         req = urllib.request.Request(url, headers={
-            "apikey": SUPABASE_KEY,
-            "Authorization": "Bearer " + SUPABASE_KEY,
+            "apikey": key,
+            "Authorization": "Bearer " + key,
         })
         with urllib.request.urlopen(req, timeout=10) as r:
             return json.loads(r.read())
@@ -30,16 +42,16 @@ def sb_get(table, params=""):
         return []
 
 def sb_post(table, payload):
-    if not SUPABASE_URL or not SUPABASE_KEY:
+    if not BRAIN_URL or not BRAIN_KEY:
         return
     try:
         data = json.dumps(payload).encode()
         req = urllib.request.Request(
-            f"{SUPABASE_URL}/rest/v1/{table}",
+            f"{BRAIN_URL}/rest/v1/{table}",
             data=data,
             headers={
-                "apikey": SUPABASE_KEY,
-                "Authorization": "Bearer " + SUPABASE_KEY,
+                "apikey": BRAIN_KEY,
+                "Authorization": "Bearer " + BRAIN_KEY,
                 "Content-Type": "application/json",
                 "Prefer": "return=minimal"
             }, method="POST"
@@ -51,8 +63,8 @@ def sb_post(table, payload):
 
 def get_order_metrics():
     print("[1/5] Order metrics...")
-    # Last 24h orders
-    orders = sb_get("orders", f"created_at=gte.{YESTERDAY}T00:00:00Z&select=id,total_price,status,platform")
+    orders = sb_get(SUPABASE_URL, SUPABASE_KEY, "orders",
+                    f"created_at=gte.{YESTERDAY}T00:00:00Z&select=id,total_price,status,platform")
     total = len(orders)
     revenue = sum(float(o.get("total_price", 0) or 0) for o in orders)
     platforms = {}
@@ -67,10 +79,12 @@ def get_order_metrics():
 
 def get_agent_activity():
     print("[2/5] Agent activity...")
-    learnings = sb_get("learnings", f"created_at=gte.{YESTERDAY}T00:00:00Z&select=agent,category")
-    agents_active = list(set(l.get("agent", "") for l in learnings if l.get("agent")))
-    chatroom = sb_get("chatroom", f"created_at=gte.{YESTERDAY}T00:00:00Z&select=agent")
-    chatroom_agents = list(set(c.get("agent", "") for c in chatroom if c.get("agent")))
+    learnings = sb_get(BRAIN_URL, BRAIN_KEY, "learnings",
+                       f"created_at=gte.{YESTERDAY}T00:00:00Z&select=agent_id,category")
+    agents_active = list(set(l.get("agent_id", "") for l in learnings if l.get("agent_id")))
+    chatroom = sb_get(BRAIN_URL, BRAIN_KEY, "chatroom",
+                      f"created_at=gte.{YESTERDAY}T00:00:00Z&select=agent_id")
+    chatroom_agents = list(set(c.get("agent_id", "") for c in chatroom if c.get("agent_id")))
     print(f"  Learnings posted: {len(learnings)} | Agents active: {len(agents_active)}")
     return {
         "learnings_24h": len(learnings),
@@ -81,15 +95,18 @@ def get_agent_activity():
 
 def get_project_health():
     print("[3/5] Project health...")
-    projects = sb_get("projects", "select=name,status,updated_at")
+    projects = sb_get(BRAIN_URL, BRAIN_KEY, "projects", "select=name,status,updated_at")
     active = [p for p in projects if p.get("status") in ["active", "in-progress"]]
     stale = [p for p in projects if p.get("status") == "active" and p.get("updated_at", "") < YESTERDAY]
     print(f"  Active projects: {len(active)} | Stale: {len(stale)}")
     return {"total_projects": len(projects), "active": len(active), "stale": len(stale)}
 
 def get_cron_health():
-    print("[4/5] Cron health (systemd)...")
-    import subprocess
+    print("[4/5] Cron health...")
+    import subprocess, platform
+    if platform.system() != "Linux":
+        print("  Skipping systemd check (not Linux)")
+        return {"note": "systemd check skipped on non-Linux"}
     try:
         r = subprocess.run(
             ["systemctl", "list-timers", "--all", "--no-pager"],
@@ -102,14 +119,15 @@ def get_cron_health():
             capture_output=True, text=True, timeout=10
         )
         failed = len([l for l in failed_check.stdout.split("\n") if ".service" in l and "failed" in l])
-        print(f"  Timers: {len(lines)} total | Active: {active} | Failed services: {failed}")
+        print(f"  Timers: {len(lines)} total | Active: {active} | Failed: {failed}")
         return {"total_timers": len(lines), "active_timers": active, "failed_services": failed}
     except Exception as e:
         return {"error": str(e)}
 
 def check_inventory():
     print("[5/5] Inventory check...")
-    inventory = sb_get("products", "select=id,stock_quantity,sku&stock_quantity=lt.5&limit=20")
+    inventory = sb_get(SUPABASE_URL, SUPABASE_KEY, "products",
+                       "select=id,stock_quantity,sku&stock_quantity=lt.5&limit=20")
     print(f"  Low stock items (<5): {len(inventory)}")
     return {"low_stock_count": len(inventory), "low_stock_skus": [i.get("sku") for i in inventory[:10]]}
 

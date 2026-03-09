@@ -28,9 +28,19 @@ Usage:
 import json
 import uuid
 import os
+import sys
 import subprocess
 import requests
 from datetime import datetime, timezone, timedelta
+from pathlib import Path
+from dotenv import load_dotenv
+
+sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+sys.stderr.reconfigure(encoding="utf-8", errors="replace")
+
+_script_dir = Path(__file__).resolve().parent
+_repo_root = _script_dir.parent if _script_dir.name == "execution" else _script_dir
+load_dotenv(dotenv_path=_repo_root / ".env")
 
 SUPABASE_PROJECT_ID = os.getenv("SUPABASE_PROJECT_ID", "lkwydqtfbdjhxaarelaz")
 BRAIN_URL = os.getenv("ANTIGRAVITY_BRAIN_URL", f"https://{SUPABASE_PROJECT_ID}.supabase.co")
