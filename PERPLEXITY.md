@@ -173,32 +173,95 @@ _No learnings yet — populated after first deployment._
 
 ## Standing Research Briefs
 
-These are ongoing intelligence needs. Run these proactively when you have capacity:
+These are real, live priorities for the Antigravity Agency. Pick one, research it properly, commit the output.
 
-### 1. BL Motorcycles — eBay Competitor Intel
-- Top UK motorcycle parts sellers on eBay: pricing, fulfilment speed, listing quality
-- Any tools or APIs for bulk eBay fitment data (9691 unmatched products is a live problem)
-- How competitors handle "check if this fits your bike" on eBay vs own websites
+---
 
-### 2. Agency Pricing Intel
-- What are UK digital agencies charging for AI automation in 2026?
-- Benchmark: £150-£500/mo retainer — is this underpriced?
-- What specific deliverables justify £1k+/mo to SME clients?
+### 1. Agency Pricing — What Should We Be Charging? (STRATEGIC)
 
-### 3. Emerging Agent Roles
-- What agent types are missing from the 70-agent roster?
-- New AI capabilities (real-time voice, computer use, long context) — which agents need upgrading?
-- Any new frameworks (ADK, A2A, MCP 2.0) that the Orchestra should adopt?
+**The problem:** Antigravity is at ~£1,550/mo MRR. The target is £10k/mo. We need to know if we're underpriced and what the right offer architecture looks like.
 
-### 4. JonnyAI Platform Intel
-- Competitors to jonnyai.co.uk: platforms selling AI automation to UK SMEs
-- What's the most effective lead magnet for agency client acquisition in 2026?
-- Case study format that converts best for UK trades/SME clients
+**What to find:**
 
-### 5. Betting Ecosystem
-- Latest AI-powered betting tools and edges in UK market
-- Value betting services: Trademate, RebelBetting, OddsJam — current pricing and edge claims
-- Horse racing data APIs: Racing Post, Timeform — what's available programmatically?
+- What are UK AI automation agencies actually charging in 2026? Find published prices or disclosed case studies — not generic estimates. Look at Automately, Mindset AI, Growth Giants, Neighbourhood, and any UK-based agencies selling AI retainers to SMEs.
+- What specific deliverables justify £750–£2k/mo to a UK SME? Is it chatbots, reporting dashboards, lead gen automation, or something else?
+- What does the highest-converting service offer look like for UK trades and SME clients (roofers, contractors, mechanics)?
+- What's the average churn rate for UK digital agency retainers and what keeps clients longest?
+
+**Output:** `perplexity/briefs/YYYY-MM-DD-agency-pricing-benchmark.md`
+
+**Format:** Pricing table by service type, 3–5 competitor breakdowns with actual prices, recommended offer structure for Antigravity to hit £10k/mo.
+
+---
+
+### 2. JonnyAI Platform — Competitive Landscape (STRATEGIC)
+
+**The problem:** jonnyai.co.uk is being rebuilt as the agency's public face and client acquisition engine. We need to know what works and what the competition looks like.
+
+**What to find:**
+
+- Who are the direct competitors to a UK "AI agency OS" platform? Tools like AgencyAI, Relevance AI, and any UK-focused agency management tools with AI built in.
+- What is the highest-converting landing page structure for an AI agency selling to UK SMEs? Find real examples, not theory.
+- What lead magnet works best for this audience in 2026 — free audit, free tool, case study, ROI calculator?
+- What does the onboarding flow look like for the best-converting agency SaaS products?
+
+**Output:** `perplexity/briefs/YYYY-MM-DD-jonnyai-competitive-landscape.md`
+
+**Format:** Competitor table (positioning, pricing, ICP, strengths/weaknesses), landing page teardown of 2–3 competitors, recommended positioning for JonnyAI.
+
+---
+
+### 3. New Agent Designs — Fill the 59 Gaps (ONGOING)
+
+**The problem:** 70 agents on the roster but only 13 have real SKILL.md files. The rest are empty shells with no domain expertise baked in.
+
+**Priority agents to design (highest value first):**
+
+- **@Nathan** — Automation & Email Architect (n8n, Resend pipelines) — actively used every session
+- **@Felix** — Monetisation & Funnel Design — critical for agency growth sprint
+- **@Boyce** — Sales Conversion Specialist — closes deals, builds proposals
+- **@Gareth** — Football Tactical Intelligence — betting ecosystem is live
+- **@Harry** — Horse Racing Form Analysis — betting ecosystem is live
+
+**What to find:** Real domain expertise for each role. What do the top practitioners in that discipline actually do, what frameworks do they use, what tools, what workflows?
+
+**Output:** One file per agent at `perplexity/agents/YYYY-MM-DD-@handle-draft.md`
+
+**Format:** Full SKILL.md structure (see Creating New Agents section above). Commit each one separately.
+
+---
+
+### 4. Betting Edge — Real Tools and Data Sources (ECOSYSTEM)
+
+**The problem:** The betting ecosystem has 8 specialist agents but they're not grounded in the actual tools and data sources available in 2026.
+
+**What to find:**
+
+- Value betting services: Trademate Sport, RebelBetting, OddsJam, Betburger — current ROI claims, UK availability, pricing, and viability post-gubbing. Which actually still work?
+- Horse racing data: Is Racing Post data accessible programmatically? Timeform API? What do Sporting Life, At The Races, or SIS offer to developers?
+- Are there open/free horse racing datasets (results, form, going, handicap history) usable for backtesting?
+- Football data APIs: StatsBomb, Opta, Understat, FBref — what's free vs paid in 2026? What does each dataset actually contain?
+
+**Output:** `perplexity/research/YYYY-MM-DD-betting-tools-and-data-sources.md`
+
+**Format:** Table per sport — tool/API, data available, cost, UK legal status, verdict.
+
+---
+
+### 5. AI Agency Client Acquisition — What's Working in 2026? (GROWTH)
+
+**The problem:** Jonny needs a repeatable system to go from cold to signed client. We have the delivery stack. We need the acquisition engine.
+
+**What to find:**
+
+- What outreach methods are UK AI agencies using to win SME clients in 2026? Cold email, LinkedIn, referrals, content, paid ads — what's actually converting?
+- What does a winning cold outreach sequence look like for selling AI automation to UK trades businesses (roofing, coatings, construction)?
+- Are there any case studies of solo/small agencies scaling from £2k to £10k+ MRR with AI services? What was the turning point?
+- What's the most effective proof of concept or "quick win" offer to get a new client to commit to a retainer?
+
+**Output:** `perplexity/briefs/YYYY-MM-DD-agency-acquisition-playbook.md`
+
+**Format:** Ranked acquisition channels with evidence, sample outreach sequence, recommended 90-day acquisition plan for Antigravity.
 
 ---
 
