@@ -120,6 +120,43 @@ def get_active_projects():
     return len(sb_get(BRAIN_URL, BRAIN_KEY, "projects", "status=eq.active"))
 
 
+def get_crm_pipeline():
+    """Pull CRM pipeline from Twenty CRM GraphQL (VM localhost only — falls back gracefully)."""
+    try:
+        import urllib.parse
+        crm_key = (
+            "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI3ZTkxY2UyNC0xZjkyLTRiZmMtYTk3NC02MzY5NjNlYWFjYjAi"
+            "LCJ0eXBlIjoiQVBJX0tFWSIsIndvcmtzcGFjZUlkIjoiN2U5MWNlMjQtMWY5Mi00YmZjLWE5NzQtNjM2OTYzZWFhY2IwIiwi"
+            "aWF0IjoxNzczMDAyODc5LCJleHAiOjQ5MjY2MDI4NzcsImp0aSI6IjQwOGQxNzQ0LWMzMWItNGMxZi1hM2Q2LWE4ZmQxMzgz"
+            "MTZmYiJ9.1uOtmlrrG--EetlapjYpewC8PqiZogvNpZQxvabJoYQ"
+        )
+        q = """{ opportunities(first: 20) { edges { node {
+            name stage amount { amountMicros currencyCode }
+            company { name }
+        } } } }"""
+        data = json.dumps({"query": q}).encode()
+        req = urllib.request.Request(
+            "http://localhost:3000/graphql", data=data,
+            headers={"Authorization": f"Bearer {crm_key}", "Content-Type": "application/json"}
+        )
+        with urllib.request.urlopen(req, timeout=5) as r:
+            result = json.loads(r.read())
+        opps = result.get("data", {}).get("opportunities", {}).get("edges", [])
+        total_mrr = sum(
+            (o["node"].get("amount") or {}).get("amountMicros", 0) / 1_000_000
+            for o in opps
+        )
+        rows = []
+        for o in opps[:6]:
+            n = o["node"]
+            company = (n.get("company") or {}).get("name", "?")
+            amt = (n.get("amount") or {}).get("amountMicros", 0) / 1_000_000
+            rows.append({"company": company, "amount": amt, "stage": n.get("stage", "?")})
+        return {"total_mrr": round(total_mrr), "rows": rows, "count": len(opps)}
+    except Exception:
+        return {"total_mrr": 0, "rows": [], "count": 0}
+
+
 # ── HTML builder ──────────────────────────────────────────────────────────────
 
 def stat_block(label, value, sub="", color="#d97757"):
@@ -138,7 +175,7 @@ def section_head(title, color="#d97757"):
 
 
 def build_html(activity, learnings, social_count, calendar_pending,
-               bl_orders, bl_inv, active_projects):
+               bl_orders, bl_inv, active_projects, crm_pipeline):
 
     order_rows = ""
     for o in bl_orders["rows"][:5]:
@@ -181,9 +218,9 @@ def build_html(activity, learnings, social_count, calendar_pending,
   <div style="padding:32px 40px">
     <div style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:32px">
       {stat_block("BL Orders (24h)", bl_orders['count'], f"&pound;{bl_orders['revenue']:.2f} revenue")}
-      {stat_block("Social Posts", social_count, f"{calendar_pending} queued", "#4ade80")}
+      {stat_block("Agency MRR", f"&pound;{crm_pipeline['total_mrr']:,}", f"{crm_pipeline['count']} active deals", "#f59e0b")}
       {stat_block("Agent Messages", activity['count'], "today in chatroom", "#60a5fa")}
-      {stat_block("Active Projects", active_projects, "", "#a78bfa")}
+      {stat_block("Active Projects", active_projects, f"{social_count} social posts", "#a78bfa")}
     </div>
     {section_head("BL Motorcycles — Recent Orders")}
     {orders_section}
@@ -197,6 +234,19 @@ def build_html(activity, learnings, social_count, calendar_pending,
         <div style="font-size:11px;color:#555;text-transform:uppercase;letter-spacing:1px">Low Stock (&lt;3 units)</div>
         <div style="font-size:22px;font-weight:700;color:{low_color};margin-top:4px">{bl_inv['low_stock']}</div>
       </div>
+    </div>
+    {section_head("Agency Pipeline", "#f59e0b")}
+    <div style="background:#0d0d18;border:1px solid #1a1a2e;border-radius:4px;padding:16px 20px;margin-bottom:28px">
+      <div style="font-size:11px;color:#555;text-transform:uppercase;letter-spacing:1px;margin-bottom:10px">
+        {crm_pipeline['count']} active deals &bull; Total MRR: <span style="color:#f59e0b;font-weight:700">&pound;{crm_pipeline['total_mrr']:,}/mo</span>
+      </div>
+      {''.join(
+        f'<div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid #111;font-size:12px">'
+        f'<span style="color:#ccc">{r["company"]}</span>'
+        f'<span style="color:#f59e0b">&pound;{r["amount"]:.0f}/mo</span>'
+        f'</div>'
+        for r in crm_pipeline['rows']
+      ) if crm_pipeline['rows'] else '<div style="color:#555;font-size:13px">No pipeline data available</div>'}
     </div>
     {section_head("Orchestra Activity", "#60a5fa")}
     <ul style="font-size:13px;line-height:1.9;color:#aaa;padding-left:20px;margin-bottom:28px">
@@ -230,9 +280,10 @@ def main():
     bl_orders        = get_bl_orders()
     bl_inv           = get_bl_inventory()
     active_projects  = get_active_projects()
+    crm_pipeline     = get_crm_pipeline()
 
     html = build_html(activity, learnings, social_count, calendar_pending,
-                      bl_orders, bl_inv, active_projects)
+                      bl_orders, bl_inv, active_projects, crm_pipeline)
 
     resp = requests.post(
         "https://api.resend.com/emails",
