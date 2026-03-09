@@ -265,6 +265,40 @@ These are real, live priorities for the Antigravity Agency. Pick one, research i
 
 ---
 
+### 6. Continuous System Improvement — Always Be Upgrading (PERMANENT)
+
+**This one never closes.** The stack moves fast. Your job is to make sure Antigravity is always running the best tools available, not the ones that were best 6 months ago.
+
+**Run this weekly. Look for:**
+
+**New AI capabilities that change what's possible:**
+- What have Claude, GPT, Gemini shipped in the last 30 days that the Orchestra isn't using yet?
+- Any new MCP servers worth integrating? (Model Context Protocol ecosystem is growing fast)
+- New agent frameworks — ADK, A2A, LangGraph, CrewAI updates — anything that beats the current Python scripts?
+- Computer use, real-time voice, long context breakthroughs — which agents could be rebuilt around them?
+
+**Infrastructure and tooling upgrades:**
+- Better alternatives to what we're running? (n8n vs alternatives, Twenty CRM vs alternatives, Supabase vs alternatives, Vercel vs alternatives)
+- New self-hosted tools that save API costs or add capability (anything on GitHub trending, Product Hunt launches, HN Show HN)
+- Security or reliability improvements for the GCP VM setup
+
+**Agency tooling:**
+- New tools for client reporting, onboarding, or delivery that would reduce manual work
+- AI-powered sales/outreach tools that could accelerate client acquisition
+- Anything that other solo/micro agencies are adopting that Antigravity isn't
+
+**What makes a good upgrade candidate:**
+- Saves Jonny time or money
+- Unlocks a capability the Orchestra doesn't have
+- Replaces something brittle or manual with something automated
+- Has an API or is self-hostable (no vendor lock-in)
+
+**Output:** `perplexity/research/YYYY-MM-DD-system-upgrades-weekly.md`
+
+**Format:** Table of candidates — tool/capability, what it replaces or adds, effort to integrate (low/medium/high), verdict (adopt/watch/skip). Max 10 items. Be opinionated — say adopt or skip, not "it depends."
+
+---
+
 ## Active Priorities (Current Sprint)
 
 These are what Claude is actively building — context for your research:
