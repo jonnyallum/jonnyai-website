@@ -18,32 +18,48 @@ IG_USER_ID = os.getenv("INSTAGRAM_BUSINESS_ID")
 WHATSAPP_PHONE_NUMBER_ID = os.getenv("WHATSAPP_PHONE_NUMBER_ID")
 WA_BUSINESS_ACCOUNT_ID = os.getenv("WHATSAPP_BUSINESS_ACCOUNT_ID")
 
-def post_to_facebook(message, image_url=None):
+def post_to_facebook(message, image_path=None):
     """
     Posts a text message or an image + caption to the Facebook Page feed.
+    image_path: Can be a public URL or a local file path.
     """
     if not PAGE_ID or not PAGE_ACCESS_TOKEN:
         print("❌ ERROR: Facebook Credentials missing in .env.")
         return False
 
-    if image_url:
-        print(f"📡 @nathan: Deploying visual broadcast to Facebook Page {PAGE_ID}...")
-        url = f"https://graph.facebook.com/v19.0/{PAGE_ID}/photos"
-        payload = {
-            "url": image_url,
-            "message": message,
-            "access_token": PAGE_ACCESS_TOKEN
-        }
-    else:
-        print(f"📡 @nathan: Deploying text broadcast to Facebook Page {PAGE_ID}...")
-        url = f"https://graph.facebook.com/v19.0/{PAGE_ID}/feed"
-        payload = {
-            "message": message,
-            "access_token": PAGE_ACCESS_TOKEN
-        }
+    url_base = f"https://graph.facebook.com/v19.0/{PAGE_ID}"
     
     try:
-        response = requests.post(url, data=payload)
+        if image_path:
+            is_url = image_path.startswith("http")
+            print(f"📡 @nathan: Deploying visual broadcast to Facebook Page {PAGE_ID}...")
+            
+            if is_url:
+                url = f"{url_base}/photos"
+                payload = {
+                    "url": image_path,
+                    "message": message,
+                    "access_token": PAGE_ACCESS_TOKEN
+                }
+                response = requests.post(url, data=payload)
+            else:
+                url = f"{url_base}/photos"
+                payload = {
+                    "message": message,
+                    "access_token": PAGE_ACCESS_TOKEN
+                }
+                with open(image_path, "rb") as f:
+                    files = {"source": f}
+                    response = requests.post(url, data=payload, files=files)
+        else:
+            print(f"📡 @nathan: Deploying text broadcast to Facebook Page {PAGE_ID}...")
+            url = f"{url_base}/feed"
+            payload = {
+                "message": message,
+                "access_token": PAGE_ACCESS_TOKEN
+            }
+            response = requests.post(url, data=payload)
+
         res_data = response.json()
         if response.status_code == 200:
             print(f"✅ FACEBOOK LIVE: Post ID {res_data.get('id')}")
