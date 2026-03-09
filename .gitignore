@@ -37,15 +37,16 @@ execution/vps_key.pub
 
 # GCP tokens
 execution/gcp_compute_token.json
+execution/gcp_tokens.json
 
-# BL Motorcycles data feeds (downloaded fresh from Bike It FTP — stored in Supabase)
+# BL Motorcycles data feeds (large CSVs/XLSXs — pulled fresh from Bike It FTP, stored in Supabase)
 Clients/BL Motorcycles ltd/BL Motorcycles- Dropshipping/**/*.csv
 Clients/BL Motorcycles ltd/BL Motorcycles- Dropshipping/**/*.xlsx
 Clients/BL Motorcycles ltd/BL Motorcycles- Dropshipping/**/*.zip
 Clients/BL Motorcycles ltd/BL Motorcycles- Dropshipping/**/*.mp4
 Clients/BL Motorcycles ltd/BL Motorcycles- Dropshipping/**/*.exe
 
-# Large client images (not needed in version control)
+# Large client images
 Clients/Jsc website/**/*.jpeg
 Clients/Jsc website/**/*.jpg
 Clients/Jsc website/**/*.png
@@ -53,3 +54,14 @@ Clients/jsc-contractors*/**/*.jpeg
 Clients/jsc-contractors*/**/*.jpg
 Clients/jsc-contractors*/**/*.JPG
 Clients/jsc-contractors*/**/*.png
+
+# Operational artefacts — debug dumps, server logs, tmp env snapshots
+tmp_*
+*.log
+git_status.txt
+validation_report.txt
+e2e_validation_results.json
+resend_status.json
+append_env.txt
+twenty_env_example.txt
+twentyhq_env.txt

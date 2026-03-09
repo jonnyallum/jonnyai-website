@@ -87,15 +87,45 @@ async def place_cmpo_order(sku: str, qty: int, shipping_address: dict):
             await page.click("#save-drop-shipping-address-btn")
             print("📍 Shipping address saved (Drop Ship).")
 
-            # 7. Final Order Creation
-            # On checkout.php there should now be an option to confirm the order.
-            # We will stop here or look for the final place order button.
+            # 7. Final Order Confirmation
+            await page.wait_for_timeout(1500)
             await page.screenshot(path="cmpo_checkout_final_review.png")
-            
-            # NOTE: To prevent actual spend during testing, we'll cap it here.
-            # In production, we'd find the 'Pay' or 'Confirm Order' button.
-            
-            return {"success": True, "order_ref": "PENDING_CONFIRMATION", "screenshot": "cmpo_checkout_final_review.png"}
+
+            # Try known CMPO confirm button selectors
+            confirm_btn = page.locator(
+                "input[value='Confirm Order'], "
+                "input[value='Place Order'], "
+                "button:has-text('Confirm Order'), "
+                "button:has-text('Place Order'), "
+                "input[value='Submit Order']"
+            ).first
+            if await confirm_btn.count() == 0:
+                confirm_btn = page.locator("input[type='submit'], button[type='submit']").last
+
+            if await confirm_btn.count() > 0:
+                await confirm_btn.click()
+                await page.wait_for_load_state("networkidle")
+            else:
+                return {"success": False, "error": "Could not find confirm order button on checkout page"}
+
+            # 8. Capture order reference from confirmation page
+            await page.screenshot(path="cmpo_order_confirmed.png")
+            content = await page.content()
+            import re
+            order_ref = None
+            match = re.search(r'order[^\d]*#?\s*(\w+)', content, re.IGNORECASE)
+            if match:
+                order_ref = match.group(1)
+
+            confirmed = (
+                any(kw in page.url.lower() for kw in ["thank", "confirm", "success"])
+                or any(kw in content.lower() for kw in ["thank you", "order received", "order confirmed", "order number"])
+            )
+            if confirmed:
+                print(f"Order placed! Ref: {order_ref or 'check CMPO portal'}")
+                return {"success": True, "order_ref": order_ref or "CMPO_PLACED"}
+            else:
+                return {"success": False, "error": f"Unexpected page after confirm: {page.url}"}
 
         except Exception as e:
             print(f"❌ Error: {e}")

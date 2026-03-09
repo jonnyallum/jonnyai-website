@@ -1,4 +1,7 @@
 # -*- coding: utf-8 -*-
+import sys
+if sys.stdout.encoding and sys.stdout.encoding.lower() != "utf-8":
+    sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 """
 enrich_ebay_descriptions.py
 ============================
@@ -15,14 +18,14 @@ Run:
     python enrich_ebay_descriptions.py [--dry-run] [--sku RCOBLK03]
 
 Requirements:
-    pip install pandas requests python-dotenv
+    pip install requests python-dotenv
 """
 
 import os
 import sys
+import csv
 import time
 import argparse
-import pandas as pd
 import requests
 from dotenv import load_dotenv
 
@@ -62,7 +65,7 @@ def get_access_token() -> str:
 
 # ── HTML builder ─────────────────────────────────────────────────────────────
 
-def build_html_description(row: pd.Series) -> str:
+def build_html_description(row: dict) -> str:
     """Build a clean, professional eBay HTML description from Bike It feed fields."""
     parts = []
 
@@ -120,7 +123,7 @@ def build_html_description(row: pd.Series) -> str:
     return "\n".join(parts)
 
 
-def get_image_urls(row: pd.Series) -> list:
+def get_image_urls(row: dict) -> list:
     """Extract up to 12 non-empty image URLs from image1..image12 columns."""
     urls = []
     for i in range(1, 13):
@@ -141,7 +144,9 @@ def get_inventory_item(sku: str, token: str) -> dict | None:
     )
     if resp.status_code == 404:
         return None
-    resp.raise_for_status()
+    if resp.status_code >= 400:
+        print(f"    ! eBay {resp.status_code} for {sku} — skipping")
+        return None
     return resp.json()
 
 
@@ -171,18 +176,22 @@ def main():
     args = parser.parse_args()
 
     print(f"Loading product data from: {CSV_PATH}")
-    df = pd.read_csv(CSV_PATH, dtype=str, low_memory=False)
-    df["sku"] = df["sku"].str.strip()
-    print(f"  {len(df):,} products loaded")
+    with open(CSV_PATH, encoding="utf-8", errors="replace", newline="") as f:
+        rows = list(csv.DictReader(f))
+    # Strip SKU whitespace
+    for r in rows:
+        if "sku" in r and r["sku"]:
+            r["sku"] = r["sku"].strip()
+    print(f"  {len(rows):,} products loaded")
 
     if args.sku:
-        df = df[df["sku"] == args.sku]
-        if df.empty:
+        rows = [r for r in rows if r.get("sku") == args.sku]
+        if not rows:
             print(f"SKU '{args.sku}' not found in CSV.")
             sys.exit(1)
 
     if args.limit > 0:
-        df = df.head(args.limit)
+        rows = rows[: args.limit]
 
     token = None
     if not args.dry_run:
@@ -192,8 +201,8 @@ def main():
 
     ok = skipped = failed = no_match = 0
 
-    for _, row in df.iterrows():
-        sku = row["sku"]
+    for row in rows:
+        sku = row.get("sku", "").strip()
         html = build_html_description(row)
         images = get_image_urls(row)
 
@@ -209,7 +218,12 @@ def main():
             continue
 
         # Check item exists on eBay
-        item = get_inventory_item(sku, token)
+        try:
+            item = get_inventory_item(sku, token)
+        except Exception as e:
+            print(f"    ! GET exception for {sku}: {e}")
+            failed += 1
+            continue
         if item is None:
             no_match += 1
             continue
@@ -220,10 +234,15 @@ def main():
         if images:
             item["product"]["imageUrls"] = images
 
-        success = put_inventory_item(sku, item, token)
+        try:
+            success = put_inventory_item(sku, item, token)
+        except Exception as e:
+            print(f"    ! PUT exception for {sku}: {e}")
+            success = False
+
         if success:
             ok += 1
-            print(f"  ✓ {sku} enriched ({len(html)} chars, {len(images)} images)")
+            print(f"  + {sku} enriched ({len(html)} chars, {len(images)} images)")
         else:
             failed += 1
 
