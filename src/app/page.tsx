@@ -102,35 +102,49 @@ export default function HomePage() {
             transition={{ duration: 1.0, ease: [0.16, 1, 0.3, 1] }}
             className="relative flex items-center justify-center mb-10"
           >
-            {/* Outer atmospheric halo — massive, soft */}
+            {/* Outer atmospheric halo — fills the hero */}
             <div
-              className="absolute rounded-full pointer-events-none"
+              className="absolute pointer-events-none"
               style={{
-                width: 520,
-                height: 260,
-                background: 'radial-gradient(ellipse, rgba(217,119,87,0.22) 0%, rgba(217,119,87,0.06) 45%, transparent 75%)',
-                filter: 'blur(24px)',
-                transform: 'translateY(10px)',
+                width: 'clamp(500px, 70vw, 900px)',
+                height: 'clamp(200px, 25vw, 380px)',
+                background: 'radial-gradient(ellipse, rgba(217,119,87,0.28) 0%, rgba(217,119,87,0.08) 40%, transparent 70%)',
+                filter: 'blur(40px)',
+                transform: 'translateY(12px)',
+              }}
+            />
+            {/* Mid glow */}
+            <div
+              className="absolute pointer-events-none"
+              style={{
+                width: 'clamp(300px, 45vw, 600px)',
+                height: 'clamp(120px, 15vw, 220px)',
+                background: 'radial-gradient(ellipse, rgba(217,119,87,0.45) 0%, rgba(217,119,87,0.1) 50%, transparent 75%)',
+                filter: 'blur(18px)',
               }}
             />
             {/* Inner tight glow */}
             <div
-              className="absolute rounded-full pointer-events-none"
+              className="absolute pointer-events-none"
               style={{
-                width: 320,
-                height: 130,
-                background: 'radial-gradient(ellipse, rgba(217,119,87,0.35) 0%, transparent 70%)',
-                filter: 'blur(10px)',
+                width: 'clamp(200px, 30vw, 420px)',
+                height: 'clamp(80px, 10vw, 160px)',
+                background: 'radial-gradient(ellipse, rgba(217,119,87,0.6) 0%, transparent 65%)',
+                filter: 'blur(8px)',
               }}
             />
-            {/* The logo */}
+            {/* The logo — dominant */}
             <Image
               src="/jai_logo_clean.png"
               alt="JonnyAI"
-              width={300}
-              height={92}
-              className="relative object-contain drop-shadow-2xl"
-              style={{ filter: 'drop-shadow(0 0 32px rgba(217,119,87,0.5))' }}
+              width={800}
+              height={245}
+              className="relative object-contain"
+              style={{
+                width: 'clamp(300px, 52vw, 720px)',
+                height: 'auto',
+                filter: 'drop-shadow(0 0 48px rgba(217,119,87,0.55)) drop-shadow(0 0 12px rgba(217,119,87,0.3))',
+              }}
               priority
             />
           </motion.div>
@@ -268,7 +282,7 @@ export default function HomePage() {
       {/* ════════════════════════════════════════════════════════════
           THE PROBLEM
       ═══════════════════════════════════════════════════════════════ */}
-      <section className="max-w-4xl mx-auto px-6 py-32 text-center">
+      <section className="relative max-w-4xl mx-auto px-6 py-32 text-center overflow-hidden">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}

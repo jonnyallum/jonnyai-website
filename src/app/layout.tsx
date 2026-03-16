@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import GoogleAnalytics from "@/components/GoogleAnalytics";
 import GlassNavbar from "@/components/GlassNavbar";
+import SiteCanvas from "@/components/SiteCanvas";
 import { ModeProvider } from "@/context/ModeContext";
 
 export const metadata: Metadata = {
@@ -55,6 +56,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         />
       </head>
       <body className="antialiased">
+        <SiteCanvas />
         <ModeProvider>
           <GlassNavbar />
           {children}
