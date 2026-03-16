@@ -1,22 +1,22 @@
 @import "tailwindcss";
 
 :root {
-  --background: #050508;
+  --background: #070708;
 }
 
 @theme {
   --font-inter: "Inter", sans-serif;
   --font-outfit: "Outfit", sans-serif;
 
-  /* Core Palette */
-  --color-void: #020205;       /* Deeper Space */
-  --color-surface: #0a0a0f;    /* Dark Slate */
-  --color-panel: #0d0d12;      /* Midnight */
-  --color-citrus: #ff4d00;     /* Safety Orange (God-Tier accent) */
-  --color-signal: #00ffca;     /* Neon Cyan (The Signal) */
-  --color-alert: #ff003c;      /* High-Vis Crimson */
-  --color-titanium: #f8f8ff;   /* Ghost White Steel */
-  --color-carbon: rgba(255, 255, 255, 0.03);
+  /* Core Palette — Brand Locked */
+  --color-void:     #070708;          /* Background — the canvas */
+  --color-surface:  #0d0d10;          /* Card backgrounds */
+  --color-panel:    #0f0f13;          /* Panel backgrounds */
+  --color-citrus:   #D97757;          /* Primary accent — warm citrus orange */
+  --color-signal:   #22C55E;          /* Live / success / checkmarks */
+  --color-alert:    #ef4444;          /* Error / danger */
+  --color-titanium: #f8f8ff;          /* Primary text */
+  --color-carbon:   rgba(255,255,255,0.025);
 }
 
 @layer base {
@@ -27,26 +27,30 @@
 
 @layer components {
   .btn-citrus {
-    @apply inline-flex items-center justify-center bg-citrus text-white font-bold py-3 px-8 transition-all duration-300 hover:shadow-[0_0_30px_rgba(217,119,87,0.45)] hover:scale-105 active:scale-95 uppercase tracking-widest text-sm rounded-sm;
+    @apply inline-flex items-center justify-center bg-citrus text-void font-bold py-3 px-8 transition-all duration-300 hover:bg-white hover:text-void hover:shadow-[0_0_40px_rgba(217,119,87,0.35)] active:scale-95 uppercase tracking-widest text-sm rounded-sm;
   }
 
   .btn-ghost {
-    @apply inline-flex items-center justify-center border border-white/20 text-white font-bold py-3 px-8 transition-all duration-300 hover:border-white/40 hover:bg-white/5 active:scale-95 uppercase tracking-widest text-sm rounded-sm;
+    @apply inline-flex items-center justify-center border border-white/15 text-white/70 font-bold py-3 px-8 transition-all duration-300 hover:border-white/30 hover:text-white hover:bg-white/5 active:scale-95 uppercase tracking-widest text-sm rounded-sm;
   }
 
   .glass-card {
-    @apply bg-surface border border-white/8 rounded-sm p-6;
+    @apply bg-surface border border-white/[0.07] rounded-sm p-6 transition-all duration-300 hover:border-citrus/20 hover:-translate-y-0.5;
   }
 
   .glass-panel {
-    @apply bg-panel border border-white/8 rounded-sm;
+    @apply bg-panel border border-white/[0.07] rounded-sm;
   }
 
   .futuristic-title {
-    @apply font-outfit font-extrabold uppercase tracking-tight text-titanium;
+    @apply font-outfit font-extrabold tracking-tight text-titanium;
   }
 
   .section-label {
     @apply text-xs font-mono uppercase tracking-[0.3em] text-citrus;
+  }
+
+  .live-dot {
+    @apply w-2 h-2 rounded-full bg-signal shadow-[0_0_8px_rgba(34,197,94,0.7)];
   }
 }

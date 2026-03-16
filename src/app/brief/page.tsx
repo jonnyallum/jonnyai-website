@@ -22,7 +22,7 @@ interface QuoteData {
 }
 
 const INITIAL_MESSAGE =
-  "I'm Marcus — I run the project team here. Tell me what you're trying to build or fix. Don't worry about the detail yet — just give me the one-line version.";
+  "Hi — I'm Jonny. Tell me what you're trying to build or fix. Don't worry about the detail yet — just give me the one-line version.";
 
 function getTimestamp() {
   return new Date().toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
@@ -244,11 +244,11 @@ export default function BriefPage() {
         <div className="max-w-2xl mx-auto px-6 h-12 flex items-center justify-between">
           <div className="flex items-center gap-2.5">
             <div className="relative w-7 h-7 rounded-full bg-citrus/10 border border-citrus/20 flex items-center justify-center text-[10px] font-bold text-citrus shrink-0">
-              MC
+              JA
               <span className="absolute -top-0.5 -right-0.5 w-2 h-2 rounded-full bg-signal border-2 border-void" />
             </div>
             <div>
-              <span className="text-sm font-medium text-white">Marcus</span>
+              <span className="text-sm font-medium text-white">Jonny</span>
               <span className="text-white/20 text-xs font-mono ml-2 hidden sm:inline">— Free Project Scope</span>
             </div>
           </div>
@@ -275,7 +275,7 @@ export default function BriefPage() {
         >
           <span className="inline-flex items-center gap-2 text-[10px] font-mono text-white/20 border border-white/8 bg-surface/50 px-3 py-1.5 rounded-sm">
             <span className="w-1 h-1 rounded-full bg-citrus/60" />
-            Powered by Claude · Fixed-price roadmap in 5 min
+            Powered by AI · Fixed-price roadmap in 5 min
           </span>
         </motion.div>
 
@@ -290,7 +290,7 @@ export default function BriefPage() {
             >
               {msg.from === 'marcus' && (
                 <div className="relative w-7 h-7 rounded-full bg-citrus/10 border border-citrus/20 flex items-center justify-center text-[10px] font-bold text-citrus shrink-0 mb-1">
-                  MC
+                  JA
                 </div>
               )}
               <div className={`flex flex-col gap-1 ${msg.from === 'user' ? 'items-end' : 'items-start'} max-w-sm`}>
@@ -328,7 +328,7 @@ export default function BriefPage() {
               className="flex items-end gap-2.5"
             >
               <div className="w-7 h-7 rounded-full bg-citrus/10 border border-citrus/20 flex items-center justify-center text-[10px] font-bold text-citrus shrink-0">
-                MC
+                JA
               </div>
               <div className="bg-surface border border-white/8 rounded-sm">
                 <TypingDots />
@@ -373,7 +373,7 @@ export default function BriefPage() {
                 value={input}
                 onChange={handleInput}
                 onKeyDown={handleKeyDown}
-                placeholder="Tell Marcus what you need..."
+                placeholder="Tell us what you need..."
                 disabled={isLoading || isCheckingOut}
                 rows={1}
                 className="w-full bg-surface border border-white/12 rounded-sm px-4 py-3 pr-16 text-sm text-white placeholder-white/20 focus:outline-none focus:border-citrus/40 transition-colors resize-none overflow-hidden leading-relaxed disabled:opacity-50"
