@@ -25,7 +25,7 @@ export async function POST(req: NextRequest) {
             unit_amount: Math.round(amount * 100), // pence
             product_data: {
               name: productName,
-              description: 'JonnyAi — AI Product Engine. Powered by Jai.OS 4.0.',
+              description: 'JonnyAI — Private AI Installation & Automation Services.',
             },
           },
         },

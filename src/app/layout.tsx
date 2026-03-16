@@ -10,6 +10,9 @@ export const metadata: Metadata = {
   keywords: "private AI install UK, AI for small business, business automation UK, AI installation service, n8n automation, AI workforce UK",
   metadataBase: new URL("https://jonnyai.co.uk"),
   alternates: { canonical: "/" },
+  verification: {
+    google: process.env.GOOGLE_SITE_VERIFICATION,
+  },
   twitter: {
     card: "summary_large_image",
     title: "JonnyAI | Private AI for Small Business",
