@@ -3,8 +3,6 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
-import FiberCanvas from '@/components/FiberCanvas';
-
 const services = [
   {
     label: 'Private AI Install',
@@ -81,17 +79,6 @@ export default function HomePage() {
           HERO — Logo is the gravitational centre of the universe
       ═══════════════════════════════════════════════════════════════ */}
       <section className="relative min-h-screen flex flex-col items-center justify-center overflow-hidden">
-        {/* Orbital particle field */}
-        <FiberCanvas />
-
-        {/* Deep background vignette */}
-        <div
-          className="absolute inset-0 pointer-events-none"
-          style={{
-            background: 'radial-gradient(ellipse 80% 60% at 50% 40%, transparent 30%, rgba(7,7,8,0.7) 100%)',
-          }}
-        />
-
         {/* Hero content */}
         <div className="relative z-10 flex flex-col items-center text-center px-6 pt-20 pb-10 gap-0">
 
@@ -102,37 +89,6 @@ export default function HomePage() {
             transition={{ duration: 1.0, ease: [0.16, 1, 0.3, 1] }}
             className="relative flex items-center justify-center mb-10"
           >
-            {/* Outer atmospheric halo — fills the hero */}
-            <div
-              className="absolute pointer-events-none"
-              style={{
-                width: 'clamp(500px, 70vw, 900px)',
-                height: 'clamp(200px, 25vw, 380px)',
-                background: 'radial-gradient(ellipse, rgba(217,119,87,0.28) 0%, rgba(217,119,87,0.08) 40%, transparent 70%)',
-                filter: 'blur(40px)',
-                transform: 'translateY(12px)',
-              }}
-            />
-            {/* Mid glow */}
-            <div
-              className="absolute pointer-events-none"
-              style={{
-                width: 'clamp(300px, 45vw, 600px)',
-                height: 'clamp(120px, 15vw, 220px)',
-                background: 'radial-gradient(ellipse, rgba(217,119,87,0.45) 0%, rgba(217,119,87,0.1) 50%, transparent 75%)',
-                filter: 'blur(18px)',
-              }}
-            />
-            {/* Inner tight glow */}
-            <div
-              className="absolute pointer-events-none"
-              style={{
-                width: 'clamp(200px, 30vw, 420px)',
-                height: 'clamp(80px, 10vw, 160px)',
-                background: 'radial-gradient(ellipse, rgba(217,119,87,0.6) 0%, transparent 65%)',
-                filter: 'blur(8px)',
-              }}
-            />
             {/* The logo — dominant */}
             <Image
               src="/jai_logo_clean.png"

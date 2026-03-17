@@ -2,49 +2,78 @@ import type { Metadata } from "next";
 import "./globals.css";
 import GoogleAnalytics from "@/components/GoogleAnalytics";
 import GlassNavbar from "@/components/GlassNavbar";
-import SiteCanvas from "@/components/SiteCanvas";
+import FiberCanvas from "@/components/FiberCanvas";
 import { ModeProvider } from "@/context/ModeContext";
 
 export const metadata: Metadata = {
-  title: "JonnyAI | Private AI for Small Business",
-  description: "We install, configure, and train a private AI system inside your business. Not a SaaS. Not a chatbot. Yours. From £997.",
-  keywords: "private AI install UK, AI for small business, business automation UK, AI installation service, n8n automation, AI workforce UK",
+  title: "JonnyAI | Private AI Installation for UK Businesses",
+  description: "We install a private AI system inside your business — configured for your workflows, trained on your data, running on your hardware. Not a SaaS. Yours forever. From £997.",
+  keywords: "private AI install UK, AI for small business UK, business AI system, AI installation service UK, n8n automation UK, AI workforce UK, custom AI build UK",
   metadataBase: new URL("https://jonnyai.co.uk"),
-  alternates: { canonical: "/" },
+  alternates: { canonical: "https://jonnyai.co.uk/" },
+  robots: { index: true, follow: true, googleBot: { index: true, follow: true } },
   verification: {
     google: process.env.GOOGLE_SITE_VERIFICATION,
   },
-  twitter: {
-    card: "summary_large_image",
-    title: "JonnyAI | Private AI for Small Business",
-    description: "Your own private AI system, installed in your business in a day. From £997.",
-    creator: "@jonnyallum",
-    images: ["/brand/hero_background.png"],
-  },
   openGraph: {
-    title: "JonnyAI | Private AI for Small Business",
-    description: "We install a private AI system inside your business. Configured for your workflow. Trained on your data. From £997.",
+    title: "JonnyAI | Private AI Installation for UK Businesses",
+    description: "We install a private AI system inside your business — configured for your workflows, trained on your data, on your hardware. From £997.",
     type: "website",
+    url: "https://jonnyai.co.uk",
     locale: "en_GB",
-    images: [{ url: "/brand/hero_background.png", width: 1200, height: 630, alt: "JonnyAI — Private AI for Small Business" }],
+    siteName: "JonnyAI",
+    images: [{ url: "/brand/og_card.png", width: 1200, height: 630, alt: "JonnyAI — Private AI Installation for UK Businesses" }],
   },
 };
 
 const jsonLd = {
   "@context": "https://schema.org",
-  "@type": "LocalBusiness",
+  "@type": ["ProfessionalService", "LocalBusiness"],
   "name": "JonnyAI",
   "url": "https://jonnyai.co.uk",
   "logo": "https://jonnyai.co.uk/jai_logo_clean.png",
-  "description": "Private AI installation, automation, and digital services for UK small businesses.",
-  "address": { "@type": "PostalAddress", "addressCountry": "GB" },
+  "image": "https://jonnyai.co.uk/brand/og_card.png",
+  "description": "Private AI installation, automation, and AI workforce services for UK small businesses. We build AI systems that live inside your business — on your hardware, trained on your data.",
+  "priceRange": "£297-£1997",
+  "address": { "@type": "PostalAddress", "addressCountry": "GB", "addressRegion": "United Kingdom" },
+  "areaServed": { "@type": "Country", "name": "United Kingdom" },
   "email": "hello@jonnyai.co.uk",
-  "sameAs": ["https://twitter.com/jonnyallum", "https://github.com/jonnyallum"],
+  "founder": { "@type": "Person", "name": "Jonny Allum" },
+  "hasOfferCatalog": {
+    "@type": "OfferCatalog",
+    "name": "AI Services for UK Businesses",
+    "itemListElement": [
+      {
+        "@type": "Offer",
+        "itemOffered": {
+          "@type": "Service",
+          "name": "Private AI Install",
+          "description": "A private AI system installed on your hardware, configured for your workflows, trained on your data.",
+        },
+        "price": "997",
+        "priceCurrency": "GBP",
+        "priceSpecification": { "@type": "PriceSpecification", "minPrice": "997", "maxPrice": "1997", "priceCurrency": "GBP" },
+      },
+      {
+        "@type": "Offer",
+        "itemOffered": { "@type": "Service", "name": "Automation Packs", "description": "n8n workflows that eliminate repetitive business tasks." },
+        "price": "297",
+        "priceCurrency": "GBP",
+      },
+      {
+        "@type": "Offer",
+        "itemOffered": { "@type": "Service", "name": "AI Workforce", "description": "A dedicated AI agent trained on your business, running 24/7." },
+        "price": "1000",
+        "priceCurrency": "GBP",
+      },
+    ],
+  },
+  "sameAs": ["https://jonnyai.co.uk", "https://github.com/jonnyallum"],
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en">
+    <html lang="en-GB">
       <head>
         <GoogleAnalytics measurementId="G-K44SB55BCD" />
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
@@ -56,7 +85,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         />
       </head>
       <body className="antialiased">
-        <SiteCanvas />
+        <FiberCanvas />
         <ModeProvider>
           <GlassNavbar />
           {children}
