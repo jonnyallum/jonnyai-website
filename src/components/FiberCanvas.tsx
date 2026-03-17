@@ -252,11 +252,11 @@ export default function FiberCanvas() {
       const glowR = coreR * n.glowMult;
       const op    = Math.min(1, n.opacity * pulse);
 
-      // Outer diffuse glow
+      // Outer diffuse glow (-20%)
       const outerGlow = ctx.createRadialGradient(n.x, n.y, coreR * 0.4, n.x, n.y, glowR);
-      outerGlow.addColorStop(0,   `rgba(220,115,40,${Math.min(1, op * 0.50)})`);
-      outerGlow.addColorStop(0.3, `rgba(200,90,25,${Math.min(1, op * 0.16)})`);
-      outerGlow.addColorStop(0.7, `rgba(180,70,15,${Math.min(1, op * 0.05)})`);
+      outerGlow.addColorStop(0,   `rgba(220,115,40,${Math.min(1, op * 0.40)})`);
+      outerGlow.addColorStop(0.3, `rgba(200,90,25,${Math.min(1, op * 0.13)})`);
+      outerGlow.addColorStop(0.7, `rgba(180,70,15,${Math.min(1, op * 0.04)})`);
       outerGlow.addColorStop(1,   'rgba(180,70,15,0)');
       ctx.beginPath();
       ctx.arc(n.x, n.y, glowR, 0, Math.PI * 2);
@@ -267,11 +267,11 @@ export default function FiberCanvas() {
       const hx = n.x - coreR * 0.30;
       const hy = n.y - coreR * 0.30;
       const sphere = ctx.createRadialGradient(hx, hy, 0, n.x, n.y, coreR);
-      sphere.addColorStop(0,    `rgba(255,240,200,${Math.min(1, op)})`);       // bright specular centre
-      sphere.addColorStop(0.15, `rgba(255,200,110,${Math.min(1, op)})`);       // warm highlight
-      sphere.addColorStop(0.40, `rgba(230,120,40,${Math.min(1, op * 0.97)})`); // citrus mid
-      sphere.addColorStop(0.70, `rgba(170,60,15,${Math.min(1, op * 0.90)})`);  // deep amber
-      sphere.addColorStop(1,    `rgba(90,20,5,${Math.min(1, op * 0.70)})`);    // dark edge
+      sphere.addColorStop(0,    `rgba(255,240,200,${Math.min(1, op * 0.80)})`);  // bright specular centre
+      sphere.addColorStop(0.15, `rgba(255,200,110,${Math.min(1, op * 0.80)})`);  // warm highlight
+      sphere.addColorStop(0.40, `rgba(230,120,40,${Math.min(1, op * 0.78)})`);   // citrus mid
+      sphere.addColorStop(0.70, `rgba(170,60,15,${Math.min(1, op * 0.72)})`);    // deep amber
+      sphere.addColorStop(1,    `rgba(90,20,5,${Math.min(1, op * 0.56)})`);      // dark edge
       ctx.beginPath();
       ctx.arc(n.x, n.y, coreR, 0, Math.PI * 2);
       ctx.fillStyle = sphere;
