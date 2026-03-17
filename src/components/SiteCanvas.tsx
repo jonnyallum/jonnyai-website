@@ -1,28 +1,33 @@
 'use client';
 
+/**
+ * SiteCanvas — fixed background canvas for all inner pages.
+ * Matches the FiberCanvas brand aesthetic: fiber strands + citrus nodes.
+ * Runs at lower intensity than FiberCanvas so page content stays readable.
+ */
 import { useEffect, useRef } from 'react';
 
-interface Node {
-  x: number;
-  y: number;
-  vx: number;
-  vy: number;
-  size: number;
-  // 0 = citrus, 1 = white, 2 = signal-green
-  type: 0 | 1 | 2;
+interface Strand {
+  pts: { x: number; y: number }[];
+  width: number;
   opacity: number;
-  pulseOffset: number;
+  driftAmp: number;
+  driftFreq: number;
+  driftPhase: number;
 }
 
-const COLOURS = [
-  // citrus variants
-  (o: number) => `rgba(217,119,87,${o})`,
-  (o: number) => `rgba(235,140,100,${o})`,
-  // white/silver
-  (o: number) => `rgba(248,248,255,${o})`,
-  // signal green
-  (o: number) => `rgba(34,197,94,${o})`,
-];
+interface Node {
+  baseX: number; baseY: number;
+  x: number; y: number;
+  size: number;
+  glowMult: number;
+  opacity: number;
+  pulseFreq: number;
+  pulsePhase: number;
+  driftAmp: number;
+  driftFreq: number;
+  driftPhase: number;
+}
 
 export default function SiteCanvas() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -35,13 +40,15 @@ export default function SiteCanvas() {
 
     let animId: number;
     const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    let w = window.innerWidth;
+    let h = window.innerHeight;
 
     const resize = () => {
-      const w = window.innerWidth;
-      const h = window.innerHeight;
-      canvas.width = w * dpr;
+      w = window.innerWidth;
+      h = window.innerHeight;
+      canvas.width  = w * dpr;
       canvas.height = h * dpr;
-      canvas.style.width = `${w}px`;
+      canvas.style.width  = `${w}px`;
       canvas.style.height = `${h}px`;
       ctx.scale(dpr, dpr);
     };
@@ -54,101 +61,120 @@ export default function SiteCanvas() {
     };
     document.addEventListener('visibilitychange', onVisibility);
 
-    // 85 nodes: ~55 citrus, ~15 white, ~15 signal
-    const NODE_COUNT = 85;
-    const nodes: Node[] = Array.from({ length: NODE_COUNT }, (_, i) => {
-      const typeRoll = Math.random();
-      const type: 0 | 1 | 2 = typeRoll < 0.62 ? 0 : typeRoll < 0.80 ? 1 : 2;
+    const rand = (a: number, b: number) => a + Math.random() * (b - a);
+
+    // ─── STRANDS — sparser than hero, same fiber look ─────────────
+    const STRAND_COUNT = 30;
+    const strands: Strand[] = Array.from({ length: STRAND_COUNT }, () => {
+      const fromBottom = Math.random() < 0.5;
+      let sx: number, sy: number;
+      if (fromBottom) {
+        sx = rand(-0.1, 1.1) * w;
+        sy = rand(0.7, 1.2) * h;
+      } else {
+        const side = Math.random() < 0.5 ? -0.05 : 1.05;
+        sx = side * w;
+        sy = rand(-0.1, 1.1) * h;
+      }
+      const ex = rand(0.05, 0.95) * w;
+      const ey = rand(-0.1, 0.6) * h;
+
       return {
-        x: Math.random() * window.innerWidth,
-        y: Math.random() * window.innerHeight,
-        vx: (Math.random() - 0.5) * 0.35,
-        vy: (Math.random() - 0.5) * 0.35,
-        size: type === 1 ? Math.random() * 1.8 + 0.8 : Math.random() * 2.2 + 0.6,
-        type,
-        opacity: type === 1 ? Math.random() * 0.5 + 0.25 : Math.random() * 0.6 + 0.2,
-        pulseOffset: Math.random() * Math.PI * 2,
+        pts: [
+          { x: sx, y: sy },
+          { x: rand(0.1, 0.9) * w, y: rand(0.3, 0.9) * h },
+          { x: rand(0.1, 0.9) * w, y: rand(0.1, 0.6) * h },
+          { x: rand(0.1, 0.9) * w, y: rand(0.0, 0.5) * h },
+          { x: ex, y: ey },
+        ],
+        width:      rand(0.4, 1.2),
+        opacity:    rand(0.06, 0.16),   // subtler than hero
+        driftAmp:   rand(12, 40),
+        driftFreq:  rand(0.00015, 0.00032),
+        driftPhase: rand(0, Math.PI * 2),
       };
     });
 
-    const CONNECT_DIST = 160;
-    const t0 = Date.now();
+    const drawStrand = (s: Strand, t: number) => {
+      const drift  = s.driftAmp * Math.sin(t * s.driftFreq + s.driftPhase);
+      const driftY = s.driftAmp * Math.cos(t * s.driftFreq * 0.7 + s.driftPhase + 1.3);
+      const pts = s.pts.map((p, i) => {
+        const f = i === 0 || i === s.pts.length - 1 ? 0.12 : 1.0;
+        return { x: p.x + drift * f, y: p.y + driftY * f };
+      });
+
+      ctx.beginPath();
+      ctx.moveTo(pts[0].x, pts[0].y);
+      for (let i = 0; i < pts.length - 1; i++) {
+        const p0 = pts[Math.max(0, i - 1)];
+        const p1 = pts[i];
+        const p2 = pts[i + 1];
+        const p3 = pts[Math.min(pts.length - 1, i + 2)];
+        const cp1x = p1.x + (p2.x - p0.x) / 6;
+        const cp1y = p1.y + (p2.y - p0.y) / 6;
+        const cp2x = p2.x - (p3.x - p1.x) / 6;
+        const cp2y = p2.y - (p3.y - p1.y) / 6;
+        ctx.bezierCurveTo(cp1x, cp1y, cp2x, cp2y, p2.x, p2.y);
+      }
+      ctx.strokeStyle = `rgba(160,190,225,${s.opacity})`;
+      ctx.lineWidth   = s.width;
+      ctx.stroke();
+    };
+
+    // ─── NODES — citrus only, fewer than hero ─────────────────────
+    const NODE_COUNT = 18;
+    const nodes: Node[] = Array.from({ length: NODE_COUNT }, (_, i) => {
+      const isLarge = i < 4;
+      const size     = isLarge ? rand(3.5, 7)   : rand(0.8, 3);
+      const glowMult = isLarge ? rand(9, 14)     : rand(5, 9);
+      const opacity  = isLarge ? rand(0.5, 0.8)  : rand(0.2, 0.5);
+      const bx = rand(0.05, 0.95) * w;
+      const by = rand(0.05, 0.95) * h;
+      return {
+        baseX: bx, baseY: by, x: bx, y: by,
+        size, glowMult, opacity,
+        pulseFreq:  rand(0.0004, 0.0012),
+        pulsePhase: rand(0, Math.PI * 2),
+        driftAmp:   isLarge ? rand(3, 7) : rand(8, 18),
+        driftFreq:  rand(0.00010, 0.00020),
+        driftPhase: rand(0, Math.PI * 2),
+      };
+    });
+
+    const drawNode = (n: Node, t: number) => {
+      const pulse = 1 + 0.20 * Math.sin(t * n.pulseFreq + n.pulsePhase);
+      n.x = n.baseX + n.driftAmp * Math.sin(t * n.driftFreq + n.driftPhase);
+      n.y = n.baseY + n.driftAmp * Math.cos(t * n.driftFreq * 0.9 + n.driftPhase + 0.7);
+
+      const coreR = n.size * pulse;
+      const glowR = coreR * n.glowMult;
+      const op    = Math.min(1, n.opacity * pulse);
+
+      const grd = ctx.createRadialGradient(n.x, n.y, 0, n.x, n.y, glowR);
+      grd.addColorStop(0,    `rgba(217,119,87,${Math.min(1, op * 0.55)})`);
+      grd.addColorStop(0.2,  `rgba(217,119,87,${Math.min(1, op * 0.20)})`);
+      grd.addColorStop(0.55, `rgba(217,119,87,${Math.min(1, op * 0.05)})`);
+      grd.addColorStop(1,    `rgba(217,119,87,0)`);
+      ctx.beginPath();
+      ctx.arc(n.x, n.y, glowR, 0, Math.PI * 2);
+      ctx.fillStyle = grd;
+      ctx.fill();
+
+      const core = ctx.createRadialGradient(n.x, n.y, 0, n.x, n.y, coreR);
+      core.addColorStop(0,   `rgba(255,220,180,${op})`);
+      core.addColorStop(0.4, `rgba(217,119,87,${op})`);
+      core.addColorStop(1,   `rgba(200,90,60,0)`);
+      ctx.beginPath();
+      ctx.arc(n.x, n.y, coreR, 0, Math.PI * 2);
+      ctx.fillStyle = core;
+      ctx.fill();
+    };
 
     const draw = () => {
-      const w = window.innerWidth;
-      const h = window.innerHeight;
-      const t = (Date.now() - t0) / 1000;
-
+      const t = Date.now();
       ctx.clearRect(0, 0, w, h);
-
-      // Update positions
-      nodes.forEach(n => {
-        n.x += n.vx;
-        n.y += n.vy;
-        if (n.x < -20) n.x = w + 20;
-        if (n.x > w + 20) n.x = -20;
-        if (n.y < -20) n.y = h + 20;
-        if (n.y > h + 20) n.y = -20;
-      });
-
-      // Draw connections first (under nodes)
-      for (let i = 0; i < nodes.length; i++) {
-        for (let j = i + 1; j < nodes.length; j++) {
-          const dx = nodes[i].x - nodes[j].x;
-          const dy = nodes[i].y - nodes[j].y;
-          const dist = Math.sqrt(dx * dx + dy * dy);
-          if (dist < CONNECT_DIST) {
-            const alpha = (1 - dist / CONNECT_DIST) * 0.18;
-            // Colour the line based on node types
-            const ni = nodes[i];
-            const nj = nodes[j];
-            let lineColor: string;
-            if (ni.type === 2 || nj.type === 2) {
-              lineColor = `rgba(34,197,94,${alpha})`;
-            } else if (ni.type === 1 && nj.type === 1) {
-              lineColor = `rgba(248,248,255,${alpha * 0.7})`;
-            } else {
-              lineColor = `rgba(217,119,87,${alpha})`;
-            }
-            ctx.beginPath();
-            ctx.strokeStyle = lineColor;
-            ctx.lineWidth = 0.6;
-            ctx.moveTo(ni.x, ni.y);
-            ctx.lineTo(nj.x, nj.y);
-            ctx.stroke();
-          }
-        }
-      }
-
-      // Draw nodes with glow
-      nodes.forEach(n => {
-        const pulse = 1 + 0.15 * Math.sin(t * 1.2 + n.pulseOffset);
-        const finalOpacity = n.opacity * pulse;
-        const colFn = n.type === 0
-          ? COLOURS[0]
-          : n.type === 1
-          ? COLOURS[2]
-          : COLOURS[3];
-
-        // Glow halo for brighter/larger nodes
-        if (n.size > 1.2 || n.type === 1) {
-          const glowR = n.size * 5;
-          const grd = ctx.createRadialGradient(n.x, n.y, 0, n.x, n.y, glowR);
-          grd.addColorStop(0, colFn(finalOpacity * 0.5));
-          grd.addColorStop(1, colFn(0));
-          ctx.beginPath();
-          ctx.arc(n.x, n.y, glowR, 0, Math.PI * 2);
-          ctx.fillStyle = grd;
-          ctx.fill();
-        }
-
-        // Node core
-        ctx.beginPath();
-        ctx.arc(n.x, n.y, n.size * pulse * 0.9, 0, Math.PI * 2);
-        ctx.fillStyle = colFn(finalOpacity);
-        ctx.fill();
-      });
-
+      strands.forEach(s => drawStrand(s, t));
+      nodes.forEach(n => drawNode(n, t));
       animId = requestAnimationFrame(draw);
     };
 
