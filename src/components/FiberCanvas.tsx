@@ -3,30 +3,26 @@
 import { useEffect, useRef } from 'react';
 
 interface Strand {
-  x0: number; y0: number;
-  x1: number; y1: number;
-  cx0: number; cy0: number;
-  cx1: number; cy1: number;
-  driftAmp: number;
-  driftFreqX: number;
-  driftFreqY: number;
-  driftPhase: number;
+  // anchor points along the strand (spline)
+  pts: { x: number; y: number }[];
   width: number;
   opacity: number;
+  driftAmp: number;
+  driftFreq: number;
+  driftPhase: number;
 }
 
 interface Node {
   baseX: number; baseY: number;
   x: number; y: number;
-  size: number;
+  size: number;       // core radius px
+  glowMult: number;   // glow = size * glowMult
   opacity: number;
-  glowSize: number;
   pulseFreq: number;
   pulsePhase: number;
   driftAmp: number;
-  driftPhase: number;
   driftFreq: number;
-  isLarge: boolean;
+  driftPhase: number;
 }
 
 export default function FiberCanvas() {
@@ -46,9 +42,9 @@ export default function FiberCanvas() {
     const resize = () => {
       w = window.innerWidth;
       h = window.innerHeight;
-      canvas.width = w * dpr;
+      canvas.width  = w * dpr;
       canvas.height = h * dpr;
-      canvas.style.width = `${w}px`;
+      canvas.style.width  = `${w}px`;
       canvas.style.height = `${h}px`;
       ctx.scale(dpr, dpr);
     };
@@ -61,112 +57,152 @@ export default function FiberCanvas() {
     };
     document.addEventListener('visibilitychange', onVisibility);
 
-    // Random point near a canvas edge
-    const edgePoint = (): [number, number] => {
-      const side = Math.floor(Math.random() * 4);
-      if (side === 0) return [Math.random() * w, -10];
-      if (side === 1) return [w + 10, Math.random() * h];
-      if (side === 2) return [Math.random() * w, h + 10];
-      return [-10, Math.random() * h];
+    const rand = (a: number, b: number) => a + Math.random() * (b - a);
+
+    // ─── STRANDS ──────────────────────────────────────────────────
+    // Each strand is a catmull-rom spline with 5 control points.
+    // They sweep dramatically across the canvas — thicker, more visible,
+    // mimicking the fiber-optic look from the reference image.
+    const STRAND_COUNT = 55;
+    const strands: Strand[] = Array.from({ length: STRAND_COUNT }, () => {
+      // Pick a start edge (bottom-heavy so strands sweep upward)
+      const fromBottom = Math.random() < 0.55;
+      let sx: number, sy: number;
+      if (fromBottom) {
+        sx = rand(-0.1, 1.1) * w;
+        sy = rand(0.7, 1.2) * h;
+      } else {
+        // left or right edge
+        const side = Math.random() < 0.5 ? -0.05 : 1.05;
+        sx = side * w;
+        sy = rand(-0.1, 1.1) * h;
+      }
+
+      // End somewhere on the opposite side
+      const ex = rand(0.0, 1.0) * w;
+      const ey = rand(-0.15, 0.5) * h; // bias toward top
+
+      // 3 intermediate control points — create organic curve
+      const pts = [
+        { x: sx, y: sy },
+        { x: rand(0.0, 1.0) * w, y: rand(0.2, 0.9) * h },
+        { x: rand(0.1, 0.9) * w, y: rand(0.1, 0.7) * h },
+        { x: rand(0.1, 0.9) * w, y: rand(0.0, 0.5) * h },
+        { x: ex, y: ey },
+      ];
+
+      return {
+        pts,
+        width:      rand(0.5, 1.8),
+        opacity:    rand(0.10, 0.28),
+        driftAmp:   rand(15, 55),
+        driftFreq:  rand(0.00018, 0.00038),
+        driftPhase: rand(0, Math.PI * 2),
+      };
+    });
+
+    // Draw a Catmull-Rom spline through the pts with a drift offset
+    const drawStrand = (s: Strand, t: number) => {
+      const drift = s.driftAmp * Math.sin(t * s.driftFreq + s.driftPhase);
+      const driftY = s.driftAmp * Math.cos(t * s.driftFreq * 0.7 + s.driftPhase + 1.3);
+
+      const pts = s.pts.map((p, i) => {
+        // first and last points are anchored to edges — don't drift them
+        const factor = i === 0 || i === s.pts.length - 1 ? 0.15 : 1.0;
+        return { x: p.x + drift * factor, y: p.y + driftY * factor };
+      });
+
+      ctx.beginPath();
+      ctx.moveTo(pts[0].x, pts[0].y);
+
+      for (let i = 0; i < pts.length - 1; i++) {
+        const p0 = pts[Math.max(0, i - 1)];
+        const p1 = pts[i];
+        const p2 = pts[i + 1];
+        const p3 = pts[Math.min(pts.length - 1, i + 2)];
+
+        // Catmull-Rom → Bezier conversion
+        const cp1x = p1.x + (p2.x - p0.x) / 6;
+        const cp1y = p1.y + (p2.y - p0.y) / 6;
+        const cp2x = p2.x - (p3.x - p1.x) / 6;
+        const cp2y = p2.y - (p3.y - p1.y) / 6;
+        ctx.bezierCurveTo(cp1x, cp1y, cp2x, cp2y, p2.x, p2.y);
+      }
+
+      // Cool blue-grey tone matching the reference
+      ctx.strokeStyle = `rgba(160,190,225,${s.opacity})`;
+      ctx.lineWidth   = s.width;
+      ctx.stroke();
     };
 
-    // --- FIBER STRANDS (40 bezier curves flowing edge-to-edge) ---
-    const STRAND_COUNT = 40;
-    const strands: Strand[] = Array.from({ length: STRAND_COUNT }, () => {
-      const [x0, y0] = edgePoint();
-      const [x1, y1] = edgePoint();
-      return {
-        x0, y0, x1, y1,
-        // Control points placed randomly across canvas for organic curves
-        cx0: w * 0.15 + Math.random() * w * 0.7,
-        cy0: h * 0.05 + Math.random() * h * 0.9,
-        cx1: w * 0.15 + Math.random() * w * 0.7,
-        cy1: h * 0.05 + Math.random() * h * 0.9,
-        driftAmp: 20 + Math.random() * 60,
-        driftFreqX: 0.00025 + Math.random() * 0.00035,
-        driftFreqY: 0.00020 + Math.random() * 0.00030,
-        driftPhase: Math.random() * Math.PI * 2,
-        width: 0.3 + Math.random() * 0.6,
-        // Cool blue-grey, very subtle
-        opacity: 0.05 + Math.random() * 0.12,
-      };
-    });
-
-    // --- GLOWING NODES (citrus orange orbs, pulsing) ---
-    const NODE_COUNT = 38;
+    // ─── NODES ────────────────────────────────────────────────────
+    // Larger, brighter citrus orange orbs — the visual stars of the canvas
+    const NODE_COUNT = 32;
     const nodes: Node[] = Array.from({ length: NODE_COUNT }, (_, i) => {
-      const isLarge = i < 9;
-      const size = isLarge
-        ? 2.8 + Math.random() * 3.2
-        : 0.5 + Math.random() * 1.8;
-      const bx = Math.random() * w;
-      const by = Math.random() * h;
+      const tier = i < 6 ? 'hero' : i < 16 ? 'mid' : 'small';
+      const size     = tier === 'hero'  ? rand(5, 10)
+                     : tier === 'mid'   ? rand(2.5, 5)
+                     : rand(0.8, 2.2);
+      const glowMult = tier === 'hero'  ? rand(10, 16)
+                     : tier === 'mid'   ? rand(7, 12)
+                     : rand(5, 8);
+      const opacity  = tier === 'hero'  ? rand(0.75, 1.0)
+                     : tier === 'mid'   ? rand(0.5, 0.85)
+                     : rand(0.3, 0.6);
+
+      const bx = rand(0.05, 0.95) * w;
+      const by = rand(0.05, 0.95) * h;
       return {
-        baseX: bx, baseY: by,
-        x: bx, y: by,
-        size,
-        opacity: isLarge ? 0.65 + Math.random() * 0.35 : 0.25 + Math.random() * 0.45,
-        glowSize: size * (isLarge ? 14 : 8),
-        pulseFreq: 0.0005 + Math.random() * 0.0012,
-        pulsePhase: Math.random() * Math.PI * 2,
-        driftAmp: isLarge ? 6 : 18,
-        driftPhase: Math.random() * Math.PI * 2,
-        driftFreq: 0.00015 + Math.random() * 0.00025,
-        isLarge,
+        baseX: bx, baseY: by, x: bx, y: by,
+        size, glowMult, opacity,
+        pulseFreq:  rand(0.0004, 0.0014),
+        pulsePhase: rand(0, Math.PI * 2),
+        driftAmp:   tier === 'hero' ? rand(4, 9) : rand(8, 22),
+        driftFreq:  rand(0.00012, 0.00022),
+        driftPhase: rand(0, Math.PI * 2),
       };
     });
 
+    const drawNode = (n: Node, t: number) => {
+      const pulse = 1 + 0.22 * Math.sin(t * n.pulseFreq + n.pulsePhase);
+      n.x = n.baseX + n.driftAmp * Math.sin(t * n.driftFreq + n.driftPhase);
+      n.y = n.baseY + n.driftAmp * Math.cos(t * n.driftFreq * 0.9 + n.driftPhase + 0.7);
+
+      const coreR = n.size * pulse;
+      const glowR = coreR * n.glowMult;
+      const op    = Math.min(1, n.opacity * pulse);
+
+      // Wide, soft outer glow — 3 stops for depth
+      const grd = ctx.createRadialGradient(n.x, n.y, 0, n.x, n.y, glowR);
+      grd.addColorStop(0,    `rgba(217,119,87,${Math.min(1, op * 0.65)})`);
+      grd.addColorStop(0.18, `rgba(217,119,87,${Math.min(1, op * 0.28)})`);
+      grd.addColorStop(0.5,  `rgba(217,119,87,${Math.min(1, op * 0.07)})`);
+      grd.addColorStop(1,    `rgba(217,119,87,0)`);
+      ctx.beginPath();
+      ctx.arc(n.x, n.y, glowR, 0, Math.PI * 2);
+      ctx.fillStyle = grd;
+      ctx.fill();
+
+      // Bright hot core — white centre fading to citrus
+      const core = ctx.createRadialGradient(n.x, n.y, 0, n.x, n.y, coreR);
+      core.addColorStop(0,   `rgba(255,220,180,${op})`);
+      core.addColorStop(0.4, `rgba(217,119,87,${op})`);
+      core.addColorStop(1,   `rgba(200,90,60,0)`);
+      ctx.beginPath();
+      ctx.arc(n.x, n.y, coreR, 0, Math.PI * 2);
+      ctx.fillStyle = core;
+      ctx.fill();
+    };
+
+    // ─── DRAW LOOP ────────────────────────────────────────────────
     const draw = () => {
       const t = Date.now();
       ctx.clearRect(0, 0, w, h);
 
-      // --- Draw fiber strands ---
-      strands.forEach((s) => {
-        const dx = s.driftAmp * Math.sin(t * s.driftFreqX + s.driftPhase);
-        const dy = s.driftAmp * Math.cos(t * s.driftFreqY + s.driftPhase + 1.1);
-        ctx.beginPath();
-        ctx.moveTo(s.x0, s.y0);
-        ctx.bezierCurveTo(
-          s.cx0 + dx, s.cy0 + dy,
-          s.cx1 - dx * 0.6, s.cy1 - dy * 0.8,
-          s.x1, s.y1,
-        );
-        ctx.strokeStyle = `rgba(155,180,215,${s.opacity})`;
-        ctx.lineWidth = s.width;
-        ctx.stroke();
-      });
-
-      // --- Draw glowing nodes ---
-      nodes.forEach((n) => {
-        const pulse = 1 + 0.18 * Math.sin(t * n.pulseFreq + n.pulsePhase);
-        n.x = n.baseX + n.driftAmp * Math.sin(t * n.driftFreq + n.driftPhase);
-        n.y = n.baseY + n.driftAmp * Math.cos(t * n.driftFreq * 0.85 + n.driftPhase + 0.8);
-
-        const opacity = Math.min(1, n.opacity * pulse);
-        const glowR = n.glowSize * pulse;
-
-        // Soft outer glow halo
-        const grd = ctx.createRadialGradient(n.x, n.y, 0, n.x, n.y, glowR);
-        grd.addColorStop(0,   `rgba(217,119,87,${Math.min(1, opacity * 0.55)})`);
-        grd.addColorStop(0.25,`rgba(217,119,87,${Math.min(1, opacity * 0.18)})`);
-        grd.addColorStop(0.6, `rgba(217,119,87,${Math.min(1, opacity * 0.05)})`);
-        grd.addColorStop(1,   `rgba(217,119,87,0)`);
-        ctx.beginPath();
-        ctx.arc(n.x, n.y, glowR, 0, Math.PI * 2);
-        ctx.fillStyle = grd;
-        ctx.fill();
-
-        // Hot bright core
-        const coreR = n.size * pulse;
-        const core = ctx.createRadialGradient(n.x, n.y, 0, n.x, n.y, coreR);
-        core.addColorStop(0, `rgba(255,200,150,${opacity})`);
-        core.addColorStop(0.5, `rgba(217,119,87,${opacity})`);
-        core.addColorStop(1, `rgba(217,119,87,0)`);
-        ctx.beginPath();
-        ctx.arc(n.x, n.y, coreR, 0, Math.PI * 2);
-        ctx.fillStyle = core;
-        ctx.fill();
-      });
+      // Strands behind nodes
+      strands.forEach(s => drawStrand(s, t));
+      // Nodes on top
+      nodes.forEach(n => drawNode(n, t));
 
       animId = requestAnimationFrame(draw);
     };
