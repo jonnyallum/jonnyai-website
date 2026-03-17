@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
-import OrbitalCanvas from '@/components/OrbitalCanvas';
+import FiberCanvas from '@/components/FiberCanvas';
 
 const services = [
   {
@@ -82,7 +82,7 @@ export default function HomePage() {
       ═══════════════════════════════════════════════════════════════ */}
       <section className="relative min-h-screen flex flex-col items-center justify-center overflow-hidden">
         {/* Orbital particle field */}
-        <OrbitalCanvas />
+        <FiberCanvas />
 
         {/* Deep background vignette */}
         <div
@@ -280,6 +280,43 @@ export default function HomePage() {
       </section>
 
       {/* ════════════════════════════════════════════════════════════
+          FULL-BLEED BRAND VISUAL — neural network / fiber aesthetic
+      ═══════════════════════════════════════════════════════════════ */}
+      <section className="relative w-full overflow-hidden" style={{ height: 'clamp(320px, 45vw, 600px)' }}>
+        <Image
+          src="/brand/web_hero_field.png"
+          alt=""
+          fill
+          className="object-cover object-center"
+          style={{ opacity: 0.78 }}
+          aria-hidden="true"
+        />
+        {/* gradient overlays — fade into void at top and bottom */}
+        <div className="absolute inset-0" style={{ background: 'linear-gradient(to bottom, #070708 0%, transparent 18%, transparent 82%, #070708 100%)' }} />
+        {/* left vignette */}
+        <div className="absolute inset-0" style={{ background: 'linear-gradient(to right, #070708 0%, transparent 30%, transparent 70%, #070708 100%)' }} />
+        {/* centred statement */}
+        <div className="absolute inset-0 flex flex-col items-center justify-center text-center px-6">
+          <motion.p
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.9 }}
+            className="font-extrabold tracking-tight text-white"
+            style={{
+              fontFamily: 'Outfit, sans-serif',
+              fontSize: 'clamp(1.8rem, 4.5vw, 3.5rem)',
+              lineHeight: 1.1,
+              textShadow: '0 0 60px rgba(0,0,0,0.8)',
+            }}
+          >
+            This is what your business<br />
+            <span style={{ color: '#D97757' }}>looks like with AI inside it.</span>
+          </motion.p>
+        </div>
+      </section>
+
+      {/* ════════════════════════════════════════════════════════════
           THE PROBLEM
       ═══════════════════════════════════════════════════════════════ */}
       <section className="relative max-w-4xl mx-auto px-6 py-32 text-center overflow-hidden">
@@ -316,6 +353,92 @@ export default function HomePage() {
             It runs even if we disappear.
           </p>
         </motion.div>
+      </section>
+
+      {/* ════════════════════════════════════════════════════════════
+          PRIVATE AI INSTALL — Hero product feature callout
+      ═══════════════════════════════════════════════════════════════ */}
+      <section
+        className="w-full overflow-hidden"
+        style={{ borderTop: '1px solid rgba(255,255,255,0.06)' }}
+      >
+        <div className="max-w-7xl mx-auto px-6 py-24">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+
+            {/* Image — left on desktop */}
+            <motion.div
+              initial={{ opacity: 0, x: -30 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.8 }}
+              className="relative rounded-2xl overflow-hidden order-2 lg:order-1"
+              style={{ aspectRatio: '4/3' }}
+            >
+              <Image
+                src="/brand/web_private_install.png"
+                alt="Private AI system installation"
+                fill
+                className="object-cover object-center"
+              />
+              <div className="absolute inset-0" style={{ background: 'linear-gradient(135deg, transparent 60%, rgba(7,7,8,0.7) 100%)' }} />
+              {/* Badge overlay */}
+              <div
+                className="absolute top-5 left-5 px-3 py-1.5 text-[10px] font-bold tracking-[0.2em] uppercase rounded"
+                style={{ background: 'rgba(217,119,87,0.2)', color: '#D97757', border: '1px solid rgba(217,119,87,0.3)', backdropFilter: 'blur(8px)' }}
+              >
+                Hero Product
+              </div>
+            </motion.div>
+
+            {/* Copy — right on desktop */}
+            <motion.div
+              initial={{ opacity: 0, x: 30 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.8, delay: 0.1 }}
+              className="flex flex-col gap-6 order-1 lg:order-2"
+            >
+              <p className="text-xs font-bold tracking-[0.4em] uppercase" style={{ color: '#D97757', fontFamily: 'monospace' }}>
+                Private AI Install
+              </p>
+              <h2
+                className="font-extrabold tracking-tight"
+                style={{ fontFamily: 'Outfit, sans-serif', fontSize: 'clamp(2rem, 4vw, 3.2rem)', lineHeight: 1.05 }}
+              >
+                Your own AI system.<br />On your hardware.<br />
+                <span style={{ color: '#D97757' }}>Yours forever.</span>
+              </h2>
+              <p className="text-base leading-relaxed" style={{ color: 'rgba(255,255,255,0.5)' }}>
+                We come in, map your workflows, and build a private AI system configured
+                specifically for how your business runs. Not a SaaS tool. Not a chatbot.
+                Real infrastructure — installed on your server, trained on your data, running
+                behind your firewall.
+              </p>
+              <div className="flex flex-col gap-3">
+                {[
+                  'Configured for your exact workflows — not generic',
+                  'Trained on your documents, SOPs, and business data',
+                  'Runs on your hardware — zero monthly SaaS fees',
+                  'Keep running even if we disappear',
+                  'From £997 one-time. Support from £149/mo.',
+                ].map((point) => (
+                  <div key={point} className="flex items-start gap-3">
+                    <span className="mt-1 w-1.5 h-1.5 rounded-full shrink-0" style={{ background: '#22C55E', boxShadow: '0 0 8px rgba(34,197,94,0.7)' }} />
+                    <span className="text-sm" style={{ color: 'rgba(255,255,255,0.6)' }}>{point}</span>
+                  </div>
+                ))}
+              </div>
+              <div className="flex flex-wrap gap-4 pt-2">
+                <Link href="/install" className="btn-citrus py-3 px-8 text-xs">
+                  SEE HOW IT WORKS
+                </Link>
+                <Link href="/brief" className="btn-ghost py-3 px-8 text-xs">
+                  GET A QUOTE
+                </Link>
+              </div>
+            </motion.div>
+          </div>
+        </div>
       </section>
 
       {/* ════════════════════════════════════════════════════════════
@@ -572,6 +695,31 @@ export default function HomePage() {
             </motion.div>
           ))}
         </div>
+      </section>
+
+      {/* ════════════════════════════════════════════════════════════
+          IMAGE TRIPTYCH — brand visual strip
+      ═══════════════════════════════════════════════════════════════ */}
+      <section className="w-full overflow-hidden" style={{ borderTop: '1px solid rgba(255,255,255,0.06)' }}>
+        <motion.div
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true }}
+          transition={{ duration: 1.0 }}
+          className="grid grid-cols-3"
+          style={{ height: 'clamp(180px, 25vw, 380px)' }}
+        >
+          {[
+            { src: '/brand/v2_automation.png', label: 'Automation' },
+            { src: '/brand/web_network_deep.png', label: 'Network' },
+            { src: '/brand/v2_cta.png',        label: 'Scale' },
+          ].map(({ src, label }) => (
+            <div key={label} className="relative overflow-hidden">
+              <Image src={src} alt="" fill className="object-cover object-center" style={{ opacity: 0.7 }} aria-hidden="true" />
+              <div className="absolute inset-0" style={{ background: 'linear-gradient(to right, rgba(7,7,8,0.4), transparent 30%, transparent 70%, rgba(7,7,8,0.4))' }} />
+            </div>
+          ))}
+        </motion.div>
       </section>
 
       {/* ════════════════════════════════════════════════════════════
