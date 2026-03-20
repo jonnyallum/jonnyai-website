@@ -2,19 +2,18 @@
 
 import { useEffect, useState, useCallback } from "react";
 import { createClient } from "@supabase/supabase-js";
-import { LogOut, ShoppingBag, Clock, CheckCircle, Search, RefreshCw, ChevronDown, ChevronUp, DollarSign, Package, Mail, Phone, MapPin, Tag, Users } from "lucide-react";
+import { LogOut, ShoppingBag, Clock, CheckCircle, Search, RefreshCw, ChevronDown, ChevronUp, DollarSign, Package, Mail, Phone, MapPin, Tag, Users, ShieldAlert } from "lucide-react";
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
   process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
 );
 
+const ALLOWED_EMAILS = ["blmotorcyclesltd@gmail.com", "info@jonnyai.co.uk"];
 const WEBSITE_CHANNELS = ["bikeit", "cmpo"];
 const DATE_RANGES = [
-  { label: "Today", value: "today" },
-  { label: "7 days", value: "7d" },
-  { label: "30 days", value: "30d" },
-  { label: "90 days", value: "90d" },
+  { label: "Today", value: "today" }, { label: "7 days", value: "7d" },
+  { label: "30 days", value: "30d" }, { label: "90 days", value: "90d" },
   { label: "All time", value: "all" },
 ];
 const STATUS_OPTIONS = ["pending", "processing", "completed", "cancelled"];
@@ -42,8 +41,7 @@ function getDateFrom(range: string): string | null {
   const now = new Date();
   if (range === "all") return null;
   if (range === "today") { now.setHours(0,0,0,0); return now.toISOString(); }
-  const days = range === "7d" ? 7 : range === "30d" ? 30 : 90;
-  now.setDate(now.getDate() - days);
+  now.setDate(now.getDate() - (range === "7d" ? 7 : range === "30d" ? 30 : 90));
   return now.toISOString();
 }
 const fmt = (n: number) => new Intl.NumberFormat("en-GB", { style: "currency", currency: "GBP" }).format(n);
@@ -56,7 +54,25 @@ function ChannelBadge({ channel }: { channel: string }) {
 function StatusBadge({ status }: { status: string }) {
   const cls = STATUS_STYLES[status] ?? "bg-gray-500/20 text-gray-300 border-gray-500/40";
   return <span className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-semibold border capitalize ${cls}`}>{status}</span>;
-  }
+}
+
+function AccessDenied({ email }: { email: string }) {
+  return (
+    <div className="min-h-screen bg-[#0a0a0a] flex items-center justify-center p-4">
+      <div className="w-full max-w-sm bg-[#111] border border-red-500/30 rounded-2xl p-8 space-y-4 text-center">
+        <ShieldAlert className="w-12 h-12 text-red-400 mx-auto"/>
+        <h2 className="text-lg font-bold text-white">Access Denied</h2>
+        <p className="text-sm text-gray-400">
+          <span className="text-gray-300 font-medium">{email}</span> is not authorised to access this portal.
+        </p>
+        <button onClick={() => supabase.auth.signOut()} className="w-full bg-[#1a1a1a] border border-[#2a2a2a] text-gray-400 hover:text-white font-semibold py-2.5 px-4 rounded-xl text-sm">
+          Sign out and try another account
+        </button>
+        <p className="text-xs text-gray-700">Contact Antigravity AI to request access.</p>
+      </div>
+    </div>
+  );
+}
 
 function LoginScreen() {
   const [email, setEmail] = useState("");
@@ -70,8 +86,13 @@ function LoginScreen() {
   }
   async function handleEmail(e: React.FormEvent) {
     e.preventDefault(); setLoading(true); setError("");
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
-    if (error) { setError(error.message); setLoading(false); }
+    const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+    if (error) { setError(error.message); setLoading(false); return; }
+    if (data.user && !ALLOWED_EMAILS.includes(data.user.email ?? "")) {
+      await supabase.auth.signOut();
+      setError("Access denied. This portal is restricted to authorised users only.");
+      setLoading(false);
+    }
   }
 
   return (
@@ -95,14 +116,10 @@ function LoginScreen() {
         </button>
         <div className="flex items-center gap-3"><div className="flex-1 h-px bg-[#2a2a2a]"/><span className="text-xs text-gray-600">or</span><div className="flex-1 h-px bg-[#2a2a2a]"/></div>
         <form onSubmit={handleEmail} className="space-y-3">
-          {error && <div className="bg-red-500/10 border border-red-500/30 rounded-lg px-3 py-2 text-sm text-red-400">{error}</div>}
-          <input type="email" placeholder="Email" value={email} onChange={e => setEmail(e.target.value)} required
-            className="w-full bg-[#1a1a1a] border border-[#2a2a2a] text-white placeholder-gray-600 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-[#FF6B00]"/>
-          <input type="password" placeholder="Password" value={password} onChange={e => setPassword(e.target.value)} required
-            className="w-full bg-[#1a1a1a] border border-[#2a2a2a] text-white placeholder-gray-600 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-[#FF6B00]"/>
-          <button type="submit" disabled={loading} className="w-full bg-[#FF6B00] hover:bg-[#e05e00] text-white font-bold py-3 px-4 rounded-xl disabled:opacity-50 uppercase tracking-wide text-sm">
-            {loading ? "Signing in..." : "Email Login"}
-          </button>
+          {error && <div className="bg-red-500/10 border border-red-500/30 rounded-lg px-3 py-2 text-sm text-red-400 flex items-start gap-2"><ShieldAlert className="w-4 h-4 mt-0.5 shrink-0"/><span>{error}</span></div>}
+          <input type="email" placeholder="Email" value={email} onChange={e => setEmail(e.target.value)} required className="w-full bg-[#1a1a1a] border border-[#2a2a2a] text-white placeholder-gray-600 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-[#FF6B00]"/>
+          <input type="password" placeholder="Password" value={password} onChange={e => setPassword(e.target.value)} required className="w-full bg-[#1a1a1a] border border-[#2a2a2a] text-white placeholder-gray-600 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-[#FF6B00]"/>
+          <button type="submit" disabled={loading} className="w-full bg-[#FF6B00] hover:bg-[#e05e00] text-white font-bold py-3 px-4 rounded-xl disabled:opacity-50 uppercase tracking-wide text-sm">{loading ? "Signing in..." : "Email Login"}</button>
         </form>
         <p className="text-center text-xs text-gray-700">BL Motorcycles Ltd | Powered by Antigravity AI</p>
       </div>
@@ -113,16 +130,12 @@ function LoginScreen() {
 function OrderRow({ order, onStatusChange }: { order: Order; onStatusChange: (id: string, status: string) => Promise<void> }) {
   const [expanded, setExpanded] = useState(false);
   const [updating, setUpdating] = useState(false);
-  async function changeStatus(s: string) { setUpdating(true); await onStatusChange(order.id, s); setUpdating(false); }
-
+  async function changeStatus(st: string) { setUpdating(true); await onStatusChange(order.id, st); setUpdating(false); }
   return (
     <>
       <tr className="border-b border-[#1a1a1a] hover:bg-[#141414] cursor-pointer" onClick={() => setExpanded(!expanded)}>
         <td className="px-4 py-3 text-sm font-mono text-gray-400">#{order.order_reference ?? order.id.slice(0,8).toUpperCase()}</td>
-        <td className="px-4 py-3">
-          <div className="text-sm font-medium text-white">{order.customer_name}</div>
-          {order.customer_email && <div className="text-xs text-gray-500">{order.customer_email}</div>}
-        </td>
+        <td className="px-4 py-3"><div className="text-sm font-medium text-white">{order.customer_name}</div>{order.customer_email && <div className="text-xs text-gray-500">{order.customer_email}</div>}</td>
         <td className="px-4 py-3"><ChannelBadge channel={order.channel}/></td>
         <td className="px-4 py-3 text-sm font-bold text-white">{fmt(order.total_amount)}</td>
         <td className="px-4 py-3"><StatusBadge status={order.status}/></td>
@@ -130,43 +143,36 @@ function OrderRow({ order, onStatusChange }: { order: Order; onStatusChange: (id
         <td className="px-4 py-3">{expanded ? <ChevronUp className="w-4 h-4 text-gray-500"/> : <ChevronDown className="w-4 h-4 text-gray-500"/>}</td>
       </tr>
       {expanded && (
-        <tr className="bg-[#111] border-b border-[#1a1a1a]">
-          <td colSpan={7} className="px-6 py-4">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
-              <div className="space-y-2">
-                <p className="text-xs text-gray-500 uppercase font-semibold">Customer</p>
-                <div className="space-y-1">
-                  <div className="flex items-center gap-2 text-gray-300"><Users className="w-3.5 h-3.5 text-gray-500"/>{order.customer_name}</div>
-                  {order.customer_email && <div className="flex items-center gap-2 text-gray-400"><Mail className="w-3.5 h-3.5 text-gray-500"/>{order.customer_email}</div>}
-                  {order.customer_phone && <div className="flex items-center gap-2 text-gray-400"><Phone className="w-3.5 h-3.5 text-gray-500"/>{order.customer_phone}</div>}
-                  {order.shipping_address && <div className="flex items-start gap-2 text-gray-400"><MapPin className="w-3.5 h-3.5 text-gray-500 mt-0.5 shrink-0"/><span>{order.shipping_address}</span></div>}
-                </div>
-              </div>
-              <div className="space-y-2">
-                <p className="text-xs text-gray-500 uppercase font-semibold">Order</p>
-                <div className="space-y-1">
-                  <div className="flex justify-between text-gray-400"><span>Channel</span><ChannelBadge channel={order.channel}/></div>
-                  {order.subtotal != null && <div className="flex justify-between text-gray-400"><span>Subtotal</span><span>{fmt(order.subtotal)}</span></div>}
-                  {order.shipping_cost != null && <div className="flex justify-between text-gray-400"><span>Shipping</span><span>{fmt(order.shipping_cost)}</span></div>}
-                  <div className="flex justify-between text-white font-bold border-t border-[#2a2a2a] pt-1 mt-1"><span>Total</span><span>{fmt(order.total_amount)}</span></div>
-                  {order.payment_status && <div className="flex justify-between text-gray-400"><span>Payment</span><span className="capitalize">{order.payment_status}</span></div>}
-                </div>
-              </div>
-              <div className="space-y-2">
-                <p className="text-xs text-gray-500 uppercase font-semibold">Update Status</p>
-                <div className="grid grid-cols-2 gap-1.5">
-                  {STATUS_OPTIONS.map(s => (
-                    <button key={s} onClick={e => { e.stopPropagation(); changeStatus(s); }} disabled={updating || order.status === s}
-                      className={`px-3 py-1.5 rounded-lg text-xs font-semibold capitalize border transition-colors disabled:cursor-not-allowed ${order.status === s ? (STATUS_STYLES[s] ?? "") : "border-[#2a2a2a] text-gray-500 hover:border-[#FF6B00] hover:text-[#FF6B00]"}`}>
-                      {s}
-                    </button>
-                  ))}
-                </div>
-                {order.notes && <div className="mt-2 p-2 bg-[#1a1a1a] rounded-lg text-xs text-gray-400"><span className="text-gray-600 font-medium">Note: </span>{order.notes}</div>}
+        <tr className="bg-[#111] border-b border-[#1a1a1a]"><td colSpan={7} className="px-6 py-4">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+            <div className="space-y-2"><p className="text-xs text-gray-500 uppercase font-semibold">Customer</p>
+              <div className="space-y-1">
+                <div className="flex items-center gap-2 text-gray-300"><Users className="w-3.5 h-3.5 text-gray-500"/>{order.customer_name}</div>
+                {order.customer_email && <div className="flex items-center gap-2 text-gray-400"><Mail className="w-3.5 h-3.5 text-gray-500"/>{order.customer_email}</div>}
+                {order.customer_phone && <div className="flex items-center gap-2 text-gray-400"><Phone className="w-3.5 h-3.5 text-gray-500"/>{order.customer_phone}</div>}
+                {order.shipping_address && <div className="flex items-start gap-2 text-gray-400"><MapPin className="w-3.5 h-3.5 text-gray-500 mt-0.5 shrink-0"/><span>{order.shipping_address}</span></div>}
               </div>
             </div>
-          </td>
-        </tr>
+            <div className="space-y-2"><p className="text-xs text-gray-500 uppercase font-semibold">Order</p>
+              <div className="space-y-1">
+                <div className="flex justify-between text-gray-400"><span>Channel</span><ChannelBadge channel={order.channel}/></div>
+                {order.subtotal != null && <div className="flex justify-between text-gray-400"><span>Subtotal</span><span>{fmt(order.subtotal)}</span></div>}
+                {order.shipping_cost != null && <div className="flex justify-between text-gray-400"><span>Shipping</span><span>{fmt(order.shipping_cost)}</span></div>}
+                <div className="flex justify-between text-white font-bold border-t border-[#2a2a2a] pt-1 mt-1"><span>Total</span><span>{fmt(order.total_amount)}</span></div>
+                {order.payment_status && <div className="flex justify-between text-gray-400"><span>Payment</span><span className="capitalize">{order.payment_status}</span></div>}
+              </div>
+            </div>
+            <div className="space-y-2"><p className="text-xs text-gray-500 uppercase font-semibold">Update Status</p>
+              <div className="grid grid-cols-2 gap-1.5">
+                {STATUS_OPTIONS.map(st => (
+                  <button key={st} onClick={e => { e.stopPropagation(); changeStatus(st); }} disabled={updating || order.status === st}
+                    className={`px-3 py-1.5 rounded-lg text-xs font-semibold capitalize border transition-colors disabled:cursor-not-allowed ${order.status === st ? (STATUS_STYLES[st] ?? "") : "border-[#2a2a2a] text-gray-500 hover:border-[#FF6B00] hover:text-[#FF6B00]"}`}>{st}</button>
+                ))}
+              </div>
+              {order.notes && <div className="mt-2 p-2 bg-[#1a1a1a] rounded-lg text-xs text-gray-400"><span className="text-gray-600 font-medium">Note: </span>{order.notes}</div>}
+            </div>
+          </div>
+        </td></tr>
       )}
     </>
   );
@@ -175,6 +181,7 @@ function OrderRow({ order, onStatusChange }: { order: Order; onStatusChange: (id
 export default function AdminPage() {
   const [session, setSession] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [accessDenied, setAccessDenied] = useState<string>("");
   const [orders, setOrders] = useState<Order[]>([]);
   const [fetching, setFetching] = useState(false);
   const [search, setSearch] = useState("");
@@ -183,8 +190,25 @@ export default function AdminPage() {
   const [channelFilter, setChannelFilter] = useState("all");
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => { setSession(session); setLoading(false); });
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_, session) => setSession(session));
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (session && !ALLOWED_EMAILS.includes(session.user.email ?? "")) {
+        supabase.auth.signOut();
+        setAccessDenied(session.user.email ?? "unknown");
+      } else {
+        setSession(session);
+      }
+      setLoading(false);
+    });
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_, session) => {
+      if (session && !ALLOWED_EMAILS.includes(session.user.email ?? "")) {
+        await supabase.auth.signOut();
+        setAccessDenied(session.user.email ?? "unknown");
+        setSession(null);
+        return;
+      }
+      setAccessDenied("");
+      setSession(session);
+    });
     return () => subscription.unsubscribe();
   }, []);
 
@@ -219,7 +243,8 @@ export default function AdminPage() {
   const avgOrder = filtered.length ? totalRevenue / filtered.length : 0;
 
   if (loading) return <div className="min-h-screen bg-[#0a0a0a] flex items-center justify-center"><RefreshCw className="w-6 h-6 text-[#FF6B00] animate-spin"/></div>;
-  if (!session) return <LoginScreen />;
+  if (accessDenied) return <AccessDenied email={accessDenied}/>;
+  if (!session) return <LoginScreen/>;
 
   return (
     <div className="min-h-screen bg-[#0a0a0a] text-white">
@@ -227,16 +252,11 @@ export default function AdminPage() {
         <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="w-8 h-8 bg-[#FF6B00] rounded-lg flex items-center justify-center font-black text-sm">B</div>
-            <div>
-              <h1 className="font-black text-sm tracking-tight">B&L <span className="text-[#FF6B00]">MOTORCYCLES</span></h1>
-              <p className="text-xs text-gray-500">Website Sales Dashboard</p>
-            </div>
+            <div><h1 className="font-black text-sm tracking-tight">B&L <span className="text-[#FF6B00]">MOTORCYCLES</span></h1><p className="text-xs text-gray-500">Website Sales Dashboard</p></div>
           </div>
           <div className="flex items-center gap-3">
             <span className="text-xs text-gray-600 hidden sm:block">{session.user?.email}</span>
-            <button onClick={() => supabase.auth.signOut()} className="flex items-center gap-1.5 text-xs text-gray-500 hover:text-white px-3 py-1.5 rounded-lg hover:bg-[#1a1a1a]">
-              <LogOut className="w-3.5 h-3.5"/>Sign out
-            </button>
+            <button onClick={() => supabase.auth.signOut()} className="flex items-center gap-1.5 text-xs text-gray-500 hover:text-white px-3 py-1.5 rounded-lg hover:bg-[#1a1a1a]"><LogOut className="w-3.5 h-3.5"/>Sign out</button>
           </div>
         </div>
       </header>
@@ -277,4 +297,4 @@ export default function AdminPage() {
       </main>
     </div>
   );
-                                  }
+                                                                                                                                                                }
