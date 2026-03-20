@@ -1,300 +1,1090 @@
 "use client";
 
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useMemo, useCallback } from "react";
 import { createClient } from "@supabase/supabase-js";
-import { LogOut, ShoppingBag, Clock, CheckCircle, Search, RefreshCw, ChevronDown, ChevronUp, DollarSign, Package, Mail, Phone, MapPin, Tag, Users, ShieldAlert } from "lucide-react";
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-);
+// ─── Supabase ─────────────────────────────────────────────────────────────────
+const SUPABASE_URL = "https://ddjuoeyaoxllockcusgf.supabase.co";
+const SUPABASE_ANON_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
+const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
+// ─── Auth ─────────────────────────────────────────────────────────────────────
 const ALLOWED_EMAILS = ["blmotorcyclesltd@gmail.com", "info@jonnyai.co.uk"];
-const WEBSITE_CHANNELS = ["bikeit", "cmpo"];
-const DATE_RANGES = [
-  { label: "Today", value: "today" }, { label: "7 days", value: "7d" },
-  { label: "30 days", value: "30d" }, { label: "90 days", value: "90d" },
-  { label: "All time", value: "all" },
-];
-const STATUS_OPTIONS = ["pending", "processing", "completed", "cancelled"];
-const CHANNEL_LABELS: Record<string, { label: string; color: string }> = {
-  bikeit: { label: "BikeIT", color: "bg-blue-500/20 text-blue-300 border-blue-500/40" },
-  cmpo:   { label: "CMPO",   color: "bg-green-500/20 text-green-300 border-green-500/40" },
+
+// ─── Types ────────────────────────────────────────────────────────────────────
+interface Order {
+  id: string;
+  created_at: string;
+  updated_at?: string;
+  channel?: string;
+  order_reference?: string;
+  customer_name?: string;
+  customer_email?: string;
+  customer_phone?: string;
+  shipping_address?: string;
+  items?: OrderItem[] | string;
+  total_amount?: number;
+  total?: number;
+  total_price?: string;
+  subtotal?: number;
+  shipping_cost?: number;
+  status: string;
+  payment_status?: string;
+  notes?: string;
+  tracking_number?: string;
+  supplier?: string;
+}
+
+interface OrderItem {
+  sku?: string;
+  title?: string;
+  name?: string;
+  quantity: number;
+  price: number;
+}
+
+interface Customer {
+  id: string;
+  created_at: string;
+  name?: string;
+  customer_name?: string;
+  email?: string;
+  customer_email?: string;
+  phone?: string;
+  customer_phone?: string;
+  address?: string;
+  order_count?: number;
+  total_spent?: number;
+}
+
+interface Product {
+  id: string;
+  created_at?: string;
+  sku?: string;
+  title?: string;
+  name?: string;
+  price?: number;
+  stock_qty?: number;
+  quantity?: number;
+  supplier?: string;
+  category?: string;
+  status?: string;
+}
+
+// ─── Helpers ──────────────────────────────────────────────────────────────────
+const daysSince = (date: string) => {
+  const ms = Date.now() - new Date(date).getTime();
+  return Math.floor(ms / (1000 * 60 * 60 * 24));
 };
-const STATUS_STYLES: Record<string, string> = {
-  pending:    "bg-yellow-500/20 text-yellow-300 border-yellow-500/40",
-  processing: "bg-blue-500/20 text-blue-300 border-blue-500/40",
-  completed:  "bg-green-500/20 text-green-300 border-green-500/40",
-  cancelled:  "bg-red-500/20 text-red-300 border-red-500/40",
+
+const orderTotal = (o: Order): number => {
+  if (o.total_amount) return o.total_amount;
+  if (o.total) return o.total;
+  if (o.total_price) return parseFloat(o.total_price) || 0;
+  return 0;
 };
 
-type Order = {
-  id: string; channel: string; order_reference?: string;
-  customer_name: string; customer_email?: string; customer_phone?: string;
-  shipping_address?: string; items?: { sku: string; title: string; quantity: number; price: number }[];
-  total_amount: number; subtotal?: number; shipping_cost?: number;
-  status: string; payment_status?: string; notes?: string;
-  created_at: string; updated_at?: string;
+const statusColor = (s: string) => {
+  switch (s?.toLowerCase()) {
+    case "pending":    return "bg-yellow-100 text-yellow-800 border-yellow-200";
+    case "ordering":   return "bg-blue-100 text-blue-800 border-blue-200";
+    case "ordered":    return "bg-indigo-100 text-indigo-800 border-indigo-200";
+    case "dispatched": return "bg-teal-100 text-teal-800 border-teal-200";
+    case "delivered":  return "bg-green-100 text-green-800 border-green-200";
+    case "failed":     return "bg-red-100 text-red-800 border-red-200";
+    case "rejected":   return "bg-red-100 text-red-800 border-red-200";
+    case "cancelled":  return "bg-zinc-100 text-zinc-600 border-zinc-200";
+    default:           return "bg-zinc-100 text-zinc-700 border-zinc-200";
+  }
 };
 
-function getDateFrom(range: string): string | null {
-  const now = new Date();
-  if (range === "all") return null;
-  if (range === "today") { now.setHours(0,0,0,0); return now.toISOString(); }
-  now.setDate(now.getDate() - (range === "7d" ? 7 : range === "30d" ? 30 : 90));
-  return now.toISOString();
-}
-const fmt = (n: number) => new Intl.NumberFormat("en-GB", { style: "currency", currency: "GBP" }).format(n);
-const fmtDate = (s: string) => new Date(s).toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit" });
+const channelBadge = (ch?: string) => {
+  const c = ch?.toLowerCase();
+  if (c === "ebay")   return "bg-yellow-400 text-black";
+  if (c === "bikeit") return "bg-blue-600 text-white";
+  if (c === "cmpo")   return "bg-green-600 text-white";
+  return "bg-zinc-700 text-zinc-100";
+};
 
-function ChannelBadge({ channel }: { channel: string }) {
-  const cfg = CHANNEL_LABELS[channel] ?? { label: channel.toUpperCase(), color: "bg-gray-500/20 text-gray-300 border-gray-500/40" };
-  return <span className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-semibold border ${cfg.color}`}>{cfg.label}</span>;
-}
-function StatusBadge({ status }: { status: string }) {
-  const cls = STATUS_STYLES[status] ?? "bg-gray-500/20 text-gray-300 border-gray-500/40";
-  return <span className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-semibold border capitalize ${cls}`}>{status}</span>;
-}
+const fmt = (n: number) => `£${n.toFixed(2)}`;
+const fmtDate = (d: string) => new Date(d).toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" });
 
-function AccessDenied({ email }: { email: string }) {
-  return (
-    <div className="min-h-screen bg-[#0a0a0a] flex items-center justify-center p-4">
-      <div className="w-full max-w-sm bg-[#111] border border-red-500/30 rounded-2xl p-8 space-y-4 text-center">
-        <ShieldAlert className="w-12 h-12 text-red-400 mx-auto"/>
-        <h2 className="text-lg font-bold text-white">Access Denied</h2>
-        <p className="text-sm text-gray-400">
-          <span className="text-gray-300 font-medium">{email}</span> is not authorised to access this portal.
-        </p>
-        <button onClick={() => supabase.auth.signOut()} className="w-full bg-[#1a1a1a] border border-[#2a2a2a] text-gray-400 hover:text-white font-semibold py-2.5 px-4 rounded-xl text-sm">
-          Sign out and try another account
-        </button>
-        <p className="text-xs text-gray-700">Contact Antigravity AI to request access.</p>
-      </div>
-    </div>
-  );
-}
-
-function LoginScreen() {
-  const [email, setEmail] = useState("");
+// ─── Login Screen ─────────────────────────────────────────────────────────────
+function LoginScreen({ onLogin }: { onLogin: (email: string) => void }) {
+  const [email, setEmail]       = useState("");
   const [password, setPassword] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
+  const [error, setError]       = useState("");
+  const [loading, setLoading]   = useState(false);
 
-  async function handleGoogle() {
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError("");
     setLoading(true);
-    await supabase.auth.signInWithOAuth({ provider: "google", options: { redirectTo: window.location.origin + "/admin" } });
-  }
-  async function handleEmail(e: React.FormEvent) {
-    e.preventDefault(); setLoading(true); setError("");
-    const { data, error } = await supabase.auth.signInWithPassword({ email, password });
-    if (error) { setError(error.message); setLoading(false); return; }
-    if (data.user && !ALLOWED_EMAILS.includes(data.user.email ?? "")) {
-      await supabase.auth.signOut();
-      setError("Access denied. This portal is restricted to authorised users only.");
+    if (!ALLOWED_EMAILS.includes(email.toLowerCase().trim())) {
+      setError("Access denied. This portal is restricted.");
       setLoading(false);
+      return;
     }
-  }
-
-  return (
-    <div className="min-h-screen bg-[#0a0a0a] flex items-center justify-center p-4">
-      <div className="w-full max-w-sm bg-[#111] border border-[#222] rounded-2xl p-8 space-y-6">
-        <div className="text-center">
-          <div className="flex items-center justify-center gap-2 mb-4">
-            <div className="w-10 h-10 bg-[#FF6B00] rounded-lg flex items-center justify-center font-black text-white text-lg">B</div>
-            <span className="text-xl font-black text-white">B&L <span className="text-[#FF6B00]">OPERATIONS</span></span>
+    const { error: authErr } = await supabase.auth.signInWithPassword({
+      email: email.trim(),
+      password,
+    });
+    if (authErr) {
+      setError("Invalid credentials. Please try again.");
+    } else {
+      onLogin(email.trim());
+    }
+    setLoading(false);
+  };>
+      <div className="w-full max-w-sm">
+        <div className="mb-8 text-center">
+          <div className="inline-flex items-center justify-center w-14 h-14 rounded-xl bg-orange-500 mb-4">
+            <span className="text-2xl font-black text-white">B&amp;L</span>
           </div>
-          <p className="text-xs text-gray-500 uppercase tracking-widest">Management Portal</p>
+          <h1 className="text-2xl font-bold text-white">B&amp;LOPS</h1>
+          <p className="text-zinc-400 text-sm mt-1">Operations Portal — Restricted Access</p>
         </div>
-        <button onClick={handleGoogle} disabled={loading} className="w-full flex items-center justify-center gap-3 bg-white text-gray-900 font-semibold py-3 px-4 rounded-xl hover:bg-gray-100 disabled:opacity-50">
-          <svg className="w-5 h-5" viewBox="0 0 24 24">
-            <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
-            <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
-            <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
-            <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
-          </svg>
-          Sign in with Google
-        </button>
-        <div className="flex items-center gap-3"><div className="flex-1 h-px bg-[#2a2a2a]"/><span className="text-xs text-gray-600">or</span><div className="flex-1 h-px bg-[#2a2a2a]"/></div>
-        <form onSubmit={handleEmail} className="space-y-3">
-          {error && <div className="bg-red-500/10 border border-red-500/30 rounded-lg px-3 py-2 text-sm text-red-400 flex items-start gap-2"><ShieldAlert className="w-4 h-4 mt-0.5 shrink-0"/><span>{error}</span></div>}
-          <input type="email" placeholder="Email" value={email} onChange={e => setEmail(e.target.value)} required className="w-full bg-[#1a1a1a] border border-[#2a2a2a] text-white placeholder-gray-600 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-[#FF6B00]"/>
-          <input type="password" placeholder="Password" value={password} onChange={e => setPassword(e.target.value)} required className="w-full bg-[#1a1a1a] border border-[#2a2a2a] text-white placeholder-gray-600 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-[#FF6B00]"/>
-          <button type="submit" disabled={loading} className="w-full bg-[#FF6B00] hover:bg-[#e05e00] text-white font-bold py-3 px-4 rounded-xl disabled:opacity-50 uppercase tracking-wide text-sm">{loading ? "Signing in..." : "Email Login"}</button>
+
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div>
+            <label className="block text-xs font-medium text-zinc-400 mb-1.5">Email</label>
+            <input
+              type="email"
+              value={email}
+              onChange={e => setEmail(e.target.value)}
+              className="w-full bg-zinc-900 border border-zinc-700 rounded-lg px-4 py-3 text-white text-sm outline-none focus:border-orange-500 transition-colors"
+              placeholder="your@email.com"
+              required
+            />
+          </div>
+          <div>
+            <label className="block text-xs font-medium text-zinc-400 mb-1.5">Password</label>
+            <input
+              type="password"
+              value={password}
+              onChange={e => setPassword(e.target.value)}
+              className="w-full bg-zinc-900 border border-zinc-700 rounded-lg px-4 py-3 text-white text-sm outline-none focus:border-orange-500 transition-colors"
+              placeholder="••••••••"
+              required
+            />
+          </div>
+
+          {error && (
+            <div className="bg-red-900/30 border border-red-700 rounded-lg px-4 py-3 text-red-300 text-sm">
+              {error}
+            </div>
+          )}
+
+          <button
+            type="submit"
+            disabled={loading}
+            className="w-full bg-orange-500 hover:bg-orange-400 disabled:opacity-50 text-white font-semibold rounded-lg px-4 py-3 text-sm transition-colors"
+          >
+            {loading ? "Signing in…" : "Sign In"}
+          </button>
         </form>
-        <p className="text-center text-xs text-gray-700">BL Motorcycles Ltd | Powered by Antigravity AI</p>
       </div>
     </div>
   );
 }
 
-function OrderRow({ order, onStatusChange }: { order: Order; onStatusChange: (id: string, status: string) => Promise<void> }) {
-  const [expanded, setExpanded] = useState(false);
-  const [updating, setUpdating] = useState(false);
-  async function changeStatus(st: string) { setUpdating(true); await onStatusChange(order.id, st); setUpdating(false); }
-  return (
-    <>
-      <tr className="border-b border-[#1a1a1a] hover:bg-[#141414] cursor-pointer" onClick={() => setExpanded(!expanded)}>
-        <td className="px-4 py-3 text-sm font-mono text-gray-400">#{order.order_reference ?? order.id.slice(0,8).toUpperCase()}</td>
-        <td className="px-4 py-3"><div className="text-sm font-medium text-white">{order.customer_name}</div>{order.customer_email && <div className="text-xs text-gray-500">{order.customer_email}</div>}</td>
-        <td className="px-4 py-3"><ChannelBadge channel={order.channel}/></td>
-        <td className="px-4 py-3 text-sm font-bold text-white">{fmt(order.total_amount)}</td>
-        <td className="px-4 py-3"><StatusBadge status={order.status}/></td>
-        <td className="px-4 py-3 text-xs text-gray-500">{fmtDate(order.created_at)}</td>
-        <td className="px-4 py-3">{expanded ? <ChevronUp className="w-4 h-4 text-gray-500"/> : <ChevronDown className="w-4 h-4 text-gray-500"/>}</td>
-      </tr>
-      {expanded && (
-        <tr className="bg-[#111] border-b border-[#1a1a1a]"><td colSpan={7} className="px-6 py-4">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
-            <div className="space-y-2"><p className="text-xs text-gray-500 uppercase font-semibold">Customer</p>
-              <div className="space-y-1">
-                <div className="flex items-center gap-2 text-gray-300"><Users className="w-3.5 h-3.5 text-gray-500"/>{order.customer_name}</div>
-                {order.customer_email && <div className="flex items-center gap-2 text-gray-400"><Mail className="w-3.5 h-3.5 text-gray-500"/>{order.customer_email}</div>}
-                {order.customer_phone && <div className="flex items-center gap-2 text-gray-400"><Phone className="w-3.5 h-3.5 text-gray-500"/>{order.customer_phone}</div>}
-                {order.shipping_address && <div className="flex items-start gap-2 text-gray-400"><MapPin className="w-3.5 h-3.5 text-gray-500 mt-0.5 shrink-0"/><span>{order.shipping_address}</span></div>}
-              </div>
-            </div>
-            <div className="space-y-2"><p className="text-xs text-gray-500 uppercase font-semibold">Order</p>
-              <div className="space-y-1">
-                <div className="flex justify-between text-gray-400"><span>Channel</span><ChannelBadge channel={order.channel}/></div>
-                {order.subtotal != null && <div className="flex justify-between text-gray-400"><span>Subtotal</span><span>{fmt(order.subtotal)}</span></div>}
-                {order.shipping_cost != null && <div className="flex justify-between text-gray-400"><span>Shipping</span><span>{fmt(order.shipping_cost)}</span></div>}
-                <div className="flex justify-between text-white font-bold border-t border-[#2a2a2a] pt-1 mt-1"><span>Total</span><span>{fmt(order.total_amount)}</span></div>
-                {order.payment_status && <div className="flex justify-between text-gray-400"><span>Payment</span><span className="capitalize">{order.payment_status}</span></div>}
-              </div>
-            </div>
-            <div className="space-y-2"><p className="text-xs text-gray-500 uppercase font-semibold">Update Status</p>
-              <div className="grid grid-cols-2 gap-1.5">
-                {STATUS_OPTIONS.map(st => (
-                  <button key={st} onClick={e => { e.stopPropagation(); changeStatus(st); }} disabled={updating || order.status === st}
-                    className={`px-3 py-1.5 rounded-lg text-xs font-semibold capitalize border transition-colors disabled:cursor-not-allowed ${order.status === st ? (STATUS_STYLES[st] ?? "") : "border-[#2a2a2a] text-gray-500 hover:border-[#FF6B00] hover:text-[#FF6B00]"}`}>{st}</button>
-                ))}
-              </div>
-              {order.notes && <div className="mt-2 p-2 bg-[#1a1a1a] rounded-lg text-xs text-gray-400"><span className="text-gray-600 font-medium">Note: </span>{order.notes}</div>}
-            </div>
-          </div>
-        </td></tr>
-      )}
-    </>
-  );
-}
-
+// ─── Main Dashboard ───────────────────────────────────────────────────────────
 export default function AdminPage() {
-  const [session, setSession] = useState<any>(null);
-  const [loading, setLoading] = useState(true);
-  const [accessDenied, setAccessDenied] = useState<string>("");
-  const [orders, setOrders] = useState<Order[]>([]);
-  const [fetching, setFetching] = useState(false);
-  const [search, setSearch] = useState("");
-  const [dateRange, setDateRange] = useState("30d");
-  const [statusFilter, setStatusFilter] = useState("all");
-  const [channelFilter, setChannelFilter] = useState("all");
+  // Auth
+  const [authed, setAuthed]     = useState(false);
+  const [userEmail, setUserEmail] = useState("");
+  const [authChecked, setAuthChecked] = useState(false);
+
+  // Nav
+  const [tab, setTab] = useState<"command" | "orders" | "customers" | "stock" | "suppliers" | "weekly">("command");
+
+  // Data
+  const [orders,    setOrders]    = useState<Order[]>([]);
+  const [customers, setCustomers] = useState<Customer[]>([]);
+  const [products,  setProducts]  = useState<Product[]>([]);
+  const [loading,   setLoading]   = useState(false);
+  const [lastRefresh, setLastRefresh] = useState<Date | null>(null);
+
+  // Order Matrix filters
+  const [orderFilter, setOrderFilter] = useState<string>("all");
+  const [search,      setSearch]      = useState<string>("");tLastRefresh(new Date());
+    setLoading(false);
+  }, [loadOrders, loadCustomers, loadProducts]);
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      if (session && !ALLOWED_EMAILS.includes(session.user.email ?? "")) {
-        supabase.auth.signOut();
-        setAccessDenied(session.user.email ?? "unknown");
-      } else {
-        setSession(session);
-      }
-      setLoading(false);
-    });
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_, session) => {
-      if (session && !ALLOWED_EMAILS.includes(session.user.email ?? "")) {
-        await supabase.auth.signOut();
-        setAccessDenied(session.user.email ?? "unknown");
-        setSession(null);
-        return;
-      }
-      setAccessDenied("");
-      setSession(session);
-    });
-    return () => subscription.unsubscribe();
+    if (authed) refreshAll();
+  }, [authed, refreshAll]);
+
+  // ── Pre-computed counts (case-insensitive) ─────────────────────────────────
+  const now7d = useMemo(() => {
+    const d = new Date();
+    d.setDate(d.getDate() - 7);
+    return d.getTime();
   }, []);
 
-  const fetchOrders = useCallback(async () => {
-    setFetching(true);
-    try {
-      let q = supabase.from("orders").select("*").in("channel", WEBSITE_CHANNELS).order("created_at", { ascending: false });
-      const from = getDateFrom(dateRange); if (from) q = q.gte("created_at", from);
-      if (statusFilter !== "all") q = q.eq("status", statusFilter);
-      if (channelFilter !== "all") q = q.eq("channel", channelFilter);
-      const { data, error } = await q; if (!error && data) setOrders(data as Order[]);
-    } finally { setFetching(false); }
-  }, [dateRange, statusFilter, channelFilter]);
+  const pendingOrders  = useMemo(() => orders.filter(o => ["pending","ordering"].includes(o.status?.toLowerCase())), [orders]);
+  const failedOrders   = useMemo(() => orders.filter(o => ["failed","rejected","cancelled"].includes(o.status?.toLowerCase())), [orders]);
+  const dispatchedOrds = useMemo(() => orders.filter(o => ["dispatched","delivered","ordered"].includes(o.status?.toLowerCase())), [orders]);
+  const overdueOrders  = useMemo(() => orders.filter(o => ["pending","ordering"].includes(o.status?.toLowerCase()) && daysSince(o.created_at) >= 3), [orders]);
+  const ebayOrders     = useMemo(() => orders.filter(o => o.channel?.toLowerCase() === "ebay"), [orders]);
+  const weekOrders     = useMemo(() => orders.filter(o => new Date(o.created_at).getTime() >= now7d), [orders, now7d]);
 
-  useEffect(() => { if (session) fetchOrders(); }, [session, fetchOrders]);
+  // ── Filtered orders for the Order Matrix table ─────────────────────────────
+  // BUG FIX: all status comparisons are case-insensitive (.toLowerCase())
+  const filtered = useMemo(() => {
+    let f: Order[] = orders;
 
-  async function handleStatusChange(id: string, status: string) {
-    await supabase.from("orders").update({ status, updated_at: new Date().toISOString() }).eq("id", id);
-    setOrders(prev => prev.map(o => o.id === id ? { ...o, status } : o));
+    // Status / channel filter
+    if (orderFilter === "pending") {
+      f = f.filter(o => ["pending","ordering"].includes(o.status?.toLowerCase()));
+    } else if (orderFilter === "dispatched") {
+      f = f.filter(o => ["dispatched","delivered","ordered"].includes(o.status?.toLowerCase()));
+    } else if (orderFilter === "failed") {
+      f = f.filter(o => ["failed","rejected","cancelled"].includes(o.status?.toLowerCase()));
+    } else if (orderFilter === "ebay") {
+      f = f.filter(o => o.channel?.toLowerCase() === "ebay");
+    } else if (orderFilter === "overdue") {
+      f = f.filter(o => ["pending","ordering"].includes(o.status?.toLowerCase()) && daysSince(o.created_at) >= 3);
+    } else if (orderFilter === "week") {
+      f = f.filter(o => new Date(o.created_at).getTime() >= now7d);
+    }
+    // orderFilter === "all" → keep everything
+
+    // Search filter (only applied when search is non-empty)
+    const q = search.trim().toLowerCase();
+    if (q) {
+      f = f.filter(o =>
+        (o.customer_name?.toLowerCase().includes(q)) ||
+        (o.customer_email?.toLowerCase().includes(q)) ||
+        (o.order_reference?.toLowerCase().includes(q)) ||
+        (o.id?.toLowerCase().includes(q)) ||
+        (o.channel?.toLowerCase().includes(q)) ||
+        (o.status?.toLowerCase().includes(q))
+      );
+    }
+
+    return f;
+  }, [orders, orderFilter, search, now7d]);
+
+  // ── Revenue stats ──────────────────────────────────────────────────────────
+  const totalRevenue   = useMemo(() => orders.reduce((s, o) => s + orderTotal(o), 0), [orders]);
+  const weekRevenue    = useMemo(() => weekOrders.reduce((s, o) => s + orderTotal(o), 0), [weekOrders]);
+
+  // ─── Sign out ─────────────────────────────────────────────────────────────
+  const signOut = async () => {
+    await supabase.auth.signOut();
+    setAuthed(false);
+    setUserEmail("");
+    setOrders([]); setCustomers([]); setProducts([]);
+  };
+
+  // ─── Render gates ──────────────────────────────────────────────────────────
+  if (!authChecked) {
+    return (
+      <div className="min-h-screen bg-zinc-950 flex items-center justify-center">
+        <div className="text-zinc-400 text-sm animate-pulse">Initialising B&amp;LOPS…</div>
+      </div>
+    );
+  }
+  if (!authed) {
+    return <LoginScreen onLogin={(email) => { setAuthed(true); setUserEmail(email); }} />;
   }
 
-  const filtered = orders.filter(o => {
-    if (!search) return true; const q = search.toLowerCase();
-    return o.customer_name?.toLowerCase().includes(q) || o.customer_email?.toLowerCase().includes(q) || o.order_reference?.toLowerCase().includes(q) || o.id.toLowerCase().includes(q);
-  });
-  const totalRevenue = filtered.reduce((s, o) => s + (o.total_amount ?? 0), 0);
-  const pendingCount = filtered.filter(o => o.status === "pending").length;
-  const processingCount = filtered.filter(o => o.status === "processing").length;
-  const completedCount = filtered.filter(o => o.status === "completed").length;
-  const bikeItCount = filtered.filter(o => o.channel === "bikeit").length;
-  const cmpoCount = filtered.filter(o => o.channel === "cmpo").length;
-  const avgOrder = filtered.length ? totalRevenue / filtered.length : 0;
+  // ─── Tab definitions ───────────────────────────────────────────────────────
+  const orderTabs = [
+    { id: "all",        label: "All Orders",    count: orders.length },
+    { id: "pending",    label: "Pending",       count: pendingOrders.length },
+    { id: "dispatched", label: "Dispatched",    count: dispatchedOrds.length },
+    { id: "failed",     label: "Failed",        count: failedOrders.length },
+    { id: "overdue",    label: "Overdue 3d+",   count: overdueOrders.length },
+    { id: "ebay",       label: "eBay",          count: ebayOrders.length },
+    { id: "week",       label: "This Week",     count: weekOrders.length },
+  ];
 
-  if (loading) return <div className="min-h-screen bg-[#0a0a0a] flex items-center justify-center"><RefreshCw className="w-6 h-6 text-[#FF6B00] animate-spin"/></div>;
-  if (accessDenied) return <AccessDenied email={accessDenied}/>;
-  if (!session) return <LoginScreen/>;
+  // ─── Sidebar nav ───────────────────────────────────────────────────────────
+  const navItems = [
+    { id: "command",   icon: "⚡", label: "Command Centre" },
+    { id: "orders",    icon: "📦", label: "Order Matrix" },
+    { id: "customers", icon: "👥", label: "Customers" },
+    { id: "stock",     icon: "🏭", label: "Stock & Inventory" },
+    { id: "suppliers", icon: "🔗", label: "Supplier Hub" },
+    { id: "weekly",    icon: "📊", label: "Weekly Summary" },
+  ] as const;
 
+  // ─── JSX ───────────────────────────────────────────────────────────────────
   return (
-    <div className="min-h-screen bg-[#0a0a0a] text-white">
-      <header className="border-b border-[#1a1a1a] bg-[#0d0d0d] sticky top-0 z-10">
-        <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
+    <div className="min-h-screen bg-zinc-950 text-white flex" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>
+
+      {/* ── Sidebar ────────────────────────────────────────────────────────── */}
+      <aside className="w-56 bg-zinc-900 border-r border-zinc-800 flex flex-col shrink-0">
+        {/* Logo */}
+        <div className="px-4 py-5 border-b border-zinc-800">
+          <div className="flex items-center gap-2.5">
+            <div className="w-8 h-8 rounded-lg bg-orange-500 flex items-center justify-center">
+              <span className="text-xs font-black text-white">B&amp;L</span>
+            </div>
+            <div>
+              <div className="text-sm font-bold text-white leading-none">B&amp;LOPS</div>
+              <div className="text-[10px] text-zinc-500 mt-0.5">Operations Portal</div>
+            </div>
+          </div>
+        </div>
+
+        {/* Nav */}
+        <nav className="flex-1 py-3 px-2 space-y-0.5">
+          {navItems.map(item => (
+            <button
+              key={item.id}
+              onClick={() => setTab(item.id)}
+              className={`w-full flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-sm transition-colors text-left ${
+                tab === item.id
+                  ? "bg-orange-500/20 text-orange-400 font-medium"
+                  : "text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800"
+              }`}
+            >
+              <span className="text-base">{item.icon}</span>
+              <span>{item.label}</span>
+            </button>
+          ))}
+        </nav>
+
+        {/* User */}
+        <div className="px-3 py-4 border-t border-zinc-800">
+          <div className="px-2 mb-2">
+            <div className="text-[10px] text-zinc-500 truncate">{userEmail}</div>
+          </div>
+          <button
+            onClick={signOut}
+            className="w-full flex items-center gap-2 px-3 py-2 rounded-lg text-xs text-zinc-500 hover:text-red-400 hover:bg-red-900/20 transition-colors"
+          >
+            <span>⏻</span>
+            <span>Sign out</span>
+          </button>
+        </div>
+      </aside>
+
+      {/* ── Main ─────────────────────────────────────────────────────────────── */}
+      <main className="flex-1 overflow-auto">
+
+        {/* ── Header bar ─────────────────────────────────────────────────── */}
+        <div className="sticky top-0 z-10 bg-zinc-950/90 backdrop-blur border-b border-zinc-800 px-6 py-3 flex items-center justify-between">
+          <div>
+            <h1 className="text-sm font-semibold text-white">
+              {navItems.find(n => n.id === tab)?.icon}{" "}
+              {navItems.find(n => n.id === tab)?.label}
+            </h1>
+          </div>
           <div className="flex items-center gap-3">
-            <div className="w-8 h-8 bg-[#FF6B00] rounded-lg flex items-center justify-center font-black text-sm">B</div>
-            <div><h1 className="font-black text-sm tracking-tight">B&L <span className="text-[#FF6B00]">MOTORCYCLES</span></h1><p className="text-xs text-gray-500">Website Sales Dashboard</p></div>
-          </div>
-          <div className="flex items-center gap-3">
-            <span className="text-xs text-gray-600 hidden sm:block">{session.user?.email}</span>
-            <button onClick={() => supabase.auth.signOut()} className="flex items-center gap-1.5 text-xs text-gray-500 hover:text-white px-3 py-1.5 rounded-lg hover:bg-[#1a1a1a]"><LogOut className="w-3.5 h-3.5"/>Sign out</button>
-          </div>
-        </div>
-      </header>
-      <main className="max-w-7xl mx-auto px-4 py-6 space-y-6">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-          <div className="bg-[#1a1a1a] border border-[#2a2a2a] rounded-xl p-4 flex items-start gap-4"><div className="p-2 rounded-lg bg-[#2a2a2a] text-[#FF6B00]"><ShoppingBag className="w-5 h-5"/></div><div><p className="text-xs text-gray-500 uppercase tracking-wide">Total Orders</p><p className="text-2xl font-bold">{filtered.length}</p><p className="text-xs text-gray-500">{bikeItCount} BikeIT · {cmpoCount} CMPO</p></div></div>
-          <div className="bg-[#1a1a1a] border border-[#2a2a2a] rounded-xl p-4 flex items-start gap-4"><div className="p-2 rounded-lg bg-[#2a2a2a] text-green-400"><DollarSign className="w-5 h-5"/></div><div><p className="text-xs text-gray-500 uppercase tracking-wide">Revenue</p><p className="text-2xl font-bold">{fmt(totalRevenue)}</p><p className="text-xs text-gray-500">Avg {fmt(avgOrder)}</p></div></div>
-          <div className="bg-[#1a1a1a] border border-[#2a2a2a] rounded-xl p-4 flex items-start gap-4"><div className="p-2 rounded-lg bg-[#2a2a2a] text-yellow-400"><Clock className="w-5 h-5"/></div><div><p className="text-xs text-gray-500 uppercase tracking-wide">Pending</p><p className="text-2xl font-bold">{pendingCount}</p><p className="text-xs text-gray-500">{processingCount} processing</p></div></div>
-          <div className="bg-[#1a1a1a] border border-[#2a2a2a] rounded-xl p-4 flex items-start gap-4"><div className="p-2 rounded-lg bg-[#2a2a2a] text-green-400"><CheckCircle className="w-5 h-5"/></div><div><p className="text-xs text-gray-500 uppercase tracking-wide">Completed</p><p className="text-2xl font-bold">{completedCount}</p><p className="text-xs text-gray-500">{Math.round((completedCount / (filtered.length || 1)) * 100)}% rate</p></div></div>
-        </div>
-        <div className="bg-[#111] border border-[#1a1a1a] rounded-xl p-4 space-y-3">
-          <div className="flex flex-wrap gap-2">
-            {DATE_RANGES.map(r => (<button key={r.value} onClick={() => setDateRange(r.value)} className={`px-3 py-1.5 rounded-lg text-xs font-semibold border ${dateRange === r.value ? "bg-[#FF6B00] border-[#FF6B00] text-white" : "border-[#2a2a2a] text-gray-500 hover:border-[#FF6B00] hover:text-[#FF6B00]"}`}>{r.label}</button>))}
-            <button onClick={fetchOrders} disabled={fetching} className="ml-auto px-3 py-1.5 rounded-lg text-xs border border-[#2a2a2a] text-gray-500 hover:border-[#FF6B00] hover:text-[#FF6B00] flex items-center gap-1.5"><RefreshCw className={`w-3 h-3 ${fetching ? "animate-spin" : ""}`}/>Refresh</button>
-          </div>
-          <div className="flex flex-wrap gap-2">
-            <select value={statusFilter} onChange={e => setStatusFilter(e.target.value)} className="bg-[#1a1a1a] border border-[#2a2a2a] text-gray-300 rounded-lg px-3 py-1.5 text-xs focus:outline-none focus:border-[#FF6B00]"><option value="all">All Statuses</option>{STATUS_OPTIONS.map(s => <option key={s} value={s}>{s}</option>)}</select>
-            <select value={channelFilter} onChange={e => setChannelFilter(e.target.value)} className="bg-[#1a1a1a] border border-[#2a2a2a] text-gray-300 rounded-lg px-3 py-1.5 text-xs focus:outline-none focus:border-[#FF6B00]"><option value="all">All Channels</option><option value="bikeit">BikeIT</option><option value="cmpo">CMPO</option></select>
-            <div className="flex-1 min-w-[200px] relative"><Search className="w-3.5 h-3.5 text-gray-600 absolute left-3 top-1/2 -translate-y-1/2"/><input type="text" placeholder="Search name, email, order ref..." value={search} onChange={e => setSearch(e.target.value)} className="w-full bg-[#1a1a1a] border border-[#2a2a2a] text-white placeholder-gray-600 rounded-lg pl-8 pr-3 py-1.5 text-xs focus:outline-none focus:border-[#FF6B00]"/></div>
+            {lastRefresh && (
+              <span className="text-[10px] text-zinc-600">
+                Updated {lastRefresh.toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" })}
+              </span>
+            )}
+            <button
+              onClick={refreshAll}
+              disabled={loading}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-xs text-zinc-300 transition-colors disabled:opacity-50"
+            >
+              <span className={loading ? "animate-spin inline-block" : ""}>↻</span>
+              Refresh
+            </button>
           </div>
         </div>
-        <div className="bg-[#111] border border-[#1a1a1a] rounded-xl overflow-hidden">
-          <div className="px-4 py-3 border-b border-[#1a1a1a] flex items-center justify-between">
-            <h2 className="text-sm font-bold flex items-center gap-2"><Package className="w-4 h-4 text-[#FF6B00]"/>Website Orders <span className="text-xs font-normal text-gray-500">({filtered.length})</span></h2>
-            {fetching && <RefreshCw className="w-3.5 h-3.5 text-[#FF6B00] animate-spin"/>}
-          </div>
-          {filtered.length === 0 ? (
-            <div className="text-center py-16 text-gray-600"><ShoppingBag className="w-10 h-10 mx-auto mb-3 opacity-30"/><p className="text-sm">{fetching ? "Loading orders..." : "No orders found"}</p></div>
-          ) : (
-            <div className="overflow-x-auto"><table className="w-full text-sm">
-              <thead><tr className="border-b border-[#1a1a1a] text-xs text-gray-500 uppercase tracking-wide">
-                <th className="px-4 py-2.5 text-left">Order</th><th className="px-4 py-2.5 text-left">Customer</th><th className="px-4 py-2.5 text-left">Channel</th><th className="px-4 py-2.5 text-left">Total</th><th className="px-4 py-2.5 text-left">Status</th><th className="px-4 py-2.5 text-left">Date</th><th className="px-4 py-2.5 w-8"/>
-              </tr></thead>
-              <tbody>{filtered.map(order => (<OrderRow key={order.id} order={order} onStatusChange={handleStatusChange}/>))}</tbody>
-            </table></div>
+
+        <div className="px-6 py-6">& (
+            <div className="space-y-6">
+              {/* KPI cards */}
+              <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+                {[
+                  { label: "Total Orders",    value: orders.length,           sub: "all time",          color: "text-white" },
+                  { label: "Pending",         value: pendingOrders.length,    sub: "awaiting action",   color: "text-yellow-400",
+                    action: () => { setTab("orders"); setOrderFilter("pending"); } },
+                  { label: "Failed / Cancel", value: failedOrders.length,     sub: "need attention",    color: "text-red-400",
+                    action: () => { setTab("orders"); setOrderFilter("failed"); } },
+                  { label: "Overdue 3d+",     value: overdueOrders.length,    sub: "urgent",            color: "text-orange-400",
+                    action: () => { setTab("orders"); setOrderFilter("overdue"); } },
+                ].map(card => (
+                  <div
+                    key={card.label}
+                    onClick={card.action}
+                    className={`bg-zinc-900 border border-zinc-800 rounded-xl p-5 ${card.action ? "cursor-pointer hover:border-zinc-600 transition-colors" : ""}`}
+                  >
+                    <div className="text-xs text-zinc-500 mb-1">{card.label}</div>
+                    <div className={`text-3xl font-bold ${card.color}`}>{card.value}</div>
+                    <div className="text-[10px] text-zinc-600 mt-1">{card.sub}</div>
+                  </div>
+                ))}
+              </div>
+
+              {/* Revenue row */}
+              <div className="grid grid-cols-2 gap-4">
+                <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-5">
+                  <div className="text-xs text-zinc-500 mb-1">Total Revenue</div>
+                  <div className="text-3xl font-bold text-green-400">{fmt(totalRevenue)}</div>
+                  <div className="text-[10px] text-zinc-600 mt-1">all time</div>
+                </div>
+                <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-5">
+                  <div className="text-xs text-zinc-500 mb-1">This Week Revenue</div>
+                  <div className="text-3xl font-bold text-teal-400">{fmt(weekRevenue)}</div>
+                  <div className="text-[10px] text-zinc-600 mt-1">last 7 days ({weekOrders.length} orders)</div>
+                </div>
+              </div>
+
+              {/* Recent Orders */}
+              <div>
+                <div className="flex items-center justify-between mb-3">
+                  <h2 className="text-sm font-semibold text-zinc-200">Recent Orders</h2>
+                  <button
+                    onClick={() => { setTab("orders"); setOrderFilter("all"); }}
+                    className="text-xs text-orange-400 hover:text-orange-300"
+                  >
+                    View all →
+                  </button>
+                </div>
+                <div className="bg-zinc-900 border border-zinc-800 rounded-xl overflow-hidden">
+                  <table className="w-full text-xs">
+                    <thead>
+                      <tr className="border-b border-zinc-800">
+                        <th className="text-left px-4 py-3 text-zinc-500 font-medium">Customer</th>
+                        <th className="text-left px-4 py-3 text-zinc-500 font-medium">Channel</th>
+                        <th className="text-left px-4 py-3 text-zinc-500 font-medium">Total</th>
+                        <th className="text-left px-4 py-3 text-zinc-500 font-medium">Status</th>
+                        <th className="text-left px-4 py-3 text-zinc-500 font-medium">Date</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {orders.slice(0, 10).map(o => (
+                        <tr key={o.id} className="border-b border-zinc-800/50 hover:bg-zinc-800/30">
+                          <td className="px-4 py-3 text-zinc-200">{o.customer_name || "—"}</td>
+                          <td className="px-4 py-3">
+                            <span className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase ${channelBadge(o.channel)}`}>
+                              {o.channel || "—"}
+                            </span>
+                          </td>
+                          <td className="px-4 py-3 text-green-400 font-mono">{fmt(orderTotal(o))}</td>
+                          <td className="px-4 py-3">
+                            <span className={`px-2 py-0.5 rounded border text-[10px] font-medium capitalize ${statusColor(o.status)}`}>
+                              {o.status}
+                            </span>
+                          </td>
+                          <td className="px-4 py-3 text-zinc-500">{fmtDate(o.created_at)}</td>
+                        </tr>
+                      ))}
+                      {orders.length === 0 && (
+                        <tr>
+                          <td colSpan={5} className="px-4 py-8 text-center text-zinc-600 text-xs">
+                            {loading ? "Loading…" : "No orders found"}
+                          </td>
+                        </tr>
+                      )}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+
+              {/* Quick actions */}
+              <div>
+                <h2 className="text-sm font-semibold text-zinc-200 mb-3">Quick Actions</h2>
+                <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+                  {[
+                    { label: "Pending Orders",  icon: "⏳", action: () => { setTab("orders"); setOrderFilter("pending"); } },
+                    { label: "Failed Orders",   icon: "❌", action: () => { setTab("orders"); setOrderFilter("failed"); } },
+                    { label: "eBay Orders",     icon: "🛒", action: () => { setTab("orders"); setOrderFilter("ebay"); } },
+                    { label: "Overdue Orders",  icon: "🔥", action: () => { setTab("orders"); setOrderFilter("overdue"); } },
+                  ].map(q => (
+                    <button
+                      key={q.label}
+                      onClick={q.action}
+                      className="bg-zinc-900 border border-zinc-800 hover:border-zinc-600 rounded-xl p-4 text-left transition-colors"
+                    >
+                      <div className="text-xl mb-2">{q.icon}</div>
+                      <div className="text-xs text-zinc-300 font-medium">{q.label}</div>
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </div>
           )}
+
+          {/* ════════════════════════════════════════════════════════════════ */}
+          {/* ORDER MATRIX                                                     */}
+          {/* ════════════════════════════════════════════════════════════════ */}
+          {tab === "orders" && (
+            <div className="space-y-4">
+              {/* Filter tabs */}
+              <div className="flex flex-wrap gap-2">
+                {orderTabs.map(t => (
+                  <button
+                    key={t.id}
+                    onClick={() => setOrderFilter(t.id)}
+                    className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-colors border ${
+                      orderFilter === t.id
+                        ? "bg-orange-500 text-white border-orange-500"
+                        : "bg-zinc-900 text-zinc-400 border-zinc-700 hover:border-zinc-500 hover:text-zinc-200"
+                    }`}
+                  >
+                    {t.label}
+                    <span className={`px-1.5 py-0.5 rounded text-[10px] font-mono ${
+                      orderFilter === t.id ? "bg-white/20" : "bg-zinc-800"
+                    }`}>
+                      {t.count}
+                    </span>
+                  </button>
+                ))}
+              </div>
+
+              {/* Search */}
+              <div className="relative">
+                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-500 text-xs">🔍</span>
+                <input
+                  type="text"
+                  value={search}
+                  onChange={e => setSearch(e.target.value)}
+                  placeholder="Search by name, email, order ref, status…"
+                  className="w-full bg-zinc-900 border border-zinc-700 rounded-lg pl-8 pr-4 py-2.5 text-sm text-white placeholder-zinc-600 outline-none focus:border-orange-500 transition-colors"
+                />
+                {search && (
+                  <button
+                    onClick={() => setSearch("")}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-500 hover:text-zinc-300 text-xs"
+                  >
+                    ✕
+                  </button>
+                )}
+              </div>
+
+              {/* Results summary */}
+              <div className="text-xs text-zinc-500">
+                Showing {filtered.length} order{filtered.length !== 1 ? "s" : ""}
+                {orderFilter !== "all" && ` · filter: ${orderTabs.find(t => t.id === orderFilter)?.label}`}
+                {search.trim() && ` · search: "${search.trim()}"`}
+              </div>
+
+              {/* Table */}
+              <div className="bg-zinc-900 border border-zinc-800 rounded-xl overflow-hidden">
+                <div className="overflow-x-auto">
+                  <table className="w-full text-xs">
+                    <thead>
+                      <tr className="border-b border-zinc-800">
+                        <th className="text-left px-4 py-3 text-zinc-500 font-medium">Order</th>
+                        <th className="text-left px-4 py-3 text-zinc-500 font-medium">Customer</th>
+                        <th className="text-left px-4 py-3 text-zinc-500 font-medium">Channel</th>
+                        <th className="text-left px-4 py-3 text-zinc-500 font-medium">Items</th>
+                        <th className="text-left px-4 py-3 text-zinc-500 font-medium">Total</th>
+                        <th className="text-left px-4 py-3 text-zinc-500 font-medium">Status</th>
+                        <th className="text-left px-4 py-3 text-zinc-500 font-medium">Age</th>
+                        <th className="text-left px-4 py-3 text-zinc-500 font-medium">Date</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {filtered.map(o => {
+                        const age = daysSince(o.created_at);
+                        const isOverdue = ["pending","ordering"].includes(o.status?.toLowerCase()) && age >= 3;
+                        return (
+                          <tr
+                            key={o.id}
+                            className={`border-b border-zinc-800/50 hover:bg-zinc-800/40 transition-colors ${isOverdue ? "bg-red-900/10" : ""}`}
+                          >
+                            <td className="px-4 py-3">
+                              <div className="font-mono text-zinc-300 text-[10px]">
+                                {o.order_reference || o.id.slice(0, 8)}
+                              </div>
+                            </td>
+                            <td className="px-4 py-3">
+                              <div className="text-zinc-200">{o.customer_name || "—"}</div>
+                              {o.customer_email && (
+                                <div className="text-[10px] text-zinc-500">{o.customer_email}</div>
+                              )}
+                            </td>
+                            <td className="px-4 py-3">
+                              <span className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase ${channelBadge(o.channel)}`}>
+                                {o.channel || "—"}
+                              </span>
+                            </td>
+                            <td className="px-4 py-3 text-zinc-400">
+                              {Array.isArray(o.items) ? o.items.length : (typeof o.items === "string" ? "—" : "—")}
+                            </td>
+                            <td className="px-4 py-3 font-mono text-green-400">{fmt(orderTotal(o))}</td>
+                            <td className="px-4 py-3">
+                              <span className={`px-2 py-0.5 rounded border text-[10px] font-medium capitalize ${statusColor(o.status)}`}>
+                                {o.status}
+                              </span>
+                            </td>
+                            <td className={`px-4 py-3 font-mono text-[10px] ${isOverdue ? "text-orange-400 font-bold" : "text-zinc-500"}`}>
+                              {age}d{isOverdue ? " ⚠" : ""}
+                            </td>
+                            <td className="px-4 py-3 text-zinc-500">{fmtDate(o.created_at)}</td>
+                          </tr>
+                        );
+                      })}
+                      {filtered.length === 0 && (
+                        <tr>
+                          <td colSpan={8} className="px-4 py-12 text-center text-zinc-600 font-mono text-xs">
+                            {loading ? "Loading orders…" : "No orders match your filters"}
+                          </td>
+                        </tr>
+                      )}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* ════════════════════════════════════════════════════════════════ */}
+          {/* CUSTOMERS                                                        */}
+          {/* ════════════════════════════════════════════════════════════════ */}
+          {tab === "customers" && (
+            <div className="space-y-4">
+              <div className="bg-zinc-900 border border-zinc-800 rounded-xl overflow-hidden">
+                <div className="px-4 py-3 border-b border-zinc-800 flex items-center justify-between">
+                  <span className="text-sm font-medium text-zinc-200">Customers ({customers.length})</span>
+                </div>
+                <div className="overflow-x-auto">
+                  <table className="w-full text-xs">
+                    <thead>
+                      <tr className="border-b border-zinc-800">
+                        <th className="text-left px-4 py-3 text-zinc-500 font-medium">Name</th>
+                        <th className="text-left px-4 py-3 text-zinc-500 font-medium">Email</th>
+                        <th className="text-left px-4 py-3 text-zinc-500 font-medium">Phone</th>
+                        <th className="text-left px-4 py-3 text-zinc-500 font-medium">Joined</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {customers.map(c => (
+                        <tr key={c.id} className="border-b border-zinc-800/50 hover:bg-zinc-800/30">
+                          <td className="px-4 py-3 text-zinc-200">{c.name || c.customer_name || "—"}</td>
+                          <td className="px-4 py-3 text-zinc-400">{c.email || c.customer_email || "—"}</td>
+                          <td className="px-4 py-3 text-zinc-400">{c.phone || c.customer_phone || "—"}</td>
+                          <td className="px-4 py-3 text-zinc-500">{fmtDate(c.created_at)}</td>
+                        </tr>
+                      ))}
+                      {customers.length === 0 && (
+                        <tr>
+                          <td colSpan={4} className="px-4 py-8 text-center text-zinc-600 text-xs">
+                            {loading ? "Loading…" : "No customers found. Data may be in the orders table."}
+                          </td>
+                        </tr>
+                      )}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+
+              {/* If no separate customers table, derive from orders */}
+              {customers.length === 0 && orders.length > 0 && (
+                <div className="bg-zinc-900 border border-zinc-800 rounded-xl overflow-hidden">
+                  <div className="px-4 py-3 border-b border-zinc-800">
+                    <span className="text-sm font-medium text-zinc-200">Customers from Orders</span>
+                  </div>
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-xs">
+                      <thead>
+                        <tr className="border-b border-zinc-800">
+                          <th className="text-left px-4 py-3 text-zinc-500 font-medium">Customer</th>
+                          <th className="text-left px-4 py-3 text-zinc-500 font-medium">Email</th>
+                          <th className="text-left px-4 py-3 text-zinc-500 font-medium">Channel</th>
+                          <th className="text-left px-4 py-3 text-zinc-500 font-medium">Orders</th>
+                          <th className="text-left px-4 py-3 text-zinc-500 font-medium">Last Order</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {Object.values(
+                          orders.reduce((acc, o) => {
+                            const key = o.customer_email || o.customer_name || o.id;
+                            if (!acc[key]) acc[key] = { name: o.customer_name, email: o.customer_email, channel: o.channel, count: 0, last: o.created_at };
+                            acc[key].count++;
+                            if (o.created_at > acc[key].last) acc[key].last = o.created_at;
+                            return acc;
+                          }, {} as Record<string, { name?: string; email?: string; channel?: string; count: number; last: string }>)
+                        ).sort((a, b) => b.last.localeCompare(a.last)).map((c, i) => (
+                          <tr key={i} className="border-b border-zinc-800/50 hover:bg-zinc-800/30">
+                            <td className="px-4 py-3 text-zinc-200">{c.name || "—"}</td>
+                            <td className="px-4 py-3 text-zinc-400">{c.email || "—"}</td>
+                            <td className="px-4 py-3">
+                              <span className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase ${channelBadge(c.channel)}`}>
+                                {c.channel || "—"}
+                              </span>
+                            </td>
+                            <td className="px-4 py-3 text-zinc-300">{c.count}</td>
+                            <td className="px-4 py-3 text-zinc-500">{fmtDate(c.last)}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* ════════════════════════════════════════════════════════════════ */}
+          {/* STOCK & INVENTORY                                                */}
+          {/* ════════════════════════════════════════════════════════════════ */}
+          {tab === "stock" && (
+            <div className="space-y-4">
+              <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
+                <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-5">
+                  <div className="text-xs text-zinc-500 mb-1">Total SKUs</div>
+                  <div className="text-3xl font-bold text-white">{products.length}</div>
+                </div>
+                <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-5">
+                  <div className="text-xs text-zinc-500 mb-1">In Stock</div>
+                  <div className="text-3xl font-bold text-green-400">
+                    {products.filter(p => (p.stock_qty ?? p.quantity ?? 1) > 0).length}
+                  </div>
+                </div>
+                <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-5">
+                  <div className="text-xs text-zinc-500 mb-1">Out of Stock</div>
+                  <div className="text-3xl font-bold text-red-400">
+                    {products.filter(p => (p.stock_qty ?? p.quantity ?? 1) <= 0).length}
+                  </div>
+                </div>
+                <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-5">
+                  <div className="text-xs text-zinc-500 mb-1">Avg Price</div>
+                  <div className="text-3xl font-bold text-teal-400">
+                    {fmt(products.length ? products.reduce((s, p) => s + (p.price || 0), 0) / products.length : 0)}
+                  </div>
+                </div>
+              </div>
+
+              <div className="bg-zinc-900 border border-zinc-800 rounded-xl overflow-hidden">
+                <div className="overflow-x-auto">
+                  <table className="w-full text-xs">
+                    <thead>
+                      <tr className="border-b border-zinc-800">
+                        <th className="text-left px-4 py-3 text-zinc-500 font-medium">SKU</th>
+                        <th className="text-left px-4 py-3 text-zinc-500 font-medium">Product</th>
+                        <th className="text-left px-4 py-3 text-zinc-500 font-medium">Category</th>
+                        <th className="text-left px-4 py-3 text-zinc-500 font-medium">Price</th>
+                        <th className="text-left px-4 py-3 text-zinc-500 font-medium">Stock</th>
+                        <th className="text-left px-4 py-3 text-zinc-500 font-medium">Supplier</th>
+                        <th className="text-left px-4 py-3 text-zinc-500 font-medium">Status</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {products.map(p => {
+                        const qty = p.stock_qty ?? p.quantity ?? null;
+                        return (
+                          <tr key={p.id} className="border-b border-zinc-800/50 hover:bg-zinc-800/30">
+                            <td className="px-4 py-3 font-mono text-zinc-400 text-[10px]">{p.sku || "—"}</td>
+                            <td className="px-4 py-3 text-zinc-200">{p.title || p.name || "—"}</td>
+                            <td className="px-4 py-3 text-zinc-500">{p.category || "—"}</td>
+                            <td className="px-4 py-3 font-mono text-green-400">{p.price ? fmt(p.price) : "—"}</td>
+                            <td className={`px-4 py-3 font-mono font-bold ${qty === null ? "text-zinc-500" : qty <= 0 ? "text-red-400" : qty <= 3 ? "text-orange-400" : "text-green-400"}`}>
+                              {qty ?? "—"}
+                            </td>
+                            <td className="px-4 py-3 text-zinc-500">{p.supplier || "—"}</td>
+                            <td className="px-4 py-3">
+                              {p.status && (
+                                <span className={`px-2 py-0.5 rounded border text-[10px] font-medium capitalize ${statusColor(p.status)}`}>
+                                  {p.status}
+                                </span>
+                              )}
+                            </td>
+                          </tr>
+                        );
+                      })}
+                      {products.length === 0 && (
+                        <tr>
+                          <td colSpan={7} className="px-4 py-8 text-center text-zinc-600 text-xs">
+                            {loading ? "Loading…" : "No products found"}
+                          </td>
+                        </tr>
+                      )}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* ════════════════════════════════════════════════════════════════ */}
+          {/* SUPPLIER HUB                                                     */}
+          {/* ════════════════════════════════════════════════════════════════ */}
+          {tab === "suppliers" && (
+            <div className="space-y-4">
+              <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-6">
+                <h2 className="text-sm font-semibold text-zinc-200 mb-4">Supplier Overview</h2>
+                {(() => {
+                  const supplierMap: Record<string, { orders: number; revenue: number }> = {};
+                  orders.forEach(o => {
+                    const s = o.supplier || o.channel || "Unknown";
+                    if (!supplierMap[s]) supplierMap[s] = { orders: 0, revenue: 0 };
+                    supplierMap[s].orders++;
+                    supplierMap[s].revenue += orderTotal(o);
+                  });
+                  const suppliers = Object.entries(supplierMap).sort((a, b) => b[1].revenue - a[1].revenue);
+                  return suppliers.length > 0 ? (
+                    <div className="space-y-3">
+                      {suppliers.map(([name, stats]) => (
+                        <div key={name} className="flex items-center justify-between py-3 border-b border-zinc-800 last:border-0">
+                          <div>
+                            <div className="text-sm text-zinc-200 font-medium capitalize">{name}</div>
+                            <div className="text-xs text-zinc-500">{stats.orders} orders</div>
+                          </div>
+                          <div className="text-right">
+                            <div className="text-sm font-mono text-green-400">{fmt(stats.revenue)}</div>
+                            <div className="text-xs text-zinc-600">revenue</div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <p className="text-zinc-600 text-xs">No supplier data available. Add a supplier field to your orders table.</p>
+                  );
+                })()}
+              </div>
+
+              {/* Pending supplier orders */}
+              <div className="bg-zinc-900 border border-zinc-800 rounded-xl overflow-hidden">
+                <div className="px-4 py-3 border-b border-zinc-800">
+                  <span className="text-sm font-medium text-zinc-200">
+                    Orders Awaiting Supplier Action ({pendingOrders.length})
+                  </span>
+                </div>
+                <table className="w-full text-xs">
+                  <thead>
+                    <tr className="border-b border-zinc-800">
+                      <th className="text-left px-4 py-3 text-zinc-500 font-medium">Order Ref</th>
+                      <th className="text-left px-4 py-3 text-zinc-500 font-medium">Customer</th>
+                      <th className="text-left px-4 py-3 text-zinc-500 font-medium">Status</th>
+                      <th className="text-left px-4 py-3 text-zinc-500 font-medium">Age</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {pendingOrders.map(o => {
+                      const age = daysSince(o.created_at);
+                      return (
+                        <tr key={o.id} className={`border-b border-zinc-800/50 ${age >= 3 ? "bg-red-900/10" : ""}`}>
+                          <td className="px-4 py-3 font-mono text-zinc-300 text-[10px]">{o.order_reference || o.id.slice(0,8)}</td>
+                          <td className="px-4 py-3 text-zinc-200">{o.customer_name || "—"}</td>
+                          <td className="px-4 py-3">
+                            <span className={`px-2 py-0.5 rounded border text-[10px] font-medium capitalize ${statusColor(o.status)}`}>
+                              {o.status}
+                            </span>
+                          </td>
+                          <td className={`px-4 py-3 font-mono text-[10px] font-bold ${age >= 3 ? "text-orange-400" : "text-zinc-500"}`}>
+                            {age}d{age >= 3 ? " ⚠" : ""}
+                          </td>
+                        </tr>
+                      );
+                    })}
+                    {pendingOrders.length === 0 && (
+                      <tr>
+                        <td colSpan={4} className="px-4 py-8 text-center text-green-600 text-xs">
+                          ✓ All clear — no pending supplier orders
+                        </td>
+                      </tr>
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          )}
+
+          {/* ════════════════════════════════════════════════════════════════ */}
+          {/* WEEKLY SUMMARY                                                   */}
+          {/* ════════════════════════════════════════════════════════════════ */}
+          {tab === "weekly" && (
+            <div className="space-y-6">
+              <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-6">
+                <h2 className="text-sm font-semibold text-zinc-200 mb-1">Weekly Summary</h2>
+                <p className="text-xs text-zinc-500 mb-5">Last 7 days ending {new Date().toLocaleDateString("en-GB", { weekday:"long", day:"numeric", month:"long" })}</p>
+
+                <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+                  {[
+                    { label: "Orders This Week",   value: weekOrders.length,       unit: "orders",  color: "text-white" },
+                    { label: "Revenue This Week",   value: fmt(weekRevenue),        unit: "",         color: "text-green-400" },
+                    { label: "Avg Order Value",     value: weekOrders.length ? fmt(weekRevenue/weekOrders.length) : "£0.00",  unit: "", color: "text-teal-400" },
+                    { label: "Pending (all time)",  value: pendingOrders.length,    unit: "orders",  color: "text-yellow-400" },
+                  ].map(s => (
+                    <div key={s.label} className="bg-zinc-800/50 rounded-xl p-4">
+                      <div className="text-[10px] text-zinc-500 mb-1">{s.label}</div>
+                      <div className={`text-2xl font-bold ${s.color}`}>{s.value}</div>
+                      {s.unit && <div className="text-[10px] text-zinc-600">{s.unit}</div>}
+                    </div>
+                  ))}
+                </div>
+
+                {/* Status breakdown */}
+                <div className="mb-6">
+                  <h3 className="text-xs font-semibold text-zinc-400 mb-3 uppercase tracking-wider">Order Status Breakdown (All Time)</h3>
+                  <div className="space-y-2">
+                    {[
+                      { label: "Pending / Ordering",        count: pendingOrders.length,    color: "bg-yellow-500" },
+                      { label: "Dispatched / Delivered",    count: dispatchedOrds.length,   color: "bg-teal-500" },
+                      { label: "Failed / Cancelled",        count: failedOrders.length,     color: "bg-red-500" },
+                      { label: "Overdue (3d+)",             count: overdueOrders.length,    color: "bg-orange-500" },
+                    ].map(row => (
+                      <div key={row.label} className="flex items-center gap-3">
+                        <div className="w-28 text-[10px] text-zinc-500 shrink-0">{row.label}</div>
+                        <div className="flex-1 bg-zinc-800 rounded-full h-2">
+                          <div
+                            className={`h-2 rounded-full ${row.color}`}
+                            style={{ width: orders.length ? `${(row.count / orders.length) * 100}%` : "0%" }}
+                          />
+                        </div>
+                        <div className="text-xs text-zinc-300 font-mono w-8 text-right shrink-0">{row.count}</div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Channel breakdown */}
+                <div>
+                  <h3 className="text-xs font-semibold text-zinc-400 mb-3 uppercase tracking-wider">Channel Breakdown (All Time)</h3>
+                  <div className="space-y-2">
+                    {Object.entries(
+                      orders.reduce((acc, o) => {
+                        const ch = (o.channel || "unknown").toLowerCase();
+                        acc[ch] = (acc[ch] || 0) + 1;
+                        return acc;
+                      }, {} as Record<string, number>)
+                    ).sort((a, b) => b[1] - a[1]).map(([ch, count]) => (
+                      <div key={ch} className="flex items-center gap-3">
+                        <span className={`w-16 text-center px-2 py-0.5 rounded text-[10px] font-bold uppercase shrink-0 ${channelBadge(ch)}`}>{ch}</span>
+                        <div className="flex-1 bg-zinc-800 rounded-full h-2">
+                          <div
+                            className="h-2 rounded-full bg-blue-500"
+                            style={{ width: orders.length ? `${(count / orders.length) * 100}%` : "0%" }}
+                          />
+                        </div>
+                        <div className="text-xs text-zinc-300 font-mono w-8 text-right shrink-0">{count}</div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              {/* This week's orders */}
+              <div className="bg-zinc-900 border border-zinc-800 rounded-xl overflow-hidden">
+                <div className="px-4 py-3 border-b border-zinc-800">
+                  <span className="text-sm font-medium text-zinc-200">Orders This Week ({weekOrders.length})</span>
+                </div>
+                <table className="w-full text-xs">
+                  <thead>
+                    <tr className="border-b border-zinc-800">
+                      <th className="text-left px-4 py-3 text-zinc-500 font-medium">Customer</th>
+                      <th className="text-left px-4 py-3 text-zinc-500 font-medium">Channel</th>
+                      <th className="text-left px-4 py-3 text-zinc-500 font-medium">Total</th>
+                      <th className="text-left px-4 py-3 text-zinc-500 font-medium">Status</th>
+                      <th className="text-left px-4 py-3 text-zinc-500 font-medium">Date</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {weekOrders.map(o => (
+                      <tr key={o.id} className="border-b border-zinc-800/50 hover:bg-zinc-800/30">
+                        <td className="px-4 py-3 text-zinc-200">{o.customer_name || "—"          { label: "Revenue This Week",   value: fmt(weekRevenue),        unit: "",         color: "text-green-400" },
+                    { label: "Avg Order Value",     value: weekOrders.length ? fmt(weekRevenue/weekOrders.length) : "£0.00",  unit: "", color: "text-teal-400" },
+                    { label: "Pending (all time)",  value: pendingOrders.length,    unit: "orders",  color: "text-yellow-400" },
+                  ].map(s => (
+                    <div key={s.label} className="bg-zinc-800/50 rounded-xl p-4">
+                      <div className="text-[10px] text-zinc-500 mb-1">{s.label}</div>
+                      <div className={`text-2xl font-bold ${s.color}`}>{s.value}</div>
+                      {s.unit && <div className="text-[10px] text-zinc-600">{s.unit}</div>}
+                    </div>
+                  ))}
+                </div>
+
+                {/* Status breakdown */}
+                <div className="mb-6">
+                  <h3 className="text-xs font-semibold text-zinc-400 mb-3 uppercase tracking-wider">Order Status Breakdown (All Time)</h3>
+                  <div className="space-y-2">
+                    {[
+                      { label: "Pending / Ordering",        count: pendingOrders.length,    color: "bg-yellow-500" },
+                      { label: "Dispatched / Delivered",    count: dispatchedOrds.length,   color: "bg-teal-500" },
+                      { label: "Failed / Cancelled",        count: failedOrders.length,     color: "bg-red-500" },
+                      { label: "Overdue (3d+)",             count: overdueOrders.length,    color: "bg-orange-500" },
+                    ].map(row => (
+                      <div key={row.label} className="flex items-center gap-3">
+                        <div className="w-28 text-[10px] text-zinc-500 shrink-0">{row.label}</div>
+                        <div className="flex-1 bg-zinc-800 rounded-full h-2">
+                          <div
+                            className={`h-2 rounded-full ${row.color}`}
+                            style={{ width: orders.length ? `${(row.count / orders.length) * 100}%` : "0%" }}
+                          />
+                        </div>
+                        <div className="text-xs text-zinc-300 font-mono w-8 text-right shrink-0">{row.count}</div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Channel breakdown */}
+                <div>
+                  <h3 className="text-xs font-semibold text-zinc-400 mb-3 uppercase tracking-wider">Channel Breakdown (All Time)</h3>
+                  <div className="space-y-2">
+                    {Object.entries(
+                      orders.reduce((acc, o) => {
+                        const ch = (o.channel || "unknown").toLowerCase();
+                        acc[ch] = (acc[ch] || 0) + 1;
+                        return acc;
+                      }, {} as Record<string, number>)
+                    ).sort((a, b) => b[1] - a[1]).map(([ch, count]) => (
+                      <div key={ch} className="flex items-center gap-3">
+                        <span className={`w-16 text-center px-2 py-0.5 rounded text-[10px] font-bold uppercase shrink-0 ${channelBadge(ch)}`}>{ch}</span>
+                        <div className="flex-1 bg-zinc-800 rounded-full h-2">
+                          <div
+                            className="h-2 rounded-full bg-blue-500"
+                            style={{ width: orders.length ? `${(count / orders.length) * 100}%` : "0%" }}
+                          />
+                        </div>
+                        <div className="text-xs text-zinc-300 font-mono w-8 text-right shrink-0">{count}</div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              {/* This week's orders */}
+              <div className="bg-zinc-900 border border-zinc-800 rounded-xl overflow-hidden">
+                <div className="px-4 py-3 border-b border-zinc-800">
+                  <span className="text-sm font-medium text-zinc-200">Orders This Week ({weekOrders.length})</span>
+                </div>
+                <table className="w-full text-xs">
+                  <thead>
+                    <tr className="border-b border-zinc-800">
+                      <th className="text-left px-4 py-3 text-zinc-500 font-medium">Customer</th>
+                      <th className="text-left px-4 py-3 text-zinc-500 font-medium">Channel</th>
+                      <th className="text-left px-4 py-3 text-zinc-500 font-medium">Total</th>
+                      <th className="text-left px-4 py-3 text-zinc-500 font-medium">Status</th>
+                      <th className="text-left px-4 py-3 text-zinc-500 font-medium">Date</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {weekOrders.map(o => (
+                      <tr key={o.id} className="border-b border-zinc-800/50 hover:bg-zinc-800/30">
+                        <td className="px-4 py-3 text-zinc-200">{o.customer_name || "—"}</td>
+                        <td className="px-4 py-3">
+                          <span className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase ${channelBadge(o.channel)}`}>
+                            {o.channel || "—"}
+                          </span>
+                        </td>
+                        <td className="px-4 py-3 font-mono text-green-400">{fmt(orderTotal(o))}</td>
+                        <td className="px-4 py-3">
+                          <span className={`px-2 py-0.5 rounded border text-[10px] font-medium capitalize ${statusColor(o.status)}`}>
+                            {o.status}
+                          </span>
+                        </td>
+                        <td className="px-4 py-3 text-zinc-500">{fmtDate(o.created_at)}</td>
+                      </tr>
+                    ))}
+                    {weekOrders.length === 0 && (
+                      <tr>
+                        <td colSpan={5} className="px-4 py-8 text-center text-zinc-600 text-xs">
+                          No orders in the last 7 days
+                        </td>
+                      </tr>
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          )}
+
         </div>
       </main>
     </div>
   );
-                                                                                                                                                                }
+}
