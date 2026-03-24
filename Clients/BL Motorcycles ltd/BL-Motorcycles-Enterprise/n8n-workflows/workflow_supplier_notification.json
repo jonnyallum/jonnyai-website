@@ -1,17 +1,31 @@
 {
+  "updatedAt": "2026-03-24T19:59:14.501Z",
+  "createdAt": "2026-03-24T19:59:14.501Z",
+  "id": "bD0L2jRm6IQVNDum",
   "name": "BL: New Order \u2192 Supplier Notification",
+  "description": null,
+  "active": true,
+  "isArchived": false,
   "nodes": [
     {
       "parameters": {
         "rule": {
-          "interval": [{ "field": "minutes", "minutesInterval": 15 }]
+          "interval": [
+            {
+              "field": "minutes",
+              "minutesInterval": 15
+            }
+          ]
         }
       },
       "id": "c1000000-0000-0000-0000-000000000001",
       "name": "Every 15 Minutes",
       "type": "n8n-nodes-base.scheduleTrigger",
       "typeVersion": 1,
-      "position": [240, 300]
+      "position": [
+        240,
+        300
+      ]
     },
     {
       "parameters": {
@@ -20,18 +34,42 @@
         "sendQuery": true,
         "queryParameters": {
           "parameters": [
-            { "name": "select", "value": "id,channel_order_id,ebay_order_id,buyer_name,buyer_email,sku,qty,sale_price,trade_price,shipping_address,created_at,supplier_order_id,bikeit_order_ref,status" },
-            { "name": "supplier_order_id", "value": "is.null" },
-            { "name": "bikeit_order_ref", "value": "is.null" },
-            { "name": "status", "value": "neq.cancelled" },
-            { "name": "created_at", "value": "gte.{{new Date(Date.now() - 15 * 60 * 1000).toISOString()}}" },
-            { "name": "order", "value": "created_at.asc" }
+            {
+              "name": "select",
+              "value": "id,channel_order_id,ebay_order_id,buyer_name,buyer_email,sku,qty,sale_price,trade_price,shipping_address,created_at,supplier_order_id,bikeit_order_ref,status"
+            },
+            {
+              "name": "supplier_order_id",
+              "value": "is.null"
+            },
+            {
+              "name": "bikeit_order_ref",
+              "value": "is.null"
+            },
+            {
+              "name": "status",
+              "value": "neq.cancelled"
+            },
+            {
+              "name": "created_at",
+              "value": "gte.{{new Date(Date.now() - 15 * 60 * 1000).toISOString()}}"
+            },
+            {
+              "name": "order",
+              "value": "created_at.asc"
+            }
           ]
         },
         "headerParameters": {
           "parameters": [
-            { "name": "apikey", "value": "={{$env.BL_SUPABASE_SERVICE_KEY}}" },
-            { "name": "Authorization", "value": "=Bearer {{$env.BL_SUPABASE_SERVICE_KEY}}" }
+            {
+              "name": "apikey",
+              "value": "=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRkanVvZXlhb3hsbG9ja2N1c2dmIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc2NTM4ODM3OSwiZXhwIjoyMDgwOTY0Mzc5fQ.tQTpdQCkE-V-aCfdt7GgN5FF-IdXQzGCAEuRE6gNupE"
+            },
+            {
+              "name": "Authorization",
+              "value": "=Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRkanVvZXlhb3hsbG9ja2N1c2dmIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc2NTM4ODM3OSwiZXhwIjoyMDgwOTY0Mzc5fQ.tQTpdQCkE-V-aCfdt7GgN5FF-IdXQzGCAEuRE6gNupE"
+            }
           ]
         }
       },
@@ -39,7 +77,10 @@
       "name": "Get New Unordered Orders",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 3,
-      "position": [460, 300]
+      "position": [
+        460,
+        300
+      ]
     },
     {
       "parameters": {
@@ -57,7 +98,10 @@
       "name": "Any New Orders?",
       "type": "n8n-nodes-base.if",
       "typeVersion": 1,
-      "position": [680, 300]
+      "position": [
+        680,
+        300
+      ]
     },
     {
       "parameters": {
@@ -65,12 +109,17 @@
         "url": "https://api.resend.com/emails",
         "headerParameters": {
           "parameters": [
-            { "name": "Authorization", "value": "=Bearer {{$env.RESEND_API_KEY}}" }
+            {
+              "name": "Authorization",
+              "value": "=Bearer re_WPiPmTVK_9G1Sp9KPATm8DJnRPvnoH4ru"
+            }
           ]
         },
         "body": {
           "from": "BL Ops <reports@jonnyai.co.uk>",
-          "to": ["blmotorcyclesltd@gmail.com"],
+          "to": [
+            "blmotorcyclesltd@gmail.com"
+          ],
           "subject": "={{`\ud83d\udce6 ${$json.length} New Order${$json.length > 1 ? 's' : ''} \u2014 Place with Supplier`}}",
           "html": "={{`<div style='font-family:Arial;max-width:700px;margin:auto;background:#0a0a0c;padding:40px;border-radius:8px;'><h2 style='color:#f97316;margin-top:0;'>\ud83d\udce6 New Order${$json.length > 1 ? 's' : ''} \u2014 Action Required</h2><p style='color:#ddd;'>You have ${$json.length} new order${$json.length > 1 ? 's' : ''} that need${$json.length === 1 ? 's' : ''} to be placed with Bike It.</p><table style='width:100%;border-collapse:collapse;margin:20px 0;'><thead><tr style='border-bottom:2px solid #222;'><th style='text-align:left;padding:10px 8px;color:#888;font-size:12px;text-transform:uppercase;'>Order ID</th><th style='text-align:left;padding:10px 8px;color:#888;font-size:12px;text-transform:uppercase;'>Buyer</th><th style='text-align:left;padding:10px 8px;color:#888;font-size:12px;text-transform:uppercase;'>SKU</th><th style='text-align:right;padding:10px 8px;color:#888;font-size:12px;text-transform:uppercase;'>Qty</th><th style='text-align:right;padding:10px 8px;color:#888;font-size:12px;text-transform:uppercase;'>Sale</th><th style='text-align:right;padding:10px 8px;color:#888;font-size:12px;text-transform:uppercase;'>Cost</th></tr></thead><tbody>${$json.map(o => '<tr style=\"border-bottom:1px solid #111;\"><td style=\"padding:10px 8px;color:#f97316;font-size:13px;\">' + (o.ebay_order_id || o.channel_order_id || o.id).toString().slice(-10) + '</td><td style=\"padding:10px 8px;color:#ddd;font-size:13px;\">' + (o.buyer_name || '-') + '</td><td style=\"padding:10px 8px;color:#ddd;font-size:13px;font-family:monospace;\">' + (o.sku || '-') + '</td><td style=\"padding:10px 8px;color:#ddd;font-size:13px;text-align:right;\">' + (o.qty || 1) + '</td><td style=\"padding:10px 8px;color:#22c55e;font-size:13px;text-align:right;\">\u00a3' + parseFloat(o.sale_price || 0).toFixed(2) + '</td><td style=\"padding:10px 8px;color:#888;font-size:13px;text-align:right;\">\u00a3' + parseFloat(o.trade_price || 0).toFixed(2) + '</td></tr>').join('')}</tbody></table><p style='color:#888;font-size:12px;margin-top:20px;'>Log in to <a href=\"https://bikeit.co.uk\" style=\"color:#f97316;\">Bike It trade portal</a> to place orders. Once ordered, update the Supabase <code>bikeit_order_ref</code> column to prevent re-notification.</p></div>`}}"
         }
@@ -79,25 +128,266 @@
       "name": "Email Brett: Order from Supplier",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 3,
-      "position": [900, 200]
+      "position": [
+        900,
+        200
+      ]
     }
   ],
   "connections": {
     "Every 15 Minutes": {
-      "main": [[{ "node": "Get New Unordered Orders", "type": "main", "index": 0 }]]
+      "main": [
+        [
+          {
+            "node": "Get New Unordered Orders",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     },
     "Get New Unordered Orders": {
-      "main": [[{ "node": "Any New Orders?", "type": "main", "index": 0 }]]
+      "main": [
+        [
+          {
+            "node": "Any New Orders?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     },
     "Any New Orders?": {
       "main": [
-        [{ "node": "Email Brett: Order from Supplier", "type": "main", "index": 0 }],
+        [
+          {
+            "node": "Email Brett: Order from Supplier",
+            "type": "main",
+            "index": 0
+          }
+        ],
         []
       ]
     }
   },
   "settings": {
-    "executionOrder": "v1"
+    "executionOrder": "v1",
+    "callerPolicy": "workflowsFromSameOwner",
+    "availableInMCP": false
   },
-  "staticData": null
+  "staticData": {
+    "node:Every 15 Minutes": {
+      "recurrenceRules": []
+    }
+  },
+  "meta": null,
+  "pinData": null,
+  "versionId": "688f8d66-d1bf-49ee-b319-afc445e0db9c",
+  "activeVersionId": "688f8d66-d1bf-49ee-b319-afc445e0db9c",
+  "versionCounter": 4,
+  "triggerCount": 1,
+  "shared": [
+    {
+      "updatedAt": "2026-03-24T19:59:14.504Z",
+      "createdAt": "2026-03-24T19:59:14.504Z",
+      "role": "workflow:owner",
+      "workflowId": "bD0L2jRm6IQVNDum",
+      "projectId": "x4pe9L85fJyNyY0Y",
+      "project": {
+        "updatedAt": "2026-03-03T21:46:35.329Z",
+        "createdAt": "2026-03-03T19:25:37.964Z",
+        "id": "x4pe9L85fJyNyY0Y",
+        "name": "Jonny Allum <info@jonnyai.co.uk>",
+        "type": "personal",
+        "icon": null,
+        "description": null,
+        "creatorId": "0f4efd46-167b-4ca1-a086-b969a1d4fd5c"
+      }
+    }
+  ],
+  "tags": [],
+  "activeVersion": {
+    "updatedAt": "2026-03-24T19:59:14.511Z",
+    "createdAt": "2026-03-24T19:59:14.511Z",
+    "versionId": "688f8d66-d1bf-49ee-b319-afc445e0db9c",
+    "workflowId": "bD0L2jRm6IQVNDum",
+    "nodes": [
+      {
+        "parameters": {
+          "rule": {
+            "interval": [
+              {
+                "field": "minutes",
+                "minutesInterval": 15
+              }
+            ]
+          }
+        },
+        "id": "c1000000-0000-0000-0000-000000000001",
+        "name": "Every 15 Minutes",
+        "type": "n8n-nodes-base.scheduleTrigger",
+        "typeVersion": 1,
+        "position": [
+          240,
+          300
+        ]
+      },
+      {
+        "parameters": {
+          "method": "GET",
+          "url": "https://ddjuoeyaoxllockcusgf.supabase.co/rest/v1/orders",
+          "sendQuery": true,
+          "queryParameters": {
+            "parameters": [
+              {
+                "name": "select",
+                "value": "id,channel_order_id,ebay_order_id,buyer_name,buyer_email,sku,qty,sale_price,trade_price,shipping_address,created_at,supplier_order_id,bikeit_order_ref,status"
+              },
+              {
+                "name": "supplier_order_id",
+                "value": "is.null"
+              },
+              {
+                "name": "bikeit_order_ref",
+                "value": "is.null"
+              },
+              {
+                "name": "status",
+                "value": "neq.cancelled"
+              },
+              {
+                "name": "created_at",
+                "value": "gte.{{new Date(Date.now() - 15 * 60 * 1000).toISOString()}}"
+              },
+              {
+                "name": "order",
+                "value": "created_at.asc"
+              }
+            ]
+          },
+          "headerParameters": {
+            "parameters": [
+              {
+                "name": "apikey",
+                "value": "=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRkanVvZXlhb3hsbG9ja2N1c2dmIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc2NTM4ODM3OSwiZXhwIjoyMDgwOTY0Mzc5fQ.tQTpdQCkE-V-aCfdt7GgN5FF-IdXQzGCAEuRE6gNupE"
+              },
+              {
+                "name": "Authorization",
+                "value": "=Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRkanVvZXlhb3hsbG9ja2N1c2dmIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc2NTM4ODM3OSwiZXhwIjoyMDgwOTY0Mzc5fQ.tQTpdQCkE-V-aCfdt7GgN5FF-IdXQzGCAEuRE6gNupE"
+              }
+            ]
+          }
+        },
+        "id": "c1000000-0000-0000-0000-000000000002",
+        "name": "Get New Unordered Orders",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 3,
+        "position": [
+          460,
+          300
+        ]
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "number": [
+              {
+                "value1": "={{$json.length}}",
+                "operation": "larger",
+                "value2": 0
+              }
+            ]
+          }
+        },
+        "id": "c1000000-0000-0000-0000-000000000003",
+        "name": "Any New Orders?",
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 1,
+        "position": [
+          680,
+          300
+        ]
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "https://api.resend.com/emails",
+          "headerParameters": {
+            "parameters": [
+              {
+                "name": "Authorization",
+                "value": "=Bearer re_WPiPmTVK_9G1Sp9KPATm8DJnRPvnoH4ru"
+              }
+            ]
+          },
+          "body": {
+            "from": "BL Ops <reports@jonnyai.co.uk>",
+            "to": [
+              "blmotorcyclesltd@gmail.com"
+            ],
+            "subject": "={{`\ud83d\udce6 ${$json.length} New Order${$json.length > 1 ? 's' : ''} \u2014 Place with Supplier`}}",
+            "html": "={{`<div style='font-family:Arial;max-width:700px;margin:auto;background:#0a0a0c;padding:40px;border-radius:8px;'><h2 style='color:#f97316;margin-top:0;'>\ud83d\udce6 New Order${$json.length > 1 ? 's' : ''} \u2014 Action Required</h2><p style='color:#ddd;'>You have ${$json.length} new order${$json.length > 1 ? 's' : ''} that need${$json.length === 1 ? 's' : ''} to be placed with Bike It.</p><table style='width:100%;border-collapse:collapse;margin:20px 0;'><thead><tr style='border-bottom:2px solid #222;'><th style='text-align:left;padding:10px 8px;color:#888;font-size:12px;text-transform:uppercase;'>Order ID</th><th style='text-align:left;padding:10px 8px;color:#888;font-size:12px;text-transform:uppercase;'>Buyer</th><th style='text-align:left;padding:10px 8px;color:#888;font-size:12px;text-transform:uppercase;'>SKU</th><th style='text-align:right;padding:10px 8px;color:#888;font-size:12px;text-transform:uppercase;'>Qty</th><th style='text-align:right;padding:10px 8px;color:#888;font-size:12px;text-transform:uppercase;'>Sale</th><th style='text-align:right;padding:10px 8px;color:#888;font-size:12px;text-transform:uppercase;'>Cost</th></tr></thead><tbody>${$json.map(o => '<tr style=\"border-bottom:1px solid #111;\"><td style=\"padding:10px 8px;color:#f97316;font-size:13px;\">' + (o.ebay_order_id || o.channel_order_id || o.id).toString().slice(-10) + '</td><td style=\"padding:10px 8px;color:#ddd;font-size:13px;\">' + (o.buyer_name || '-') + '</td><td style=\"padding:10px 8px;color:#ddd;font-size:13px;font-family:monospace;\">' + (o.sku || '-') + '</td><td style=\"padding:10px 8px;color:#ddd;font-size:13px;text-align:right;\">' + (o.qty || 1) + '</td><td style=\"padding:10px 8px;color:#22c55e;font-size:13px;text-align:right;\">\u00a3' + parseFloat(o.sale_price || 0).toFixed(2) + '</td><td style=\"padding:10px 8px;color:#888;font-size:13px;text-align:right;\">\u00a3' + parseFloat(o.trade_price || 0).toFixed(2) + '</td></tr>').join('')}</tbody></table><p style='color:#888;font-size:12px;margin-top:20px;'>Log in to <a href=\"https://bikeit.co.uk\" style=\"color:#f97316;\">Bike It trade portal</a> to place orders. Once ordered, update the Supabase <code>bikeit_order_ref</code> column to prevent re-notification.</p></div>`}}"
+          }
+        },
+        "id": "c1000000-0000-0000-0000-000000000004",
+        "name": "Email Brett: Order from Supplier",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 3,
+        "position": [
+          900,
+          200
+        ]
+      }
+    ],
+    "connections": {
+      "Every 15 Minutes": {
+        "main": [
+          [
+            {
+              "node": "Get New Unordered Orders",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Get New Unordered Orders": {
+        "main": [
+          [
+            {
+              "node": "Any New Orders?",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Any New Orders?": {
+        "main": [
+          [
+            {
+              "node": "Email Brett: Order from Supplier",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          []
+        ]
+      }
+    },
+    "authors": "Jonny Allum",
+    "name": null,
+    "description": null,
+    "autosaved": false,
+    "workflowPublishHistory": [
+      {
+        "createdAt": "2026-03-24T19:59:23.946Z",
+        "id": 91,
+        "workflowId": "bD0L2jRm6IQVNDum",
+        "versionId": "688f8d66-d1bf-49ee-b319-afc445e0db9c",
+        "event": "activated",
+        "userId": "0f4efd46-167b-4ca1-a086-b969a1d4fd5c"
+      }
+    ]
+  }
 }

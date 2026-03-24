@@ -1,5 +1,11 @@
 {
+  "updatedAt": "2026-03-24T19:59:14.102Z",
+  "createdAt": "2026-03-24T19:59:14.102Z",
+  "id": "dZ8Pu5ryhuD2rRBV",
   "name": "BL: Order Confirmation Email (Stripe)",
+  "description": null,
+  "active": true,
+  "isArchived": false,
   "nodes": [
     {
       "parameters": {
@@ -12,19 +18,25 @@
       "name": "Stripe Webhook",
       "type": "n8n-nodes-base.webhook",
       "typeVersion": 1,
-      "position": [240, 300],
+      "position": [
+        240,
+        300
+      ],
       "webhookId": "bl-stripe-order-confirm"
     },
     {
       "parameters": {
         "mode": "runOnceForEachItem",
-        "jsCode": "// Parse Stripe checkout.session.completed event\n// Also handles payment_intent.succeeded\nconst body = $json.body || $json;\nconst evt = body;\n\nconst eventType = evt.type || '';\nif (!['checkout.session.completed', 'payment_intent.succeeded'].includes(eventType)) {\n  // Ignore other event types\n  return [];\n}\n\nlet customerEmail, customerName, totalAmount, orderId, lineItemsSummary;\n\nif (eventType === 'checkout.session.completed') {\n  const session = evt.data?.object || {};\n  customerEmail = session.customer_details?.email || session.customer_email || '';\n  customerName = session.customer_details?.name || 'Valued Customer';\n  totalAmount = session.amount_total ? (session.amount_total / 100).toFixed(2) : '0.00';\n  orderId = session.id || '';\n  // Line items aren't expanded by default — use metadata or fallback\n  lineItemsSummary = session.metadata?.items || 'Your order items';\n} else {\n  // payment_intent.succeeded\n  const pi = evt.data?.object || {};\n  customerEmail = pi.receipt_email || '';\n  customerName = 'Valued Customer';\n  totalAmount = pi.amount ? (pi.amount / 100).toFixed(2) : '0.00';\n  orderId = pi.id || '';\n  lineItemsSummary = 'Your order items';\n}\n\nif (!customerEmail) return [];\n\nreturn [{ json: { customerEmail, customerName, totalAmount, orderId, lineItemsSummary } }];"
+        "jsCode": "// Parse Stripe checkout.session.completed event\n// Also handles payment_intent.succeeded\nconst body = $json.body || $json;\nconst evt = body;\n\nconst eventType = evt.type || '';\nif (!['checkout.session.completed', 'payment_intent.succeeded'].includes(eventType)) {\n  // Ignore other event types\n  return [];\n}\n\nlet customerEmail, customerName, totalAmount, orderId, lineItemsSummary;\n\nif (eventType === 'checkout.session.completed') {\n  const session = evt.data?.object || {};\n  customerEmail = session.customer_details?.email || session.customer_email || '';\n  customerName = session.customer_details?.name || 'Valued Customer';\n  totalAmount = session.amount_total ? (session.amount_total / 100).toFixed(2) : '0.00';\n  orderId = session.id || '';\n  // Line items aren't expanded by default \u2014 use metadata or fallback\n  lineItemsSummary = session.metadata?.items || 'Your order items';\n} else {\n  // payment_intent.succeeded\n  const pi = evt.data?.object || {};\n  customerEmail = pi.receipt_email || '';\n  customerName = 'Valued Customer';\n  totalAmount = pi.amount ? (pi.amount / 100).toFixed(2) : '0.00';\n  orderId = pi.id || '';\n  lineItemsSummary = 'Your order items';\n}\n\nif (!customerEmail) return [];\n\nreturn [{ json: { customerEmail, customerName, totalAmount, orderId, lineItemsSummary } }];"
       },
       "id": "b1000000-0000-0000-0000-000000000002",
       "name": "Parse Stripe Event",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
-      "position": [460, 300]
+      "position": [
+        460,
+        300
+      ]
     },
     {
       "parameters": {
@@ -41,7 +53,10 @@
       "name": "Has Email?",
       "type": "n8n-nodes-base.if",
       "typeVersion": 1,
-      "position": [680, 300]
+      "position": [
+        680,
+        300
+      ]
     },
     {
       "parameters": {
@@ -49,12 +64,17 @@
         "url": "https://api.resend.com/emails",
         "headerParameters": {
           "parameters": [
-            { "name": "Authorization", "value": "=Bearer {{$env.RESEND_API_KEY}}" }
+            {
+              "name": "Authorization",
+              "value": "=Bearer re_WPiPmTVK_9G1Sp9KPATm8DJnRPvnoH4ru"
+            }
           ]
         },
         "body": {
           "from": "BL Motorcycles <info@blmotorcycles.co.uk>",
-          "to": ["={{$json.customerEmail}}"],
+          "to": [
+            "={{$json.customerEmail}}"
+          ],
           "reply_to": "blmotorcyclesltd@gmail.com",
           "subject": "={{`\u2705 Order Confirmed \u2014 BL Motorcycles`}}",
           "html": "={{`<!DOCTYPE html><html><body style='margin:0;padding:0;background:#f4f4f5;font-family:Arial,sans-serif;'><div style='max-width:600px;margin:32px auto;background:#fff;border-radius:8px;overflow:hidden;'><div style='background:#1a1a2e;padding:32px;text-align:center;'><h1 style='color:#fff;margin:0;font-size:24px;'>BL Motorcycles</h1></div><div style='padding:40px;'><h2 style='color:#1a1a2e;margin-top:0;'>Order Confirmed \u2705</h2><p style='color:#444;'>Hi ${$json.customerName},</p><p style='color:#444;'>Thank you for your order! We\\'ve received your payment and your order is being processed.</p><table style='width:100%;border-collapse:collapse;margin:24px 0;background:#f9f9f9;border-radius:6px;'><tr><td style='padding:16px;color:#666;font-size:13px;'>Order Reference</td><td style='padding:16px;color:#1a1a2e;font-size:13px;font-weight:bold;text-align:right;'>${$json.orderId.slice(-8).toUpperCase()}</td></tr><tr style='border-top:1px solid #eee;'><td style='padding:16px;color:#666;font-size:13px;'>Total Paid</td><td style='padding:16px;color:#1a1a2e;font-size:13px;font-weight:bold;text-align:right;'>\u00a3${$json.totalAmount}</td></tr></table><p style='color:#444;font-size:14px;'>We\\'ll send you a dispatch confirmation with tracking details once your order ships. Most orders dispatch within 1-2 working days.</p><p style='color:#444;font-size:14px;'>Questions? Reply to this email or contact us at <a href=\\'mailto:blmotorcyclesltd@gmail.com\\' style=\\'color:#e63946;\\'>blmotorcyclesltd@gmail.com</a></p><p style='color:#444;font-size:14px;'>Thank you for choosing BL Motorcycles!</p></div><div style='background:#f4f4f5;padding:20px;text-align:center;'><p style='color:#888;font-size:12px;margin:0;'>BL Motorcycles Ltd \u2022 blmotorcyclesltd.co.uk</p></div></div></body></html>`}}"
@@ -64,25 +84,218 @@
       "name": "Send Order Confirmation",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 3,
-      "position": [900, 200]
+      "position": [
+        900,
+        200
+      ]
     }
   ],
   "connections": {
     "Stripe Webhook": {
-      "main": [[{ "node": "Parse Stripe Event", "type": "main", "index": 0 }]]
+      "main": [
+        [
+          {
+            "node": "Parse Stripe Event",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     },
     "Parse Stripe Event": {
-      "main": [[{ "node": "Has Email?", "type": "main", "index": 0 }]]
+      "main": [
+        [
+          {
+            "node": "Has Email?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     },
     "Has Email?": {
       "main": [
-        [{ "node": "Send Order Confirmation", "type": "main", "index": 0 }],
+        [
+          {
+            "node": "Send Order Confirmation",
+            "type": "main",
+            "index": 0
+          }
+        ],
         []
       ]
     }
   },
   "settings": {
-    "executionOrder": "v1"
+    "executionOrder": "v1",
+    "callerPolicy": "workflowsFromSameOwner",
+    "availableInMCP": false
   },
-  "staticData": null
+  "staticData": null,
+  "meta": null,
+  "pinData": null,
+  "versionId": "cbe4877b-4e95-4d58-a66c-73fb9bff8672",
+  "activeVersionId": "cbe4877b-4e95-4d58-a66c-73fb9bff8672",
+  "versionCounter": 3,
+  "triggerCount": 1,
+  "shared": [
+    {
+      "updatedAt": "2026-03-24T19:59:14.107Z",
+      "createdAt": "2026-03-24T19:59:14.107Z",
+      "role": "workflow:owner",
+      "workflowId": "dZ8Pu5ryhuD2rRBV",
+      "projectId": "x4pe9L85fJyNyY0Y",
+      "project": {
+        "updatedAt": "2026-03-03T21:46:35.329Z",
+        "createdAt": "2026-03-03T19:25:37.964Z",
+        "id": "x4pe9L85fJyNyY0Y",
+        "name": "Jonny Allum <info@jonnyai.co.uk>",
+        "type": "personal",
+        "icon": null,
+        "description": null,
+        "creatorId": "0f4efd46-167b-4ca1-a086-b969a1d4fd5c"
+      }
+    }
+  ],
+  "tags": [],
+  "activeVersion": {
+    "updatedAt": "2026-03-24T19:59:14.116Z",
+    "createdAt": "2026-03-24T19:59:14.116Z",
+    "versionId": "cbe4877b-4e95-4d58-a66c-73fb9bff8672",
+    "workflowId": "dZ8Pu5ryhuD2rRBV",
+    "nodes": [
+      {
+        "parameters": {
+          "httpMethod": "POST",
+          "path": "bl-stripe-order",
+          "responseMode": "onReceived",
+          "responseData": "noData"
+        },
+        "id": "b1000000-0000-0000-0000-000000000001",
+        "name": "Stripe Webhook",
+        "type": "n8n-nodes-base.webhook",
+        "typeVersion": 1,
+        "position": [
+          240,
+          300
+        ],
+        "webhookId": "bl-stripe-order-confirm"
+      },
+      {
+        "parameters": {
+          "mode": "runOnceForEachItem",
+          "jsCode": "// Parse Stripe checkout.session.completed event\n// Also handles payment_intent.succeeded\nconst body = $json.body || $json;\nconst evt = body;\n\nconst eventType = evt.type || '';\nif (!['checkout.session.completed', 'payment_intent.succeeded'].includes(eventType)) {\n  // Ignore other event types\n  return [];\n}\n\nlet customerEmail, customerName, totalAmount, orderId, lineItemsSummary;\n\nif (eventType === 'checkout.session.completed') {\n  const session = evt.data?.object || {};\n  customerEmail = session.customer_details?.email || session.customer_email || '';\n  customerName = session.customer_details?.name || 'Valued Customer';\n  totalAmount = session.amount_total ? (session.amount_total / 100).toFixed(2) : '0.00';\n  orderId = session.id || '';\n  // Line items aren't expanded by default \u2014 use metadata or fallback\n  lineItemsSummary = session.metadata?.items || 'Your order items';\n} else {\n  // payment_intent.succeeded\n  const pi = evt.data?.object || {};\n  customerEmail = pi.receipt_email || '';\n  customerName = 'Valued Customer';\n  totalAmount = pi.amount ? (pi.amount / 100).toFixed(2) : '0.00';\n  orderId = pi.id || '';\n  lineItemsSummary = 'Your order items';\n}\n\nif (!customerEmail) return [];\n\nreturn [{ json: { customerEmail, customerName, totalAmount, orderId, lineItemsSummary } }];"
+        },
+        "id": "b1000000-0000-0000-0000-000000000002",
+        "name": "Parse Stripe Event",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          460,
+          300
+        ]
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "string": [
+              {
+                "value1": "={{$json.customerEmail}}",
+                "operation": "isNotEmpty"
+              }
+            ]
+          }
+        },
+        "id": "b1000000-0000-0000-0000-000000000003",
+        "name": "Has Email?",
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 1,
+        "position": [
+          680,
+          300
+        ]
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "https://api.resend.com/emails",
+          "headerParameters": {
+            "parameters": [
+              {
+                "name": "Authorization",
+                "value": "=Bearer re_WPiPmTVK_9G1Sp9KPATm8DJnRPvnoH4ru"
+              }
+            ]
+          },
+          "body": {
+            "from": "BL Motorcycles <info@blmotorcycles.co.uk>",
+            "to": [
+              "={{$json.customerEmail}}"
+            ],
+            "reply_to": "blmotorcyclesltd@gmail.com",
+            "subject": "={{`\u2705 Order Confirmed \u2014 BL Motorcycles`}}",
+            "html": "={{`<!DOCTYPE html><html><body style='margin:0;padding:0;background:#f4f4f5;font-family:Arial,sans-serif;'><div style='max-width:600px;margin:32px auto;background:#fff;border-radius:8px;overflow:hidden;'><div style='background:#1a1a2e;padding:32px;text-align:center;'><h1 style='color:#fff;margin:0;font-size:24px;'>BL Motorcycles</h1></div><div style='padding:40px;'><h2 style='color:#1a1a2e;margin-top:0;'>Order Confirmed \u2705</h2><p style='color:#444;'>Hi ${$json.customerName},</p><p style='color:#444;'>Thank you for your order! We\\'ve received your payment and your order is being processed.</p><table style='width:100%;border-collapse:collapse;margin:24px 0;background:#f9f9f9;border-radius:6px;'><tr><td style='padding:16px;color:#666;font-size:13px;'>Order Reference</td><td style='padding:16px;color:#1a1a2e;font-size:13px;font-weight:bold;text-align:right;'>${$json.orderId.slice(-8).toUpperCase()}</td></tr><tr style='border-top:1px solid #eee;'><td style='padding:16px;color:#666;font-size:13px;'>Total Paid</td><td style='padding:16px;color:#1a1a2e;font-size:13px;font-weight:bold;text-align:right;'>\u00a3${$json.totalAmount}</td></tr></table><p style='color:#444;font-size:14px;'>We\\'ll send you a dispatch confirmation with tracking details once your order ships. Most orders dispatch within 1-2 working days.</p><p style='color:#444;font-size:14px;'>Questions? Reply to this email or contact us at <a href=\\'mailto:blmotorcyclesltd@gmail.com\\' style=\\'color:#e63946;\\'>blmotorcyclesltd@gmail.com</a></p><p style='color:#444;font-size:14px;'>Thank you for choosing BL Motorcycles!</p></div><div style='background:#f4f4f5;padding:20px;text-align:center;'><p style='color:#888;font-size:12px;margin:0;'>BL Motorcycles Ltd \u2022 blmotorcyclesltd.co.uk</p></div></div></body></html>`}}"
+          }
+        },
+        "id": "b1000000-0000-0000-0000-000000000004",
+        "name": "Send Order Confirmation",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 3,
+        "position": [
+          900,
+          200
+        ]
+      }
+    ],
+    "connections": {
+      "Stripe Webhook": {
+        "main": [
+          [
+            {
+              "node": "Parse Stripe Event",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Parse Stripe Event": {
+        "main": [
+          [
+            {
+              "node": "Has Email?",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Has Email?": {
+        "main": [
+          [
+            {
+              "node": "Send Order Confirmation",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          []
+        ]
+      }
+    },
+    "authors": "Jonny Allum",
+    "name": null,
+    "description": null,
+    "autosaved": false,
+    "workflowPublishHistory": [
+      {
+        "createdAt": "2026-03-24T19:59:23.423Z",
+        "id": 90,
+        "workflowId": "dZ8Pu5ryhuD2rRBV",
+        "versionId": "cbe4877b-4e95-4d58-a66c-73fb9bff8672",
+        "event": "activated",
+        "userId": "0f4efd46-167b-4ca1-a086-b969a1d4fd5c"
+      }
+    ]
+  }
 }
