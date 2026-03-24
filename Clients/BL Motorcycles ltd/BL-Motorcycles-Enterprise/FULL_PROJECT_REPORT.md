@@ -175,12 +175,43 @@ Created via Stripe API:
 
 ---
 
+---
+
+## PHASE 3 — CMPO / LLEXETER PIPELINE + AUDIT (2026-03-24)
+
+### Task 12: LLExeter (CMPO) Stock Sync v1
+**File:** `n8n-workflows/sync_llexeter_stock_v1.json`
+**n8n ID:** `uCVHdUwsam5lohHY` | **ACTIVE**
+
+CMPO products are stored in Supabase as `supplier_id = 'LLEXETER'` (LLExeter is the trade supplier; CMPO is the brand displayed on the website). 7,660 products already existed in DB.
+
+- Source: `http://api.llexeter.co.uk` — **no auth required** (public API)
+- `/stocklist` → bulk stock update for all existing LLEXETER products
+- `/code/{sku}` → full data enrichment for any new SKUs (capped 200/run to prevent n8n timeout)
+- Filters: discontinued products, price < £20, fasteners
+- Pricing: `retail_price` used directly as `selling_price` (CMPO prices are already retail — no markup)
+- Runs every 6 hours
+- CMPO portal login: `blmotorcyclesltd@gmail.com` / `blmotorcycles8206@` (saved to `.env`)
+
+### Task 13: Workflow Credential Audit
+Found 3 older workflows (`bl-manual-dispatch`, `bl-order-cancel`, `bl-sku-alert`) using a stale Resend API key (`re_8yBdL9Ag...`). Updated all 3 to use the correct BL Motorcycles key (`re_WPiPmTVK...`).
+
+### Task 14: LLEXETER Image URL Backfill
+
+401 LLEXETER products had `image_url = NULL`. Fetched images from `http://api.llexeter.co.uk/code/{sku}` for each:
+
+- Patched: **293 products** ✓
+- No image available on API: **108 products** (discontinued or no photo — unavoidable)
+
+---
+
 ## FINAL STATE
 
-### n8n Workflows (11 Active)
+### n8n Workflows (12 Active)
 | ID | Workflow | Trigger |
 |----|----------|---------|
 | `HdlLf4DkRdiLR9nm` | BL: Bike It Stock Sync v2 | Every 6h |
+| `uCVHdUwsam5lohHY` | BL: LLExeter (CMPO) Stock Sync v1 | Every 6h |
 | `HelXvZ4HsjIbATno` | BL: Dispatch Email to Customer | Webhook |
 | `X1lP95P6LucP7uUB` | BL: Monday Weekly Ops Summary | Weekly Mon |
 | `bD0L2jRm6IQVNDum` | BL: New Order → Supplier Notification | Every 15min |
@@ -196,9 +227,12 @@ Created via Stripe API:
 | Metric | Value |
 |--------|-------|
 | Total products | 11,942 |
-| Products with images | ~11,942 (all) |
+| BIKEIT products | 4,282 |
+| LLEXETER (CMPO) products | 7,660 |
 | Products under £50 | 0 |
 | Fastener/bolt products | 0 |
+| Null image_url | 109 (108 LLEXETER no photo on API, 1 BIKEIT pattern miss) |
+| Null retail_price | 0 |
 | Orders (eBay) | 27 (hidden from admin) |
 | Orders (Stripe/Web) | 0 (awaiting first sale) |
 
@@ -206,7 +240,7 @@ Created via Stripe API:
 | Page | Status |
 |------|--------|
 | Homepage | 200 OK |
-| /shop | 200 OK — 11,942 products, all £50+, no fasteners |
+| /shop | 200 OK — 11,942 products (BIKEIT + LLEXETER), all £50+, no fasteners |
 | /admin | 200 OK — website orders only |
 | CDN cache | Purged |
 
@@ -218,6 +252,8 @@ Created via Stripe API:
 | Node.js path | `/domains/blmotorcyclesltd.co.uk/nodejs/` |
 | n8n | `https://n8n.jonnyai.co.uk` |
 | Stripe webhook | `we_1TEbXkRpcmImawCC0kapdaZL` |
+| LLExeter API | `http://api.llexeter.co.uk` (no auth) |
+| CMPO portal | `cmpoparts.com` / `blmotorcyclesltd@gmail.com` |
 
 ---
 
@@ -225,7 +261,8 @@ Created via Stripe API:
 
 | Priority | Task | Notes |
 |----------|------|-------|
-| Medium | First stock sync confirmation | Email arrives ~6h after n8n run — confirms SFTP path works from GCP server |
-| Low | Product images from FTP catalog | `ftp.bikeitinternational.com` `/UK/01_All_Products_CSV.csv` has `image1`–`image15` per SKU — could fill remaining null images with richer data |
+| Medium | First Bike It sync confirmation | Email arrives ~6h after n8n run — confirms SFTP path works from GCP server |
+| Medium | First CMPO sync confirmation | First run will update stock for 7,660 LLEXETER products — check email for report |
+| Low | 109 products with no image | 108 LLEXETER (no photo on API), 1 BIKEIT (JTKSRV1A, pattern 403) — will resolve if suppliers add photos |
 | Low | Stripe signature verification | Webhook signing secret `whsec_pPVtcyQUHrwJJUji83yKovAQwEVGCv99` not yet verified in n8n workflow |
 | Low | Website orders (STRIPE channel) | Admin is ready — no orders yet |
