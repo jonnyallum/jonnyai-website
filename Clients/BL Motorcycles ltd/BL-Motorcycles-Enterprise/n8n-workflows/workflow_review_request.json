@@ -1,0 +1,149 @@
+{
+  "name": "BL: Post-Delivery Review Request",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [{ "field": "hours", "hoursInterval": 12 }]
+        }
+      },
+      "id": "d1000000-0000-0000-0000-000000000001",
+      "name": "Every 12 Hours",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1,
+      "position": [240, 300]
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "https://ddjuoeyaoxllockcusgf.supabase.co/rest/v1/orders",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            { "name": "select", "value": "id,channel_order_id,ebay_order_id,buyer_name,buyer_email,sku,qty,sale_price,dispatched_at" },
+            { "name": "review_email_sent", "value": "is.null" },
+            { "name": "dispatch_email_sent", "value": "eq.true" },
+            { "name": "status", "value": "neq.cancelled" },
+            { "name": "dispatched_at", "value": "lt.{{new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString()}}" },
+            { "name": "buyer_email", "value": "not.is.null" },
+            { "name": "limit", "value": "50" }
+          ]
+        },
+        "headerParameters": {
+          "parameters": [
+            { "name": "apikey", "value": "={{$env.BL_SUPABASE_SERVICE_KEY}}" },
+            { "name": "Authorization", "value": "=Bearer {{$env.BL_SUPABASE_SERVICE_KEY}}" }
+          ]
+        }
+      },
+      "id": "d1000000-0000-0000-0000-000000000002",
+      "name": "Get Orders 7+ Days Post-Dispatch",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 3,
+      "position": [460, 300]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "number": [
+            {
+              "value1": "={{$json.length}}",
+              "operation": "larger",
+              "value2": 0
+            }
+          ]
+        }
+      },
+      "id": "d1000000-0000-0000-0000-000000000003",
+      "name": "Any Ready for Review?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [680, 300]
+    },
+    {
+      "parameters": {
+        "batchSize": 1,
+        "options": {}
+      },
+      "id": "d1000000-0000-0000-0000-000000000004",
+      "name": "Split Orders",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [900, 200]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.resend.com/emails",
+        "headerParameters": {
+          "parameters": [
+            { "name": "Authorization", "value": "=Bearer {{$env.RESEND_API_KEY}}" }
+          ]
+        },
+        "body": {
+          "from": "BL Motorcycles <info@blmotorcycles.co.uk>",
+          "to": ["={{$json.buyer_email}}"],
+          "reply_to": "blmotorcyclesltd@gmail.com",
+          "subject": "How was your order from BL Motorcycles?",
+          "html": "={{`<!DOCTYPE html><html><body style='margin:0;padding:0;background:#f4f4f5;font-family:Arial,sans-serif;'><div style='max-width:600px;margin:32px auto;background:#fff;border-radius:8px;overflow:hidden;'><div style='background:#1a1a2e;padding:32px;text-align:center;'><h1 style='color:#fff;margin:0;font-size:24px;'>BL Motorcycles</h1></div><div style='padding:40px;'><h2 style='color:#1a1a2e;margin-top:0;'>How was your recent order? \u2b50</h2><p style='color:#444;'>Hi ${$json.buyer_name || 'there'},</p><p style='color:#444;'>We hope your order has arrived safely. We\\'d love to hear how you got on \u2014 your feedback helps us improve and helps other riders find quality parts.</p><div style='text-align:center;margin:32px 0;'><a href='https://www.ebay.co.uk/fdbk/leave_feedback' style='background:#e63946;color:#fff;padding:16px 32px;border-radius:6px;text-decoration:none;font-weight:bold;font-size:16px;display:inline-block;'>Leave a Review</a></div><p style='color:#666;font-size:13px;'>Order ref: ${(o => o.ebay_order_id || o.channel_order_id || o.id.slice(-8).toUpperCase())($json)}</p><p style='color:#666;font-size:13px;'>Any issues? Just reply to this email and we\\'ll sort it out straight away.</p><p style='color:#444;'>Thank you for riding with BL Motorcycles!</p></div><div style='background:#f4f4f5;padding:20px;text-align:center;'><p style='color:#888;font-size:12px;margin:0;'>BL Motorcycles Ltd \u2022 <a href='https://blmotorcyclesltd.co.uk' style='color:#888;'>blmotorcyclesltd.co.uk</a></p></div></div></body></html>`}}"
+        }
+      },
+      "id": "d1000000-0000-0000-0000-000000000005",
+      "name": "Send Review Request Email",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 3,
+      "position": [1120, 200]
+    },
+    {
+      "parameters": {
+        "method": "PATCH",
+        "url": "={{`https://ddjuoeyaoxllockcusgf.supabase.co/rest/v1/orders?id=eq.${$json.id}`}}",
+        "headerParameters": {
+          "parameters": [
+            { "name": "apikey", "value": "={{$env.BL_SUPABASE_SERVICE_KEY}}" },
+            { "name": "Authorization", "value": "=Bearer {{$env.BL_SUPABASE_SERVICE_KEY}}" },
+            { "name": "Prefer", "value": "return=minimal" }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            { "name": "review_email_sent", "value": "true" }
+          ]
+        }
+      },
+      "id": "d1000000-0000-0000-0000-000000000006",
+      "name": "Mark Review Email Sent",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 3,
+      "position": [1340, 200]
+    }
+  ],
+  "connections": {
+    "Every 12 Hours": {
+      "main": [[{ "node": "Get Orders 7+ Days Post-Dispatch", "type": "main", "index": 0 }]]
+    },
+    "Get Orders 7+ Days Post-Dispatch": {
+      "main": [[{ "node": "Any Ready for Review?", "type": "main", "index": 0 }]]
+    },
+    "Any Ready for Review?": {
+      "main": [
+        [{ "node": "Split Orders", "type": "main", "index": 0 }],
+        []
+      ]
+    },
+    "Split Orders": {
+      "main": [[{ "node": "Send Review Request Email", "type": "main", "index": 0 }]]
+    },
+    "Send Review Request Email": {
+      "main": [[{ "node": "Mark Review Email Sent", "type": "main", "index": 0 }]]
+    },
+    "Mark Review Email Sent": {
+      "main": [[{ "node": "Split Orders", "type": "main", "index": 0 }]]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null
+}

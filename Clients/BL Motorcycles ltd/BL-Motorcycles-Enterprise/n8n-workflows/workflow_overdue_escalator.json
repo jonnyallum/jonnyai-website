@@ -1,0 +1,85 @@
+{
+  "name": "BL: Overdue Order Escalator",
+  "nodes": [
+    {
+      "parameters": { "rule": { "interval": [{ "field": "hours", "hoursInterval": 6 }] } },
+      "name": "Every 6 Hours",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "position": [240, 300],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "https://ddjuoeyaoxllockcusgf.supabase.co/rest/v1/orders",
+        "qs": {
+          "select": "*",
+          "status": "in.(pending,ordering)",
+          "escalated": "eq.false",
+          "created_at": "=lt.{{new Date(Date.now() - 3*86400000).toISOString()}}"
+        },
+        "headerParameters": {
+          "parameters": [
+            { "name": "apikey", "value": "={{$env.BL_SUPABASE_SERVICE_KEY}}" },
+            { "name": "Authorization", "value": "Bearer {{$env.BL_SUPABASE_SERVICE_KEY}}" }
+          ]
+        }
+      },
+      "name": "Get Overdue Orders (3d+)",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [460, 300],
+      "typeVersion": 3
+    },
+    {
+      "parameters": { "conditions": { "number": [{ "value1": "={{$json.length}}", "operation": "larger", "value2": 0 }] } },
+      "name": "Has Overdue?",
+      "type": "n8n-nodes-base.if",
+      "position": [680, 300],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.resend.com/emails",
+        "headerParameters": {
+          "parameters": [{ "name": "Authorization", "value": "Bearer {{$env.RESEND_API_KEY}}" }]
+        },
+        "body": {
+          "from": "BL Ops Alert <reports@jonnyai.co.uk>",
+          "to": ["brett@blmotorcycles.co.uk"],
+          "subject": "={{`⚠️ ${$json.length} Overdue Orders Need Chasing — BL Motorcycles`}}",
+          "html": "={{`<div style='font-family:Arial;max-width:600px;margin:auto;background:#0a0a0c;padding:40px;'><h2 style='color:#eab308;'>⚠️ Overdue Orders Alert</h2><p style='color:#ddd;'>${$json.length} order(s) have been in PENDING status for 3+ days and need chasing with suppliers.</p><table style='width:100%;border-collapse:collapse;margin:20px 0;'><tr style='border-bottom:1px solid #222;'><th style='text-align:left;padding:8px;color:#888;font-size:12px;'>Order</th><th style='text-align:left;padding:8px;color:#888;font-size:12px;'>Customer</th><th style='text-align:left;padding:8px;color:#888;font-size:12px;'>SKU</th><th style='text-align:left;padding:8px;color:#888;font-size:12px;'>Days</th></tr>${$json.map(o => '<tr style=\"border-bottom:1px solid #111;\"><td style=\"padding:8px;color:#f97316;font-size:13px;\">' + o.ebay_order_id.substring(0,15) + '</td><td style=\"padding:8px;color:#ddd;font-size:13px;\">' + o.customer_name + '</td><td style=\"padding:8px;color:#ddd;font-size:13px;\">' + (o.sku||'N/A') + '</td><td style=\"padding:8px;color:#eab308;font-size:13px;\">' + Math.floor((Date.now() - new Date(o.created_at).getTime())/86400000) + 'd</td></tr>').join('')}</table><p style='color:#888;font-size:12px;'>Login to chase: <a href=\"https://blmotorcyclesltd.co.uk/admin\" style=\"color:#f97316;\">Admin Dashboard</a></p></div>`}}",
+          "reply_to": "jonny@jonnyai.co.uk"
+        }
+      },
+      "name": "Email Brett Overdue Alert",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [900, 200],
+      "typeVersion": 3
+    },
+    {
+      "parameters": {
+        "method": "PATCH",
+        "url": "https://ddjuoeyaoxllockcusgf.supabase.co/rest/v1/orders",
+        "qs": { "status": "in.(pending,ordering)", "escalated": "eq.false" },
+        "headerParameters": {
+          "parameters": [
+            { "name": "apikey", "value": "={{$env.BL_SUPABASE_SERVICE_KEY}}" },
+            { "name": "Authorization", "value": "Bearer {{$env.BL_SUPABASE_SERVICE_KEY}}" }
+          ]
+        },
+        "body": { "escalated": true, "escalated_at": "={{new Date().toISOString()}}" }
+      },
+      "name": "Mark Escalated",
+      "type": "n8n-nodes-base.httpRequest",
+      "position": [1120, 200],
+      "typeVersion": 3
+    }
+  ],
+  "connections": {
+    "Every 6 Hours": { "main": [[{ "node": "Get Overdue Orders (3d+)", "type": "main", "index": 0 }]] },
+    "Get Overdue Orders (3d+)": { "main": [[{ "node": "Has Overdue?", "type": "main", "index": 0 }]] },
+    "Has Overdue?": { "main": [[{ "node": "Email Brett Overdue Alert", "type": "main", "index": 0 }], []] },
+    "Email Brett Overdue Alert": { "main": [[{ "node": "Mark Escalated", "type": "main", "index": 0 }]] }
+  }
+}
