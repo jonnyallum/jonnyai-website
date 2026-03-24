@@ -1,7 +1,11 @@
 {
+  "updatedAt": "2026-03-24T22:05:05.098Z",
+  "createdAt": "2026-03-24T21:37:35.721Z",
   "id": "uCVHdUwsam5lohHY",
   "name": "BL: LLExeter (CMPO) Stock Sync v1",
+  "description": null,
   "active": true,
+  "isArchived": false,
   "nodes": [
     {
       "parameters": {
@@ -18,18 +22,24 @@
       "name": "Every 6 Hours",
       "type": "n8n-nodes-base.scheduleTrigger",
       "typeVersion": 1,
-      "position": [240, 300]
+      "position": [
+        240,
+        300
+      ]
     },
     {
       "parameters": {
         "mode": "runOnceForAllItems",
-        "jsCode": "// ============================================================\n// BL: LLExeter (CMPO) Stock Sync v1\n// API: http://api.llexeter.co.uk — no auth required\n// /stocklist  → {SKU: qty, ...}  (all stock levels)\n// /code/{sku} → full product data for new products\n// ============================================================\n\nconst SUPABASE_URL = 'https://ddjuoeyaoxllockcusgf.supabase.co';\nconst SERVICE_KEY  = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRkanVvZXlhb3hsbG9ja2N1c2dmIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc2NTM4ODM3OSwiZXhwIjoyMDgwOTY0Mzc5fQ.tQTpdQCkE-V-aCfdt7GgN5FF-IdXQzGCAEuRE6gNupE';\nconst LLEXETER_BASE = 'http://api.llexeter.co.uk';\nconst CHUNK_SIZE   = 500;\nconst MAX_NEW_PER_RUN = 200; // cap new product enrichment per run to avoid timeout\nconst MIN_PRICE    = 20;    // skip products under £20\n\nconst EXCLUDE_TERMS = [\n  'bolt', 'bolts', 'nut', 'nuts', 'screw', 'screws',\n  'fastener', 'fasteners', 'washer', 'washers',\n  'rivet', 'rivets', 'split pin', 'circlip',\n  'o-ring', 'o ring', 'oring'\n];\n\nconst now = new Date().toISOString();\n\n// ── Step 1: Fetch stocklist from LLExeter API ─────────────────\nlet stocklist;\ntry {\n  const res = await fetch(`${LLEXETER_BASE}/stocklist`);\n  if (!res.ok) throw new Error(`HTTP ${res.status}`);\n  stocklist = await res.json();\n} catch (err) {\n  throw new Error('LLExeter /stocklist failed: ' + err.message);\n}\n\nconst allSkus = Object.keys(stocklist);\nif (allSkus.length === 0) throw new Error('Empty stocklist response from LLExeter');\n\n// ── Step 2: Get existing LLEXETER SKUs from Supabase ──────────\nlet existingSkus = new Set();\ntry {\n  // Fetch in pages (Supabase default limit 1000)\n  let offset = 0;\n  while (true) {\n    const res = await fetch(\n      `${SUPABASE_URL}/rest/v1/products?supplier_id=eq.LLEXETER&select=sku&limit=1000&offset=${offset}`,\n      { headers: { 'apikey': SERVICE_KEY, 'Authorization': `Bearer ${SERVICE_KEY}` } }\n    );\n    const rows = await res.json();\n    if (!Array.isArray(rows) || rows.length === 0) break;\n    rows.forEach(r => existingSkus.add(r.sku));\n    if (rows.length < 1000) break;\n    offset += 1000;\n  }\n} catch (err) {\n  throw new Error('Supabase fetch of existing SKUs failed: ' + err.message);\n}\n\n// ── Step 3: Partition into existing (stock update) vs new ─────\nconst stockUpdates = [];\nconst newSkus = [];\n\nfor (const [sku, qty] of Object.entries(stocklist)) {\n  const stock_level = qty <= 3 ? 0 : qty;\n  if (existingSkus.has(sku)) {\n    stockUpdates.push({ sku, stock_level, supplier_id: 'LLEXETER', updated_at: now });\n  } else {\n    newSkus.push({ sku, qty });\n  }\n}\n\nconst skipped_new = Math.max(0, newSkus.length - MAX_NEW_PER_RUN);\nconst newToProcess = newSkus.slice(0, MAX_NEW_PER_RUN);\n\n// ── Step 4: Batch upsert stock updates ───────────────────────\nlet stock_upserted = 0, stock_errors = 0;\n\nfor (let i = 0; i < stockUpdates.length; i += CHUNK_SIZE) {\n  const chunk = stockUpdates.slice(i, i + CHUNK_SIZE);\n  const res = await fetch(`${SUPABASE_URL}/rest/v1/products`, {\n    method: 'POST',\n    headers: {\n      'apikey':        SERVICE_KEY,\n      'Authorization': `Bearer ${SERVICE_KEY}`,\n      'Content-Type':  'application/json',\n      'Prefer':        'resolution=merge-duplicates,return=minimal'\n    },\n    body: JSON.stringify(chunk)\n  });\n  if (res.ok) {\n    stock_upserted += chunk.length;\n  } else {\n    stock_errors += chunk.length;\n    console.error('Stock upsert chunk error:', await res.text());\n  }\n}\n\n// ── Step 5: Enrich & insert new products ─────────────────────\nconst newProducts = [];\nlet skipped_price = 0, skipped_fastener = 0, skipped_discontinued = 0;\n\nfor (const { sku, qty } of newToProcess) {\n  let p;\n  try {\n    const res = await fetch(`${LLEXETER_BASE}/code/${encodeURIComponent(sku)}`);\n    p = await res.json();\n  } catch (err) {\n    console.error(`Failed to fetch /code/${sku}:`, err.message);\n    continue;\n  }\n\n  if (p.discontinued === '1') { skipped_discontinued++; continue; }\n\n  const price = parseFloat(p.retail_price) || 0;\n  if (price < MIN_PRICE) { skipped_price++; continue; }\n\n  const title = (p.name || p.fullname || '').toLowerCase();\n  if (EXCLUDE_TERMS.some(t => title.includes(t))) { skipped_fastener++; continue; }\n\n  newProducts.push({\n    sku,\n    title:         p.name || p.fullname || sku,\n    retail_price:  price,\n    selling_price: price,  // LLExeter retail_price IS the selling price\n    trade_price:   null,\n    stock_level:   qty <= 3 ? 0 : qty,\n    image_url:     (p.images && p.images[0]) ? p.images[0] : null,\n    category:      p.category || null,\n    supplier_id:   'LLEXETER',\n    updated_at:    now\n  });\n}\n\n// Upsert new products\nlet new_upserted = 0, new_errors = 0;\nfor (let i = 0; i < newProducts.length; i += CHUNK_SIZE) {\n  const chunk = newProducts.slice(i, i + CHUNK_SIZE);\n  const res = await fetch(`${SUPABASE_URL}/rest/v1/products`, {\n    method: 'POST',\n    headers: {\n      'apikey':        SERVICE_KEY,\n      'Authorization': `Bearer ${SERVICE_KEY}`,\n      'Content-Type':  'application/json',\n      'Prefer':        'resolution=merge-duplicates,return=minimal'\n    },\n    body: JSON.stringify(chunk)\n  });\n  if (res.ok) {\n    new_upserted += chunk.length;\n  } else {\n    new_errors += chunk.length;\n    console.error('New product upsert error:', await res.text());\n  }\n}\n\nreturn [{ json: {\n  total_in_stocklist:   allSkus.length,\n  existing_updated:     stock_upserted,\n  new_found:            newSkus.length,\n  new_inserted:         new_upserted,\n  new_skipped_cap:      skipped_new,\n  skipped_discontinued,\n  skipped_price,\n  skipped_fastener,\n  stock_errors,\n  new_errors,\n  run_at: now\n} }];"
+        "jsCode": "// ============================================================\n// BL: LLExeter (CMPO) Stock Sync v1\n// API: http://api.llexeter.co.uk \u2014 no auth required\n// /stocklist  \u2192 {SKU: qty, ...}  (all stock levels)\n// /code/{sku} \u2192 full product data for new products\n// ============================================================\n\nconst SUPABASE_URL = 'https://ddjuoeyaoxllockcusgf.supabase.co';\nconst SERVICE_KEY  = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRkanVvZXlhb3hsbG9ja2N1c2dmIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc2NTM4ODM3OSwiZXhwIjoyMDgwOTY0Mzc5fQ.tQTpdQCkE-V-aCfdt7GgN5FF-IdXQzGCAEuRE6gNupE';\nconst LLEXETER_BASE = 'http://api.llexeter.co.uk';\nconst CHUNK_SIZE   = 500;\nconst MAX_NEW_PER_RUN = 200; // cap new product enrichment per run to avoid timeout\nconst MIN_PRICE    = 20;    // skip products under \u00a320\n\nconst EXCLUDE_TERMS = [\n  'bolt', 'bolts', 'nut', 'nuts', 'screw', 'screws',\n  'fastener', 'fasteners', 'washer', 'washers',\n  'rivet', 'rivets', 'split pin', 'circlip',\n  'o-ring', 'o ring', 'oring'\n];\n\nconst now = new Date().toISOString();\n\n// \u2500\u2500 Step 1: Fetch stocklist from LLExeter API \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\nlet stocklist;\ntry {\n  const res = await fetch(`${LLEXETER_BASE}/stocklist`);\n  if (!res.ok) throw new Error(`HTTP ${res.status}`);\n  stocklist = await res.json();\n} catch (err) {\n  throw new Error('LLExeter /stocklist failed: ' + err.message);\n}\n\nconst allSkus = Object.keys(stocklist);\nif (allSkus.length === 0) throw new Error('Empty stocklist response from LLExeter');\n\n// \u2500\u2500 Step 2: Get existing LLEXETER SKUs from Supabase \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\nlet existingSkus = new Set();\ntry {\n  // Fetch in pages (Supabase default limit 1000)\n  let offset = 0;\n  while (true) {\n    const res = await fetch(\n      `${SUPABASE_URL}/rest/v1/products?supplier_id=eq.LLEXETER&select=sku&limit=1000&offset=${offset}`,\n      { headers: { 'apikey': SERVICE_KEY, 'Authorization': `Bearer ${SERVICE_KEY}` } }\n    );\n    const rows = await res.json();\n    if (!Array.isArray(rows) || rows.length === 0) break;\n    rows.forEach(r => existingSkus.add(r.sku));\n    if (rows.length < 1000) break;\n    offset += 1000;\n  }\n} catch (err) {\n  throw new Error('Supabase fetch of existing SKUs failed: ' + err.message);\n}\n\n// \u2500\u2500 Step 3: Partition into existing (stock update) vs new \u2500\u2500\u2500\u2500\u2500\nconst stockUpdates = [];\nconst newSkus = [];\n\nfor (const [sku, qty] of Object.entries(stocklist)) {\n  const stock_level = qty <= 3 ? 0 : qty;\n  if (existingSkus.has(sku)) {\n    stockUpdates.push({ sku, stock_level, supplier_id: 'LLEXETER', updated_at: now });\n  } else {\n    newSkus.push({ sku, qty });\n  }\n}\n\nconst skipped_new = Math.max(0, newSkus.length - MAX_NEW_PER_RUN);\nconst newToProcess = newSkus.slice(0, MAX_NEW_PER_RUN);\n\n// \u2500\u2500 Step 4: Batch upsert stock updates \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\nlet stock_upserted = 0, stock_errors = 0;\n\nfor (let i = 0; i < stockUpdates.length; i += CHUNK_SIZE) {\n  const chunk = stockUpdates.slice(i, i + CHUNK_SIZE);\n  const res = await fetch(`${SUPABASE_URL}/rest/v1/products`, {\n    method: 'POST',\n    headers: {\n      'apikey':        SERVICE_KEY,\n      'Authorization': `Bearer ${SERVICE_KEY}`,\n      'Content-Type':  'application/json',\n      'Prefer':        'resolution=merge-duplicates,return=minimal'\n    },\n    body: JSON.stringify(chunk)\n  });\n  if (res.ok) {\n    stock_upserted += chunk.length;\n  } else {\n    stock_errors += chunk.length;\n    console.error('Stock upsert chunk error:', await res.text());\n  }\n}\n\n// \u2500\u2500 Step 5: Enrich & insert new products \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\nconst newProducts = [];\nlet skipped_price = 0, skipped_fastener = 0, skipped_discontinued = 0;\n\nfor (const { sku, qty } of newToProcess) {\n  let p;\n  try {\n    const res = await fetch(`${LLEXETER_BASE}/code/${encodeURIComponent(sku)}`);\n    p = await res.json();\n  } catch (err) {\n    console.error(`Failed to fetch /code/${sku}:`, err.message);\n    continue;\n  }\n\n  if (p.discontinued === '1') { skipped_discontinued++; continue; }\n\n  const price = parseFloat(p.retail_price) || 0;\n  if (price < MIN_PRICE) { skipped_price++; continue; }\n\n  const title = (p.name || p.fullname || '').toLowerCase();\n  if (EXCLUDE_TERMS.some(t => title.includes(t))) { skipped_fastener++; continue; }\n\n  if (!p.images || !p.images[0]) { skipped_noimage = (skipped_noimage||0) + 1; continue; }\n    newProducts.push({\n    sku,\n    title:         p.name || p.fullname || sku,\n    retail_price:  price,\n    selling_price: price,  // LLExeter retail_price IS the selling price\n    trade_price:   null,\n    stock_level:   qty <= 3 ? 0 : qty,\n    image_url:     (p.images && p.images[0]) ? p.images[0] : null,\n    category:      p.category || null,\n    supplier_id:   'LLEXETER',\n    updated_at:    now\n  });\n}\n\n// Upsert new products\nlet new_upserted = 0, new_errors = 0;\nfor (let i = 0; i < newProducts.length; i += CHUNK_SIZE) {\n  const chunk = newProducts.slice(i, i + CHUNK_SIZE);\n  const res = await fetch(`${SUPABASE_URL}/rest/v1/products`, {\n    method: 'POST',\n    headers: {\n      'apikey':        SERVICE_KEY,\n      'Authorization': `Bearer ${SERVICE_KEY}`,\n      'Content-Type':  'application/json',\n      'Prefer':        'resolution=merge-duplicates,return=minimal'\n    },\n    body: JSON.stringify(chunk)\n  });\n  if (res.ok) {\n    new_upserted += chunk.length;\n  } else {\n    new_errors += chunk.length;\n    console.error('New product upsert error:', await res.text());\n  }\n}\n\n\n// Cleanup: remove any LLEXETER products with null image_url\nawait fetch(`${SUPABASE_URL}/rest/v1/products?supplier_id=eq.LLEXETER&image_url=is.null`, {\n  method: 'DELETE',\n  headers: {\n    'apikey':        SERVICE_KEY,\n    'Authorization': `Bearer ${SERVICE_KEY}`,\n    'Prefer':        'return=minimal'\n  }\n});\n\nreturn [{ json: {\n  total_in_stocklist:   allSkus.length,\n  existing_updated:     stock_upserted,\n  new_found:            newSkus.length,\n  new_inserted:         new_upserted,\n  new_skipped_cap:      skipped_new,\n  skipped_discontinued,\n  skipped_price,\n  skipped_fastener,\n  stock_errors,\n  new_errors,\n  run_at: now\n} }];"
       },
       "id": "b1000000-0000-0000-0000-000000000002",
       "name": "Sync LLExeter Stock",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
-      "position": [460, 300]
+      "position": [
+        460,
+        300
+      ]
     },
     {
       "parameters": {
@@ -45,29 +55,199 @@
         },
         "body": {
           "from": "BL Ops <reports@jonnyai.co.uk>",
-          "to": ["blmotorcyclesltd@gmail.com"],
-          "subject": "={{`✅ CMPO Stock Sync: ${$json.existing_updated} updated, ${$json.new_inserted} new`}}",
-          "html": "={{`<div style='font-family:Arial;max-width:600px;margin:auto;background:#0a0a0c;padding:40px;border-radius:8px;'><h2 style='color:#22c55e;margin-top:0;'>✅ CMPO / LLExeter Stock Sync Complete</h2><table style='width:100%;border-collapse:collapse;margin:16px 0;'><tr style='border-bottom:1px solid #222;'><td style='padding:10px 0;color:#888;font-size:13px;'>Total SKUs in LLExeter catalogue</td><td style='padding:10px 0;color:#ddd;font-size:13px;text-align:right;'>${$json.total_in_stocklist}</td></tr><tr style='border-bottom:1px solid #222;'><td style='padding:10px 0;color:#888;font-size:13px;'>Existing products — stock updated</td><td style='padding:10px 0;color:#22c55e;font-size:13px;text-align:right;'>${$json.existing_updated}</td></tr><tr style='border-bottom:1px solid #222;'><td style='padding:10px 0;color:#888;font-size:13px;'>New products found</td><td style='padding:10px 0;color:#ddd;font-size:13px;text-align:right;'>${$json.new_found}</td></tr><tr style='border-bottom:1px solid #222;'><td style='padding:10px 0;color:#22c55e;font-size:13px;font-weight:bold;'>New products inserted</td><td style='padding:10px 0;color:#22c55e;font-size:13px;font-weight:bold;text-align:right;'>${$json.new_inserted}</td></tr>${$json.new_skipped_cap > 0 ? '<tr style=\"border-bottom:1px solid #222;\"><td style=\"padding:10px 0;color:#f59e0b;font-size:13px;\">⚠️ New SKUs deferred (run cap)</td><td style=\"padding:10px 0;color:#f59e0b;font-size:13px;text-align:right;\">' + $json.new_skipped_cap + '</td></tr>' : ''}<tr style='border-bottom:1px solid #222;'><td style='padding:10px 0;color:#555;font-size:13px;'>Skipped — discontinued</td><td style='padding:10px 0;color:#555;font-size:13px;text-align:right;'>${$json.skipped_discontinued}</td></tr><tr style='border-bottom:1px solid #222;'><td style='padding:10px 0;color:#555;font-size:13px;'>Skipped — under £20</td><td style='padding:10px 0;color:#555;font-size:13px;text-align:right;'>${$json.skipped_price}</td></tr><tr><td style='padding:10px 0;color:#555;font-size:13px;'>Skipped — fasteners</td><td style='padding:10px 0;color:#555;font-size:13px;text-align:right;'>${$json.skipped_fastener}</td></tr>${($json.stock_errors + $json.new_errors) > 0 ? '<tr><td style=\"padding:10px 0;color:#ef4444;font-size:13px;\">❌ Errors</td><td style=\"padding:10px 0;color:#ef4444;font-size:13px;text-align:right;\">' + ($json.stock_errors + $json.new_errors) + '</td></tr>' : ''}</table><p style='color:#555;font-size:11px;margin-bottom:0;'>Ran at: ${$json.run_at} · Next run in ~6h</p></div>`}}"
+          "to": [
+            "blmotorcyclesltd@gmail.com"
+          ],
+          "subject": "={{`\u2705 CMPO Stock Sync: ${$json.existing_updated} updated, ${$json.new_inserted} new`}}",
+          "html": "={{`<div style='font-family:Arial;max-width:600px;margin:auto;background:#0a0a0c;padding:40px;border-radius:8px;'><h2 style='color:#22c55e;margin-top:0;'>\u2705 CMPO / LLExeter Stock Sync Complete</h2><table style='width:100%;border-collapse:collapse;margin:16px 0;'><tr style='border-bottom:1px solid #222;'><td style='padding:10px 0;color:#888;font-size:13px;'>Total SKUs in LLExeter catalogue</td><td style='padding:10px 0;color:#ddd;font-size:13px;text-align:right;'>${$json.total_in_stocklist}</td></tr><tr style='border-bottom:1px solid #222;'><td style='padding:10px 0;color:#888;font-size:13px;'>Existing products \u2014 stock updated</td><td style='padding:10px 0;color:#22c55e;font-size:13px;text-align:right;'>${$json.existing_updated}</td></tr><tr style='border-bottom:1px solid #222;'><td style='padding:10px 0;color:#888;font-size:13px;'>New products found</td><td style='padding:10px 0;color:#ddd;font-size:13px;text-align:right;'>${$json.new_found}</td></tr><tr style='border-bottom:1px solid #222;'><td style='padding:10px 0;color:#22c55e;font-size:13px;font-weight:bold;'>New products inserted</td><td style='padding:10px 0;color:#22c55e;font-size:13px;font-weight:bold;text-align:right;'>${$json.new_inserted}</td></tr>${$json.new_skipped_cap > 0 ? '<tr style=\"border-bottom:1px solid #222;\"><td style=\"padding:10px 0;color:#f59e0b;font-size:13px;\">\u26a0\ufe0f New SKUs deferred (run cap)</td><td style=\"padding:10px 0;color:#f59e0b;font-size:13px;text-align:right;\">' + $json.new_skipped_cap + '</td></tr>' : ''}<tr style='border-bottom:1px solid #222;'><td style='padding:10px 0;color:#555;font-size:13px;'>Skipped \u2014 discontinued</td><td style='padding:10px 0;color:#555;font-size:13px;text-align:right;'>${$json.skipped_discontinued}</td></tr><tr style='border-bottom:1px solid #222;'><td style='padding:10px 0;color:#555;font-size:13px;'>Skipped \u2014 under \u00a320</td><td style='padding:10px 0;color:#555;font-size:13px;text-align:right;'>${$json.skipped_price}</td></tr><tr><td style='padding:10px 0;color:#555;font-size:13px;'>Skipped \u2014 fasteners</td><td style='padding:10px 0;color:#555;font-size:13px;text-align:right;'>${$json.skipped_fastener}</td></tr>${($json.stock_errors + $json.new_errors) > 0 ? '<tr><td style=\"padding:10px 0;color:#ef4444;font-size:13px;\">\u274c Errors</td><td style=\"padding:10px 0;color:#ef4444;font-size:13px;text-align:right;\">' + ($json.stock_errors + $json.new_errors) + '</td></tr>' : ''}</table><p style='color:#555;font-size:11px;margin-bottom:0;'>Ran at: ${$json.run_at} \u00b7 Next run in ~6h</p></div>`}}"
         }
       },
       "id": "b1000000-0000-0000-0000-000000000003",
       "name": "Email Confirmation to Brett",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 3,
-      "position": [700, 300]
+      "position": [
+        700,
+        300
+      ]
     }
   ],
   "connections": {
     "Every 6 Hours": {
-      "main": [[{ "node": "Sync LLExeter Stock", "type": "main", "index": 0 }]]
+      "main": [
+        [
+          {
+            "node": "Sync LLExeter Stock",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     },
     "Sync LLExeter Stock": {
-      "main": [[{ "node": "Email Confirmation to Brett", "type": "main", "index": 0 }]]
+      "main": [
+        [
+          {
+            "node": "Email Confirmation to Brett",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     }
   },
   "settings": {
     "executionOrder": "v1",
     "callerPolicy": "workflowsFromSameOwner",
     "availableInMCP": false
+  },
+  "staticData": {
+    "node:Every 6 Hours": {
+      "recurrenceRules": []
+    }
+  },
+  "meta": null,
+  "pinData": null,
+  "versionId": "221d633f-4500-4a8b-a309-54b97bcf5031",
+  "activeVersionId": "221d633f-4500-4a8b-a309-54b97bcf5031",
+  "versionCounter": 7,
+  "triggerCount": 1,
+  "shared": [
+    {
+      "updatedAt": "2026-03-24T21:37:35.725Z",
+      "createdAt": "2026-03-24T21:37:35.725Z",
+      "role": "workflow:owner",
+      "workflowId": "uCVHdUwsam5lohHY",
+      "projectId": "x4pe9L85fJyNyY0Y",
+      "project": {
+        "updatedAt": "2026-03-03T21:46:35.329Z",
+        "createdAt": "2026-03-03T19:25:37.964Z",
+        "id": "x4pe9L85fJyNyY0Y",
+        "name": "Jonny Allum <info@jonnyai.co.uk>",
+        "type": "personal",
+        "icon": null,
+        "description": null,
+        "creatorId": "0f4efd46-167b-4ca1-a086-b969a1d4fd5c"
+      }
+    }
+  ],
+  "tags": [],
+  "activeVersion": {
+    "updatedAt": "2026-03-24T22:05:05.100Z",
+    "createdAt": "2026-03-24T22:05:05.100Z",
+    "versionId": "221d633f-4500-4a8b-a309-54b97bcf5031",
+    "workflowId": "uCVHdUwsam5lohHY",
+    "nodes": [
+      {
+        "parameters": {
+          "rule": {
+            "interval": [
+              {
+                "field": "hours",
+                "hoursInterval": 6
+              }
+            ]
+          }
+        },
+        "id": "b1000000-0000-0000-0000-000000000001",
+        "name": "Every 6 Hours",
+        "type": "n8n-nodes-base.scheduleTrigger",
+        "typeVersion": 1,
+        "position": [
+          240,
+          300
+        ]
+      },
+      {
+        "parameters": {
+          "mode": "runOnceForAllItems",
+          "jsCode": "// ============================================================\n// BL: LLExeter (CMPO) Stock Sync v1\n// API: http://api.llexeter.co.uk \u2014 no auth required\n// /stocklist  \u2192 {SKU: qty, ...}  (all stock levels)\n// /code/{sku} \u2192 full product data for new products\n// ============================================================\n\nconst SUPABASE_URL = 'https://ddjuoeyaoxllockcusgf.supabase.co';\nconst SERVICE_KEY  = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRkanVvZXlhb3hsbG9ja2N1c2dmIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc2NTM4ODM3OSwiZXhwIjoyMDgwOTY0Mzc5fQ.tQTpdQCkE-V-aCfdt7GgN5FF-IdXQzGCAEuRE6gNupE';\nconst LLEXETER_BASE = 'http://api.llexeter.co.uk';\nconst CHUNK_SIZE   = 500;\nconst MAX_NEW_PER_RUN = 200; // cap new product enrichment per run to avoid timeout\nconst MIN_PRICE    = 20;    // skip products under \u00a320\n\nconst EXCLUDE_TERMS = [\n  'bolt', 'bolts', 'nut', 'nuts', 'screw', 'screws',\n  'fastener', 'fasteners', 'washer', 'washers',\n  'rivet', 'rivets', 'split pin', 'circlip',\n  'o-ring', 'o ring', 'oring'\n];\n\nconst now = new Date().toISOString();\n\n// \u2500\u2500 Step 1: Fetch stocklist from LLExeter API \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\nlet stocklist;\ntry {\n  const res = await fetch(`${LLEXETER_BASE}/stocklist`);\n  if (!res.ok) throw new Error(`HTTP ${res.status}`);\n  stocklist = await res.json();\n} catch (err) {\n  throw new Error('LLExeter /stocklist failed: ' + err.message);\n}\n\nconst allSkus = Object.keys(stocklist);\nif (allSkus.length === 0) throw new Error('Empty stocklist response from LLExeter');\n\n// \u2500\u2500 Step 2: Get existing LLEXETER SKUs from Supabase \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\nlet existingSkus = new Set();\ntry {\n  // Fetch in pages (Supabase default limit 1000)\n  let offset = 0;\n  while (true) {\n    const res = await fetch(\n      `${SUPABASE_URL}/rest/v1/products?supplier_id=eq.LLEXETER&select=sku&limit=1000&offset=${offset}`,\n      { headers: { 'apikey': SERVICE_KEY, 'Authorization': `Bearer ${SERVICE_KEY}` } }\n    );\n    const rows = await res.json();\n    if (!Array.isArray(rows) || rows.length === 0) break;\n    rows.forEach(r => existingSkus.add(r.sku));\n    if (rows.length < 1000) break;\n    offset += 1000;\n  }\n} catch (err) {\n  throw new Error('Supabase fetch of existing SKUs failed: ' + err.message);\n}\n\n// \u2500\u2500 Step 3: Partition into existing (stock update) vs new \u2500\u2500\u2500\u2500\u2500\nconst stockUpdates = [];\nconst newSkus = [];\n\nfor (const [sku, qty] of Object.entries(stocklist)) {\n  const stock_level = qty <= 3 ? 0 : qty;\n  if (existingSkus.has(sku)) {\n    stockUpdates.push({ sku, stock_level, supplier_id: 'LLEXETER', updated_at: now });\n  } else {\n    newSkus.push({ sku, qty });\n  }\n}\n\nconst skipped_new = Math.max(0, newSkus.length - MAX_NEW_PER_RUN);\nconst newToProcess = newSkus.slice(0, MAX_NEW_PER_RUN);\n\n// \u2500\u2500 Step 4: Batch upsert stock updates \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\nlet stock_upserted = 0, stock_errors = 0;\n\nfor (let i = 0; i < stockUpdates.length; i += CHUNK_SIZE) {\n  const chunk = stockUpdates.slice(i, i + CHUNK_SIZE);\n  const res = await fetch(`${SUPABASE_URL}/rest/v1/products`, {\n    method: 'POST',\n    headers: {\n      'apikey':        SERVICE_KEY,\n      'Authorization': `Bearer ${SERVICE_KEY}`,\n      'Content-Type':  'application/json',\n      'Prefer':        'resolution=merge-duplicates,return=minimal'\n    },\n    body: JSON.stringify(chunk)\n  });\n  if (res.ok) {\n    stock_upserted += chunk.length;\n  } else {\n    stock_errors += chunk.length;\n    console.error('Stock upsert chunk error:', await res.text());\n  }\n}\n\n// \u2500\u2500 Step 5: Enrich & insert new products \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\nconst newProducts = [];\nlet skipped_price = 0, skipped_fastener = 0, skipped_discontinued = 0;\n\nfor (const { sku, qty } of newToProcess) {\n  let p;\n  try {\n    const res = await fetch(`${LLEXETER_BASE}/code/${encodeURIComponent(sku)}`);\n    p = await res.json();\n  } catch (err) {\n    console.error(`Failed to fetch /code/${sku}:`, err.message);\n    continue;\n  }\n\n  if (p.discontinued === '1') { skipped_discontinued++; continue; }\n\n  const price = parseFloat(p.retail_price) || 0;\n  if (price < MIN_PRICE) { skipped_price++; continue; }\n\n  const title = (p.name || p.fullname || '').toLowerCase();\n  if (EXCLUDE_TERMS.some(t => title.includes(t))) { skipped_fastener++; continue; }\n\n  if (!p.images || !p.images[0]) { skipped_noimage = (skipped_noimage||0) + 1; continue; }\n    newProducts.push({\n    sku,\n    title:         p.name || p.fullname || sku,\n    retail_price:  price,\n    selling_price: price,  // LLExeter retail_price IS the selling price\n    trade_price:   null,\n    stock_level:   qty <= 3 ? 0 : qty,\n    image_url:     (p.images && p.images[0]) ? p.images[0] : null,\n    category:      p.category || null,\n    supplier_id:   'LLEXETER',\n    updated_at:    now\n  });\n}\n\n// Upsert new products\nlet new_upserted = 0, new_errors = 0;\nfor (let i = 0; i < newProducts.length; i += CHUNK_SIZE) {\n  const chunk = newProducts.slice(i, i + CHUNK_SIZE);\n  const res = await fetch(`${SUPABASE_URL}/rest/v1/products`, {\n    method: 'POST',\n    headers: {\n      'apikey':        SERVICE_KEY,\n      'Authorization': `Bearer ${SERVICE_KEY}`,\n      'Content-Type':  'application/json',\n      'Prefer':        'resolution=merge-duplicates,return=minimal'\n    },\n    body: JSON.stringify(chunk)\n  });\n  if (res.ok) {\n    new_upserted += chunk.length;\n  } else {\n    new_errors += chunk.length;\n    console.error('New product upsert error:', await res.text());\n  }\n}\n\n\n// Cleanup: remove any LLEXETER products with null image_url\nawait fetch(`${SUPABASE_URL}/rest/v1/products?supplier_id=eq.LLEXETER&image_url=is.null`, {\n  method: 'DELETE',\n  headers: {\n    'apikey':        SERVICE_KEY,\n    'Authorization': `Bearer ${SERVICE_KEY}`,\n    'Prefer':        'return=minimal'\n  }\n});\n\nreturn [{ json: {\n  total_in_stocklist:   allSkus.length,\n  existing_updated:     stock_upserted,\n  new_found:            newSkus.length,\n  new_inserted:         new_upserted,\n  new_skipped_cap:      skipped_new,\n  skipped_discontinued,\n  skipped_price,\n  skipped_fastener,\n  stock_errors,\n  new_errors,\n  run_at: now\n} }];"
+        },
+        "id": "b1000000-0000-0000-0000-000000000002",
+        "name": "Sync LLExeter Stock",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          460,
+          300
+        ]
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "https://api.resend.com/emails",
+          "headerParameters": {
+            "parameters": [
+              {
+                "name": "Authorization",
+                "value": "=Bearer re_WPiPmTVK_9G1Sp9KPATm8DJnRPvnoH4ru"
+              }
+            ]
+          },
+          "body": {
+            "from": "BL Ops <reports@jonnyai.co.uk>",
+            "to": [
+              "blmotorcyclesltd@gmail.com"
+            ],
+            "subject": "={{`\u2705 CMPO Stock Sync: ${$json.existing_updated} updated, ${$json.new_inserted} new`}}",
+            "html": "={{`<div style='font-family:Arial;max-width:600px;margin:auto;background:#0a0a0c;padding:40px;border-radius:8px;'><h2 style='color:#22c55e;margin-top:0;'>\u2705 CMPO / LLExeter Stock Sync Complete</h2><table style='width:100%;border-collapse:collapse;margin:16px 0;'><tr style='border-bottom:1px solid #222;'><td style='padding:10px 0;color:#888;font-size:13px;'>Total SKUs in LLExeter catalogue</td><td style='padding:10px 0;color:#ddd;font-size:13px;text-align:right;'>${$json.total_in_stocklist}</td></tr><tr style='border-bottom:1px solid #222;'><td style='padding:10px 0;color:#888;font-size:13px;'>Existing products \u2014 stock updated</td><td style='padding:10px 0;color:#22c55e;font-size:13px;text-align:right;'>${$json.existing_updated}</td></tr><tr style='border-bottom:1px solid #222;'><td style='padding:10px 0;color:#888;font-size:13px;'>New products found</td><td style='padding:10px 0;color:#ddd;font-size:13px;text-align:right;'>${$json.new_found}</td></tr><tr style='border-bottom:1px solid #222;'><td style='padding:10px 0;color:#22c55e;font-size:13px;font-weight:bold;'>New products inserted</td><td style='padding:10px 0;color:#22c55e;font-size:13px;font-weight:bold;text-align:right;'>${$json.new_inserted}</td></tr>${$json.new_skipped_cap > 0 ? '<tr style=\"border-bottom:1px solid #222;\"><td style=\"padding:10px 0;color:#f59e0b;font-size:13px;\">\u26a0\ufe0f New SKUs deferred (run cap)</td><td style=\"padding:10px 0;color:#f59e0b;font-size:13px;text-align:right;\">' + $json.new_skipped_cap + '</td></tr>' : ''}<tr style='border-bottom:1px solid #222;'><td style='padding:10px 0;color:#555;font-size:13px;'>Skipped \u2014 discontinued</td><td style='padding:10px 0;color:#555;font-size:13px;text-align:right;'>${$json.skipped_discontinued}</td></tr><tr style='border-bottom:1px solid #222;'><td style='padding:10px 0;color:#555;font-size:13px;'>Skipped \u2014 under \u00a320</td><td style='padding:10px 0;color:#555;font-size:13px;text-align:right;'>${$json.skipped_price}</td></tr><tr><td style='padding:10px 0;color:#555;font-size:13px;'>Skipped \u2014 fasteners</td><td style='padding:10px 0;color:#555;font-size:13px;text-align:right;'>${$json.skipped_fastener}</td></tr>${($json.stock_errors + $json.new_errors) > 0 ? '<tr><td style=\"padding:10px 0;color:#ef4444;font-size:13px;\">\u274c Errors</td><td style=\"padding:10px 0;color:#ef4444;font-size:13px;text-align:right;\">' + ($json.stock_errors + $json.new_errors) + '</td></tr>' : ''}</table><p style='color:#555;font-size:11px;margin-bottom:0;'>Ran at: ${$json.run_at} \u00b7 Next run in ~6h</p></div>`}}"
+          }
+        },
+        "id": "b1000000-0000-0000-0000-000000000003",
+        "name": "Email Confirmation to Brett",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 3,
+        "position": [
+          700,
+          300
+        ]
+      }
+    ],
+    "connections": {
+      "Every 6 Hours": {
+        "main": [
+          [
+            {
+              "node": "Sync LLExeter Stock",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Sync LLExeter Stock": {
+        "main": [
+          [
+            {
+              "node": "Email Confirmation to Brett",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "authors": "Jonny Allum",
+    "name": null,
+    "description": null,
+    "autosaved": false,
+    "workflowPublishHistory": [
+      {
+        "createdAt": "2026-03-24T22:05:05.141Z",
+        "id": 119,
+        "workflowId": "uCVHdUwsam5lohHY",
+        "versionId": "221d633f-4500-4a8b-a309-54b97bcf5031",
+        "event": "activated",
+        "userId": "0f4efd46-167b-4ca1-a086-b969a1d4fd5c"
+      },
+      {
+        "createdAt": "2026-03-24T22:05:05.125Z",
+        "id": 118,
+        "workflowId": "uCVHdUwsam5lohHY",
+        "versionId": "221d633f-4500-4a8b-a309-54b97bcf5031",
+        "event": "deactivated",
+        "userId": "0f4efd46-167b-4ca1-a086-b969a1d4fd5c"
+      }
+    ]
   }
 }

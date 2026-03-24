@@ -30,4 +30,224 @@
     {
       "parameters": {
         "mode": "runOnceForAllItems",
-        "jsCode": 
+        "jsCode": "// \u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac Step 1: Download Bike It stock file via SFTP (curl) \u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\n// curl natively supports sftp:// URIs.\n// File columns: SKU, Description, OnHandQuantity, SRP, Trade\n\nconst { execSync } = require('child_process');\n\nconst SFTP_USER = '34961@sftp.bikeit.co.uk';\nconst SFTP_PASS = '9471f0ac87600a2779fa76d8b8f' || '9471f0ac87600a2779fa76d8b8f';\nconst SFTP_URL  = 'sftp://sftp.bikeit.co.uk/stockprice.csv';\n\nlet csvText;\ntry {\n  csvText = execSync(\n    `curl -s --insecure --user \"${SFTP_USER}:${SFTP_PASS}\" \"${SFTP_URL}\"`,\n    { timeout: 60000, maxBuffer: 50 * 1024 * 1024 }\n  ).toString('utf8');\n} catch (err) {\n  throw new Error('SFTP download failed: ' + err.message);\n}\n\n// \u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac Step 2: Parse CSV \u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\nconst lines = csvText.trim().split('\\n');\nif (lines.length < 2) throw new Error('Empty or invalid CSV from Bike It');\n\nconst headers = lines[0].split(',').map(h => h.trim().replace(/^\"|\"$/g, ''));\nconst rows = [];\nfor (let i = 1; i < lines.length; i++) {\n  const cols = lines[i].split(',');\n  if (cols.length < headers.length) continue;\n  const row = {};\n  headers.forEach((h, idx) => { row[h] = (cols[idx] || '').trim().replace(/^\"|\"$/g, ''); });\n  rows.push(row);\n}\n\n// \u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac Step 3: Filter & Transform \u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\nconst SUPABASE_URL = 'https://ddjuoeyaoxllockcusgf.supabase.co';\nconst SERVICE_KEY  = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRkanVvZXlhb3hsbG9ja2N1c2dmIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc2NTM4ODM3OSwiZXhwIjoyMDgwOTY0Mzc5fQ.tQTpdQCkE-V-aCfdt7GgN5FF-IdXQzGCAEuRE6gNupE';\nconst CHUNK_SIZE   = 500;\n\nconst EXCLUDE_TERMS = [\n  'bolt', 'bolts', 'nut', 'nuts', 'screw', 'screws',\n  'fastener', 'fasteners', 'washer', 'washers',\n  'rivet', 'rivets', 'split pin', 'circlip',\n  'o-ring', 'o ring', 'oring'\n];\n\nconst products = [];\nlet skipped_fastener = 0, skipped_lowvalue = 0, skipped_nosku = 0;\n\nfor (const r of rows) {\n  const sku   = (r.SKU || '').trim();\n  const title = (r.Description || '').trim();\n  const qty   = parseInt(r.OnHandQuantity) || 0;\n  const srp   = parseFloat(r.SRP) || 0;\n  const trade = parseFloat(r.Trade) || 0;\n\n  if (!sku) { skipped_nosku++; continue; }\n\n  const tl = title.toLowerCase();\n  if (EXCLUDE_TERMS.some(t => tl.includes(t))) { skipped_fastener++; continue; }\n  if (srp < 50) { skipped_lowvalue++; continue; }\n\n  products.push({\n    sku,\n    title,\n    retail_price:  srp,\n    trade_price:   trade || null,\n    selling_price: trade > 0 ? Math.round(trade * 1.5 * 100) / 100 : null,\n    stock_level:   qty <= 3 ? 0 : qty,\n    image_url:     `https://bikeittrade.com/feeddata/${sku}/image1/${sku.toLowerCase()}.jpg`,\n    supplier_id:   'BIKEIT',\n    updated_at:    new Date().toISOString()\n  });\n}\n\n// \u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac Step 4: Batch upsert to Supabase \u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\nlet upserted = 0, upsert_errors = 0;\n\nfor (let i = 0; i < products.length; i += CHUNK_SIZE) {\n  const chunk = products.slice(i, i + CHUNK_SIZE);\n  const res = await fetch(`${SUPABASE_URL}/rest/v1/products`, {\n    method: 'POST',\n    headers: {\n      'apikey':        SERVICE_KEY,\n      'Authorization': `Bearer ${SERVICE_KEY}`,\n      'Content-Type':  'application/json',\n      'Prefer':        'resolution=merge-duplicates,return=minimal'\n    },\n    body: JSON.stringify(chunk)\n  });\n  if (res.ok) {\n    upserted += chunk.length;\n  } else {\n    upsert_errors += chunk.length;\n    console.error(`Chunk ${Math.floor(i/CHUNK_SIZE)+1} error: ${await res.text()}`);\n  }\n}\n\n\n// Step 5: Remove any products with null image_url (safety net)\nawait fetch(`${SUPABASE_URL}/rest/v1/products?supplier_id=eq.BIKEIT&image_url=is.null`, {\n  method: 'DELETE',\n  headers: {\n    'apikey':        SERVICE_KEY,\n    'Authorization': `Bearer ${SERVICE_KEY}`,\n    'Prefer':        'return=minimal'\n  }\n});\n\nreturn [{ json: {\n  total_from_bikeit: rows.length,\n  eligible:          products.length,\n  skipped_fastener,\n  skipped_lowvalue,\n  skipped_nosku,\n  upserted,\n  upsert_errors,\n  run_at: new Date().toISOString()\n} }];"
+      },
+      "id": "a1000000-0000-0000-0000-000000000002",
+      "name": "Download, Filter & Upsert",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        460,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.resend.com/emails",
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "=Bearer re_WPiPmTVK_9G1Sp9KPATm8DJnRPvnoH4ru"
+            }
+          ]
+        },
+        "body": {
+          "from": "BL Ops <reports@jonnyai.co.uk>",
+          "to": [
+            "blmotorcyclesltd@gmail.com"
+          ],
+          "subject": "={{`\u00e2\u0153\u2026 Bike It Stock Sync: ${$json.upserted} products updated`}}",
+          "html": "={{`<div style='font-family:Arial;max-width:600px;margin:auto;background:#0a0a0c;padding:40px;border-radius:8px;'><h2 style='color:#22c55e;margin-top:0;'>\u00e2\u0153\u2026 Bike It Stock Sync Complete</h2><table style='width:100%;border-collapse:collapse;margin:16px 0;'><tr style='border-bottom:1px solid #222;'><td style='padding:10px 0;color:#888;font-size:13px;'>Total rows from Bike It</td><td style='padding:10px 0;color:#ddd;font-size:13px;text-align:right;'>${$json.total_from_bikeit}</td></tr><tr style='border-bottom:1px solid #222;'><td style='padding:10px 0;color:#888;font-size:13px;'>Eligible (passed filters)</td><td style='padding:10px 0;color:#ddd;font-size:13px;text-align:right;'>${$json.eligible}</td></tr><tr style='border-bottom:1px solid #222;'><td style='padding:10px 0;color:#888;font-size:13px;'>Skipped \u00e2\u20ac\u201d fasteners/bolts</td><td style='padding:10px 0;color:#888;font-size:13px;text-align:right;'>${$json.skipped_fastener}</td></tr><tr style='border-bottom:1px solid #222;'><td style='padding:10px 0;color:#888;font-size:13px;'>Skipped \u00e2\u20ac\u201d SRP under \u00c2\u00a350</td><td style='padding:10px 0;color:#888;font-size:13px;text-align:right;'>${$json.skipped_lowvalue}</td></tr><tr><td style='padding:10px 0;color:#22c55e;font-size:13px;font-weight:bold;'>\u00e2\u0153\u2026 Upserted to Supabase</td><td style='padding:10px 0;color:#22c55e;font-size:13px;font-weight:bold;text-align:right;'>${$json.upserted}</td></tr>${$json.upsert_errors > 0 ? '<tr><td style=\"padding:10px 0;color:#ef4444;font-size:13px;\">\u00e2\u0161\u00a0\u00ef\u00b8\udc8f Errors</td><td style=\"padding:10px 0;color:#ef4444;font-size:13px;text-align:right;\">' + $json.upsert_errors + '</td></tr>' : ''}</table><p style='color:#555;font-size:11px;margin-bottom:0;'>Ran at: ${$json.run_at} \u00e2\u20ac\u00a2 Next run in ~6h</p></div>`}}"
+        }
+      },
+      "id": "a1000000-0000-0000-0000-000000000003",
+      "name": "Email Confirmation to Brett",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 3,
+      "position": [
+        700,
+        300
+      ]
+    }
+  ],
+  "connections": {
+    "Every 6 Hours": {
+      "main": [
+        [
+          {
+            "node": "Download, Filter & Upsert",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download, Filter & Upsert": {
+      "main": [
+        [
+          {
+            "node": "Email Confirmation to Brett",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "callerPolicy": "workflowsFromSameOwner",
+    "availableInMCP": false
+  },
+  "staticData": {
+    "node:Every 6 Hours": {
+      "recurrenceRules": []
+    }
+  },
+  "meta": null,
+  "pinData": null,
+  "versionId": "37f25618-a56a-48cd-8bc4-542bd35a17ae",
+  "activeVersionId": "37f25618-a56a-48cd-8bc4-542bd35a17ae",
+  "versionCounter": 16,
+  "triggerCount": 1,
+  "shared": [
+    {
+      "updatedAt": "2026-03-24T19:44:01.109Z",
+      "createdAt": "2026-03-24T19:44:01.109Z",
+      "role": "workflow:owner",
+      "workflowId": "HdlLf4DkRdiLR9nm",
+      "projectId": "x4pe9L85fJyNyY0Y",
+      "project": {
+        "updatedAt": "2026-03-03T21:46:35.329Z",
+        "createdAt": "2026-03-03T19:25:37.964Z",
+        "id": "x4pe9L85fJyNyY0Y",
+        "name": "Jonny Allum <info@jonnyai.co.uk>",
+        "type": "personal",
+        "icon": null,
+        "description": null,
+        "creatorId": "0f4efd46-167b-4ca1-a086-b969a1d4fd5c"
+      }
+    }
+  ],
+  "tags": [],
+  "activeVersion": {
+    "updatedAt": "2026-03-24T22:05:04.907Z",
+    "createdAt": "2026-03-24T22:05:04.907Z",
+    "versionId": "37f25618-a56a-48cd-8bc4-542bd35a17ae",
+    "workflowId": "HdlLf4DkRdiLR9nm",
+    "nodes": [
+      {
+        "parameters": {
+          "rule": {
+            "interval": [
+              {
+                "field": "hours",
+                "hoursInterval": 6
+              }
+            ]
+          }
+        },
+        "id": "a1000000-0000-0000-0000-000000000001",
+        "name": "Every 6 Hours",
+        "type": "n8n-nodes-base.scheduleTrigger",
+        "typeVersion": 1,
+        "position": [
+          240,
+          300
+        ]
+      },
+      {
+        "parameters": {
+          "mode": "runOnceForAllItems",
+          "jsCode": "// \u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac Step 1: Download Bike It stock file via SFTP (curl) \u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\n// curl natively supports sftp:// URIs.\n// File columns: SKU, Description, OnHandQuantity, SRP, Trade\n\nconst { execSync } = require('child_process');\n\nconst SFTP_USER = '34961@sftp.bikeit.co.uk';\nconst SFTP_PASS = '9471f0ac87600a2779fa76d8b8f' || '9471f0ac87600a2779fa76d8b8f';\nconst SFTP_URL  = 'sftp://sftp.bikeit.co.uk/stockprice.csv';\n\nlet csvText;\ntry {\n  csvText = execSync(\n    `curl -s --insecure --user \"${SFTP_USER}:${SFTP_PASS}\" \"${SFTP_URL}\"`,\n    { timeout: 60000, maxBuffer: 50 * 1024 * 1024 }\n  ).toString('utf8');\n} catch (err) {\n  throw new Error('SFTP download failed: ' + err.message);\n}\n\n// \u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac Step 2: Parse CSV \u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\nconst lines = csvText.trim().split('\\n');\nif (lines.length < 2) throw new Error('Empty or invalid CSV from Bike It');\n\nconst headers = lines[0].split(',').map(h => h.trim().replace(/^\"|\"$/g, ''));\nconst rows = [];\nfor (let i = 1; i < lines.length; i++) {\n  const cols = lines[i].split(',');\n  if (cols.length < headers.length) continue;\n  const row = {};\n  headers.forEach((h, idx) => { row[h] = (cols[idx] || '').trim().replace(/^\"|\"$/g, ''); });\n  rows.push(row);\n}\n\n// \u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac Step 3: Filter & Transform \u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\nconst SUPABASE_URL = 'https://ddjuoeyaoxllockcusgf.supabase.co';\nconst SERVICE_KEY  = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRkanVvZXlhb3hsbG9ja2N1c2dmIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc2NTM4ODM3OSwiZXhwIjoyMDgwOTY0Mzc5fQ.tQTpdQCkE-V-aCfdt7GgN5FF-IdXQzGCAEuRE6gNupE';\nconst CHUNK_SIZE   = 500;\n\nconst EXCLUDE_TERMS = [\n  'bolt', 'bolts', 'nut', 'nuts', 'screw', 'screws',\n  'fastener', 'fasteners', 'washer', 'washers',\n  'rivet', 'rivets', 'split pin', 'circlip',\n  'o-ring', 'o ring', 'oring'\n];\n\nconst products = [];\nlet skipped_fastener = 0, skipped_lowvalue = 0, skipped_nosku = 0;\n\nfor (const r of rows) {\n  const sku   = (r.SKU || '').trim();\n  const title = (r.Description || '').trim();\n  const qty   = parseInt(r.OnHandQuantity) || 0;\n  const srp   = parseFloat(r.SRP) || 0;\n  const trade = parseFloat(r.Trade) || 0;\n\n  if (!sku) { skipped_nosku++; continue; }\n\n  const tl = title.toLowerCase();\n  if (EXCLUDE_TERMS.some(t => tl.includes(t))) { skipped_fastener++; continue; }\n  if (srp < 50) { skipped_lowvalue++; continue; }\n\n  products.push({\n    sku,\n    title,\n    retail_price:  srp,\n    trade_price:   trade || null,\n    selling_price: trade > 0 ? Math.round(trade * 1.5 * 100) / 100 : null,\n    stock_level:   qty <= 3 ? 0 : qty,\n    image_url:     `https://bikeittrade.com/feeddata/${sku}/image1/${sku.toLowerCase()}.jpg`,\n    supplier_id:   'BIKEIT',\n    updated_at:    new Date().toISOString()\n  });\n}\n\n// \u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac Step 4: Batch upsert to Supabase \u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\u00c3\u00a2\u00e2\u20ac\udc9d\u00e2\u201a\u00ac\nlet upserted = 0, upsert_errors = 0;\n\nfor (let i = 0; i < products.length; i += CHUNK_SIZE) {\n  const chunk = products.slice(i, i + CHUNK_SIZE);\n  const res = await fetch(`${SUPABASE_URL}/rest/v1/products`, {\n    method: 'POST',\n    headers: {\n      'apikey':        SERVICE_KEY,\n      'Authorization': `Bearer ${SERVICE_KEY}`,\n      'Content-Type':  'application/json',\n      'Prefer':        'resolution=merge-duplicates,return=minimal'\n    },\n    body: JSON.stringify(chunk)\n  });\n  if (res.ok) {\n    upserted += chunk.length;\n  } else {\n    upsert_errors += chunk.length;\n    console.error(`Chunk ${Math.floor(i/CHUNK_SIZE)+1} error: ${await res.text()}`);\n  }\n}\n\n\n// Step 5: Remove any products with null image_url (safety net)\nawait fetch(`${SUPABASE_URL}/rest/v1/products?supplier_id=eq.BIKEIT&image_url=is.null`, {\n  method: 'DELETE',\n  headers: {\n    'apikey':        SERVICE_KEY,\n    'Authorization': `Bearer ${SERVICE_KEY}`,\n    'Prefer':        'return=minimal'\n  }\n});\n\nreturn [{ json: {\n  total_from_bikeit: rows.length,\n  eligible:          products.length,\n  skipped_fastener,\n  skipped_lowvalue,\n  skipped_nosku,\n  upserted,\n  upsert_errors,\n  run_at: new Date().toISOString()\n} }];"
+        },
+        "id": "a1000000-0000-0000-0000-000000000002",
+        "name": "Download, Filter & Upsert",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          460,
+          300
+        ]
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "https://api.resend.com/emails",
+          "headerParameters": {
+            "parameters": [
+              {
+                "name": "Authorization",
+                "value": "=Bearer re_WPiPmTVK_9G1Sp9KPATm8DJnRPvnoH4ru"
+              }
+            ]
+          },
+          "body": {
+            "from": "BL Ops <reports@jonnyai.co.uk>",
+            "to": [
+              "blmotorcyclesltd@gmail.com"
+            ],
+            "subject": "={{`\u00e2\u0153\u2026 Bike It Stock Sync: ${$json.upserted} products updated`}}",
+            "html": "={{`<div style='font-family:Arial;max-width:600px;margin:auto;background:#0a0a0c;padding:40px;border-radius:8px;'><h2 style='color:#22c55e;margin-top:0;'>\u00e2\u0153\u2026 Bike It Stock Sync Complete</h2><table style='width:100%;border-collapse:collapse;margin:16px 0;'><tr style='border-bottom:1px solid #222;'><td style='padding:10px 0;color:#888;font-size:13px;'>Total rows from Bike It</td><td style='padding:10px 0;color:#ddd;font-size:13px;text-align:right;'>${$json.total_from_bikeit}</td></tr><tr style='border-bottom:1px solid #222;'><td style='padding:10px 0;color:#888;font-size:13px;'>Eligible (passed filters)</td><td style='padding:10px 0;color:#ddd;font-size:13px;text-align:right;'>${$json.eligible}</td></tr><tr style='border-bottom:1px solid #222;'><td style='padding:10px 0;color:#888;font-size:13px;'>Skipped \u00e2\u20ac\u201d fasteners/bolts</td><td style='padding:10px 0;color:#888;font-size:13px;text-align:right;'>${$json.skipped_fastener}</td></tr><tr style='border-bottom:1px solid #222;'><td style='padding:10px 0;color:#888;font-size:13px;'>Skipped \u00e2\u20ac\u201d SRP under \u00c2\u00a350</td><td style='padding:10px 0;color:#888;font-size:13px;text-align:right;'>${$json.skipped_lowvalue}</td></tr><tr><td style='padding:10px 0;color:#22c55e;font-size:13px;font-weight:bold;'>\u00e2\u0153\u2026 Upserted to Supabase</td><td style='padding:10px 0;color:#22c55e;font-size:13px;font-weight:bold;text-align:right;'>${$json.upserted}</td></tr>${$json.upsert_errors > 0 ? '<tr><td style=\"padding:10px 0;color:#ef4444;font-size:13px;\">\u00e2\u0161\u00a0\u00ef\u00b8\udc8f Errors</td><td style=\"padding:10px 0;color:#ef4444;font-size:13px;text-align:right;\">' + $json.upsert_errors + '</td></tr>' : ''}</table><p style='color:#555;font-size:11px;margin-bottom:0;'>Ran at: ${$json.run_at} \u00e2\u20ac\u00a2 Next run in ~6h</p></div>`}}"
+          }
+        },
+        "id": "a1000000-0000-0000-0000-000000000003",
+        "name": "Email Confirmation to Brett",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 3,
+        "position": [
+          700,
+          300
+        ]
+      }
+    ],
+    "connections": {
+      "Every 6 Hours": {
+        "main": [
+          [
+            {
+              "node": "Download, Filter & Upsert",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Download, Filter & Upsert": {
+        "main": [
+          [
+            {
+              "node": "Email Confirmation to Brett",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "authors": "Jonny Allum",
+    "name": null,
+    "description": null,
+    "autosaved": false,
+    "workflowPublishHistory": [
+      {
+        "createdAt": "2026-03-24T22:05:04.952Z",
+        "id": 117,
+        "workflowId": "HdlLf4DkRdiLR9nm",
+        "versionId": "37f25618-a56a-48cd-8bc4-542bd35a17ae",
+        "event": "activated",
+        "userId": "0f4efd46-167b-4ca1-a086-b969a1d4fd5c"
+      },
+      {
+        "createdAt": "2026-03-24T22:05:04.936Z",
+        "id": 116,
+        "workflowId": "HdlLf4DkRdiLR9nm",
+        "versionId": "37f25618-a56a-48cd-8bc4-542bd35a17ae",
+        "event": "deactivated",
+        "userId": "0f4efd46-167b-4ca1-a086-b969a1d4fd5c"
+      }
+    ]
+  }
+}
