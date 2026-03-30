@@ -6,6 +6,7 @@ import { createClient } from "@supabase/supabase-js";
 import { motion, AnimatePresence } from "framer-motion";
 import { Search, Bike, ShoppingCart, Filter, ChevronLeft, ChevronRight, X, Package, Shield, Truck } from "lucide-react";
 import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
 
 // Supabase Init (B&L PROJECT)
 const supabase = createClient(
@@ -15,9 +16,7 @@ const supabase = createClient(
 
 function cleanDescription(desc: string) {
   if (!desc) return "";
-  // Strip HTML tags (as a safety measure)
   const cleanText = desc.replace(/<[^>]*>/g, '').trim();
-  // Fix common entity encoding issues
   return cleanText
     .replace(/&nbsp;/g, ' ')
     .replace(/&amp;/g, '&')
@@ -79,7 +78,7 @@ function ShopContent() {
   useEffect(() => {
     const timer = setTimeout(() => {
       fetchProducts();
-    }, 400); // Debounce search
+    }, 400);
     return () => clearTimeout(timer);
   }, [search, page]);
 
@@ -119,13 +118,13 @@ function ShopContent() {
   return (
     <>
       <Navbar />
-      <main className="min-h-screen bg-brand-dark text-white p-8 pt-28">
+      <main className="min-h-screen bg-background text-white p-8 pt-28">
         {/* Search Header */}
         <div className="max-w-7xl mx-auto mb-12">
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
             <div>
-              <h1 className="text-4xl font-black mb-2 tracking-tighter">Parts Catalogue</h1>
-              <p className="text-gray-500 text-sm">{total.toLocaleString()} genuine parts in stock, dispatched from Fareham, Hampshire.</p>
+              <h1 className="text-4xl font-heading font-bold uppercase tracking-tight mb-2">Parts Catalogue</h1>
+              <p className="text-muted text-sm">{total.toLocaleString()} genuine parts in stock, dispatched from Fareham, Hampshire.</p>
             </div>
 
             <div className="relative w-full md:w-96">
@@ -135,7 +134,7 @@ function ShopContent() {
                 value={search}
                 onChange={(e) => { setSearch(e.target.value); setPage(0); }}
                 placeholder="Search by part name or fitment..."
-                className="w-full bg-brand-gray border border-white/10 rounded-2xl py-4 pl-12 pr-6 focus:border-brand-gold outline-none transition-all placeholder:text-gray-600"
+                className="w-full bg-card border border-brand-gold/20 py-4 pl-12 pr-6 focus:border-brand-gold outline-none transition-all placeholder:text-gray-600 font-mono text-sm"
               />
             </div>
           </div>
@@ -147,7 +146,7 @@ function ShopContent() {
             <AnimatePresence mode="popLayout">
               {loading ? (
                 [...Array(8)].map((_, i) => (
-                  <div key={i} className="bg-brand-gray border border-white/5 rounded-3xl h-[420px] animate-pulse"></div>
+                  <div key={i} className="bg-card border border-brand-gold/10 h-[420px] animate-pulse"></div>
                 ))
               ) : products.length > 0 ? (
                 products.map((p) => (
@@ -155,9 +154,8 @@ function ShopContent() {
                     key={p.id}
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
-                    whileHover={{ y: -8 }}
                     onClick={() => setSelectedProduct(p)}
-                    className="bg-brand-gray border border-white/5 rounded-3xl overflow-hidden group hover:border-brand-gold/50 transition-all cursor-pointer flex flex-col"
+                    className="bg-card tech-border overflow-hidden group hover:border-brand-gold/50 hover:shadow-[0_0_20px_rgba(211,192,101,0.1)] transition-all cursor-pointer flex flex-col"
                   >
                     <div className="relative h-64 bg-black/40 flex items-center justify-center p-8 overflow-hidden shrink-0">
                       {p.image_url ? (
@@ -165,21 +163,21 @@ function ShopContent() {
                       ) : (
                         <Bike className="w-16 h-16 text-white/10" />
                       )}
-                      <div className="absolute top-4 left-4 bg-black/60 backdrop-blur-md px-3 py-1 rounded-full text-[10px] font-bold border border-white/10 uppercase tracking-widest text-zinc-400">
+                      <div className="absolute top-4 left-4 bg-black/60 backdrop-blur-md px-3 py-1 text-[10px] font-bold border border-brand-gold/20 uppercase tracking-widest text-zinc-400">
                         {p.brand || (p.supplier_id === 'LLEXETER' ? 'CMPO' : 'BIKE IT')}
                       </div>
-                      <div className="absolute top-4 right-4 bg-black/60 backdrop-blur-md px-3 py-1 rounded-full text-xs font-bold border border-white/10">
+                      <div className="absolute top-4 right-4 bg-black/60 backdrop-blur-md px-3 py-1 text-xs font-bold border border-brand-gold/20">
                         {p.supplier_id === 'LLEXETER' ? 'CMPO' : 'BIKEIT'}
                       </div>
                       {p.stock_level <= 0 && (
                         <div className="absolute inset-0 bg-black/60 backdrop-blur-[2px] flex items-center justify-center">
-                          <span className="bg-red-500 text-white font-black px-4 py-2 rounded-xl text-sm transform -rotate-12 border-2 border-red-400 shadow-2xl">OUT OF STOCK</span>
+                          <span className="bg-red-500 text-white font-black px-4 py-2 text-sm transform -rotate-12 border-2 border-red-400 shadow-2xl">OUT OF STOCK</span>
                         </div>
                       )}
                     </div>
 
                     <div className="p-6 flex flex-col flex-1">
-                      <div className="text-[10px] text-zinc-500 uppercase tracking-widest mb-1 flex justify-between">
+                      <div className="text-[10px] text-zinc-500 uppercase tracking-widest mb-1 flex justify-between font-mono">
                         <span>SKU: {p.sku}</span>
                         {p.category && <span className="text-brand-gold/70">{p.category.split('>').pop()}</span>}
                       </div>
@@ -189,16 +187,16 @@ function ShopContent() {
                         <div className="flex justify-between items-end mb-4">
                           <div>
                             <div className="text-2xl font-black text-brand-gold font-mono">&pound;{p.selling_price || p.retail_price}</div>
-                            <div className="text-[10px] text-zinc-500 uppercase tracking-wider">+&pound;6.50 P&P</div>
+                            <div className="text-[10px] text-zinc-500 uppercase tracking-wider font-mono">+&pound;6.50 P&P</div>
                           </div>
-                          <div className={`text-[10px] font-black uppercase tracking-widest px-2 py-1 rounded-md ${p.stock_level > 0 ? 'bg-green-500/10 text-green-500' : 'bg-red-500/10 text-red-500'}`}>
+                          <div className={`text-[10px] font-black uppercase tracking-widest px-2 py-1 ${p.stock_level > 0 ? 'bg-green-500/10 text-green-500 border border-green-500/20' : 'bg-red-500/10 text-red-500 border border-red-500/20'}`}>
                             {p.stock_level > 0 ? `${p.stock_level} Left` : 'OOS'}
                           </div>
                         </div>
                         <button
                           onClick={(e) => handleBuy(p, e)}
                           disabled={buyingId === p.id || p.stock_level <= 0}
-                          className="w-full bg-orange-600 hover:bg-orange-500 text-black p-3 rounded-xl font-black text-xs uppercase tracking-widest transition-all disabled:opacity-30 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                          className="w-full bg-primary text-primary-foreground p-3 font-heading font-bold text-xs uppercase tracking-widest transition-all disabled:opacity-30 disabled:cursor-not-allowed flex items-center justify-center gap-2 clip-chamfer hover:bg-primary/90"
                         >
                           <ShoppingCart className={`w-4 h-4 ${buyingId === p.id ? "animate-spin" : ""}`} />
                           {buyingId === p.id ? 'Processing...' : 'Buy Now'}
@@ -221,21 +219,22 @@ function ShopContent() {
             <button
               disabled={page === 0}
               onClick={() => setPage(p => Math.max(0, p - 1))}
-              className="p-4 rounded-2xl bg-brand-gray border border-white/10 disabled:opacity-30 hover:bg-white/5 transition-all"
+              className="p-4 bg-card border border-brand-gold/20 disabled:opacity-30 hover:border-brand-gold/50 transition-all"
             >
               <ChevronLeft />
             </button>
-            <span className="text-sm font-bold font-mono">PAGE {page + 1} OF {Math.ceil(total / ITEMS_PER_PAGE) || 1}</span>
+            <span className="text-sm font-bold font-mono uppercase tracking-wider">Page {page + 1} of {Math.ceil(total / ITEMS_PER_PAGE) || 1}</span>
             <button
               disabled={products.length < ITEMS_PER_PAGE}
               onClick={() => setPage(p => p + 1)}
-              className="p-4 rounded-2xl bg-brand-gray border border-white/10 disabled:opacity-30 hover:bg-white/5 transition-all"
+              className="p-4 bg-card border border-brand-gold/20 disabled:opacity-30 hover:border-brand-gold/50 transition-all"
             >
               <ChevronRight />
             </button>
           </div>
         </div>
       </main>
+      <Footer />
 
       {/* Product Detail Modal */}
       <AnimatePresence>
@@ -245,17 +244,17 @@ function ShopContent() {
               initial={{ opacity: 0, scale: 0.95, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 20 }}
-              className="bg-[#0a0a0c] border border-white/10 rounded-3xl w-full max-w-4xl max-h-[90vh] overflow-hidden flex flex-col sm:flex-row relative shadow-2xl"
+              className="bg-background border border-brand-gold/20 w-full max-w-4xl max-h-[90vh] overflow-hidden flex flex-col sm:flex-row relative shadow-2xl"
             >
               <button
                 onClick={() => setSelectedProduct(null)}
-                className="absolute top-4 right-4 z-10 w-10 h-10 bg-black/50 hover:bg-white/10 rounded-full flex items-center justify-center transition-all backdrop-blur-md border border-white/10 text-white"
+                className="absolute top-4 right-4 z-10 w-10 h-10 bg-black/50 hover:bg-white/10 flex items-center justify-center transition-all backdrop-blur-md border border-brand-gold/20 text-white"
               >
                 <X size={20} />
               </button>
 
               {/* Image Side */}
-              <div className="w-full sm:w-1/2 min-h-[300px] sm:min-h-[500px] bg-black/40 flex items-center justify-center p-8 border-b sm:border-b-0 sm:border-r border-white/5">
+              <div className="w-full sm:w-1/2 min-h-[300px] sm:min-h-[500px] bg-black/40 flex items-center justify-center p-8 border-b sm:border-b-0 sm:border-r border-brand-gold/10">
                 {selectedProduct.image_url ? (
                   <img src={selectedProduct.image_url} alt={selectedProduct.title} className="max-h-full object-contain drop-shadow-2xl" />
                 ) : (
@@ -264,21 +263,21 @@ function ShopContent() {
               </div>
 
               {/* Info Side */}
-              <div className="w-full sm:w-1/2 p-8 sm:p-12 overflow-y-auto bg-gradient-to-br from-black to-[#050508] relative">
+              <div className="w-full sm:w-1/2 p-8 sm:p-12 overflow-y-auto bg-gradient-to-br from-black to-background relative">
                 <div className="flex items-center gap-3 mb-6">
                   {selectedProduct.brand && (
-                    <span className="px-3 py-1 bg-white/5 border border-white/10 rounded-full text-xs font-bold uppercase tracking-wider text-zinc-300">
+                    <span className="px-3 py-1 bg-white/5 border border-brand-gold/20 text-xs font-bold uppercase tracking-wider text-zinc-300">
                       {selectedProduct.brand}
                     </span>
                   )}
-                  <span className="px-3 py-1 bg-white/5 border border-white/10 rounded-full text-xs font-bold uppercase tracking-wider text-zinc-500 font-mono">
+                  <span className="px-3 py-1 bg-white/5 border border-brand-gold/20 text-xs font-bold uppercase tracking-wider text-zinc-500 font-mono">
                     SKU: {selectedProduct.sku}
                   </span>
                 </div>
 
-                <h2 className="text-2xl sm:text-3xl font-black tracking-tight mb-2 leading-tight">{selectedProduct.title}</h2>
+                <h2 className="text-2xl sm:text-3xl font-heading font-bold uppercase tracking-tight mb-2 leading-tight">{selectedProduct.title}</h2>
                 <div className="text-zinc-500 text-sm mb-8 flex items-center gap-2">
-                  <span className="w-2 h-2 rounded-full bg-brand-gold"></span>
+                  <span className="w-2 h-2 bg-brand-gold"></span>
                   Supplied directly by {selectedProduct.supplier_id === 'LLEXETER' ? 'CMPO' : 'Bike It'}
                 </div>
 
@@ -287,50 +286,50 @@ function ShopContent() {
                   <span className="text-sm font-bold text-zinc-500 uppercase tracking-widest">+ &pound;6.50 P&P</span>
                 </div>
 
-                <div className={`inline-flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-black uppercase tracking-widest mb-10 ${selectedProduct.stock_level > 0 ? "bg-green-500/10 text-green-400 border border-green-500/20" : "bg-red-500/10 text-red-500 border border-red-500/20"}`}>
+                <div className={`inline-flex items-center gap-2 px-4 py-2 text-sm font-black uppercase tracking-widest mb-10 ${selectedProduct.stock_level > 0 ? "bg-green-500/10 text-green-400 border border-green-500/20" : "bg-red-500/10 text-red-500 border border-red-500/20"}`}>
                   <Package size={16} />
                   {selectedProduct.stock_level > 0 ? `${selectedProduct.stock_level} Items In UK Warehouse` : "Currently Out of Stock"}
                 </div>
 
                 {selectedProduct.description && (
                   <div className="mb-10">
-                    <h3 className="text-sm font-black text-white uppercase tracking-widest mb-4 flex items-center gap-2">
+                    <h3 className="text-sm font-heading font-bold text-white uppercase tracking-widest mb-4 flex items-center gap-2">
                       <Bike size={16} className="text-brand-gold" />
                       Product Information
                     </h3>
-                    <div className="text-sm text-zinc-400 leading-relaxed font-mono whitespace-pre-wrap bg-white/5 p-6 rounded-2xl border border-white/5">
+                    <div className="text-sm text-zinc-400 leading-relaxed font-mono whitespace-pre-wrap bg-white/5 p-6 border border-brand-gold/10">
                       {cleanDescription(selectedProduct.description)}
                     </div>
                   </div>
                 )}
 
                 <div className="grid grid-cols-2 gap-4 mb-10">
-                  <div className="bg-white/5 border border-white/10 rounded-xl p-4 flex gap-3">
+                  <div className="bg-white/5 border border-brand-gold/10 p-4 flex gap-3">
                     <Truck className="text-brand-gold shrink-0" size={20} />
                     <div>
-                      <h4 className="text-[10px] font-black tracking-widest uppercase text-white mb-1">Fast Disptach</h4>
+                      <h4 className="text-[10px] font-heading font-bold tracking-widest uppercase text-white mb-1">Fast Dispatch</h4>
                       <p className="text-[10px] text-zinc-500">Usually dispatched within 24 hours via DPD/Royal Mail.</p>
                     </div>
                   </div>
-                  <div className="bg-white/5 border border-white/10 rounded-xl p-4 flex gap-3">
+                  <div className="bg-white/5 border border-brand-gold/10 p-4 flex gap-3">
                     <Shield className="text-brand-gold shrink-0" size={20} />
                     <div>
-                      <h4 className="text-[10px] font-black tracking-widest uppercase text-white mb-1">Fitment Guarantee</h4>
+                      <h4 className="text-[10px] font-heading font-bold tracking-widest uppercase text-white mb-1">Fitment Guarantee</h4>
                       <p className="text-[10px] text-zinc-500">100% genuine replacement parts guaranteed.</p>
                     </div>
                   </div>
                 </div>
 
-                <div className="sticky bottom-0 bg-gradient-to-t from-[#050508] pt-10 pb-2">
+                <div className="sticky bottom-0 bg-gradient-to-t from-background pt-10 pb-2">
                   <button
                     onClick={() => handleBuy(selectedProduct)}
                     disabled={buyingId === selectedProduct.id || selectedProduct.stock_level <= 0}
-                    className="w-full h-14 bg-orange-600 hover:bg-orange-500 text-black rounded-2xl font-black text-sm uppercase tracking-[0.2em] transition-all disabled:opacity-30 disabled:cursor-not-allowed flex items-center justify-center gap-3 shadow-2xl shadow-orange-500/20"
+                    className="w-full h-14 bg-primary text-primary-foreground font-heading font-bold text-sm uppercase tracking-[0.2em] transition-all disabled:opacity-30 disabled:cursor-not-allowed flex items-center justify-center gap-3 clip-chamfer hover:bg-primary/90"
                   >
                     <ShoppingCart className={`w-5 h-5 ${buyingId === selectedProduct.id ? "animate-spin" : ""}`} />
                     {buyingId === selectedProduct.id ? 'Starting Secure Checkout...' : 'Buy This Part Now'}
                   </button>
-                  <p className="text-center text-[10px] text-zinc-500 mt-4 uppercase tracking-widest">Payments secured by Stripe / Apple Pay</p>
+                  <p className="text-center text-[10px] text-zinc-500 mt-4 uppercase tracking-widest font-mono">Payments secured by Stripe / Apple Pay</p>
                 </div>
               </div>
             </motion.div>
@@ -343,7 +342,7 @@ function ShopContent() {
 
 export default function Shop() {
   return (
-    <Suspense fallback={<div className="min-h-screen bg-brand-dark flex items-center justify-center text-white">Loading parts catalogue...</div>}>
+    <Suspense fallback={<div className="min-h-screen bg-background flex items-center justify-center text-white">Loading parts catalogue...</div>}>
       <ShopContent />
     </Suspense>
   );

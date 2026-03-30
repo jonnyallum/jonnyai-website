@@ -1,9 +1,11 @@
 import Navbar from "@/components/Navbar";
 import Hero from "@/components/Hero";
-import TrustBar from "@/components/TrustBar";
-import Services from "@/components/Services";
-import Categories from "@/components/Categories";
 import About from "@/components/About";
+import Services from "@/components/Services";
+import ShopSection from "@/components/ShopSection";
+import Products from "@/components/Products";
+import Gallery from "@/components/Gallery";
+import Mission from "@/components/Mission";
 import Footer from "@/components/Footer";
 
 export default function Home() {
@@ -11,10 +13,12 @@ export default function Home() {
     <>
       <Navbar />
       <Hero />
-      <TrustBar />
-      <Services />
-      <Categories />
       <About />
+      <Services />
+      <ShopSection />
+      <Products />
+      <Gallery />
+      <Mission />
       <Footer />
     </>
   );
