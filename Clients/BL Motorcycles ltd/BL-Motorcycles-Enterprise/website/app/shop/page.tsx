@@ -171,8 +171,8 @@ function RichDescription({ product }: { product: any }) {
 
         {/* Important Information */}
         {structured.IMPORTANT_INFORMATION && structured.IMPORTANT_INFORMATION.length > 0 && (
-          <div className="bg-orange-500/5 p-5 rounded-2xl border border-orange-500/20">
-            <h4 className="text-[11px] font-black uppercase tracking-widest text-orange-400 mb-3 flex items-center gap-2">
+          <div className="bg-brand-gold/5 p-5 rounded-2xl border border-brand-gold/20">
+            <h4 className="text-[11px] font-black uppercase tracking-widest text-brand-gold mb-3 flex items-center gap-2">
               <AlertTriangle size={14} />
               Important Information
             </h4>
@@ -450,7 +450,7 @@ function ShopContent() {
                         <button
                           onClick={(e) => handleBuy(p, e)}
                           disabled={buyingId === p.id || p.stock_level <= 0}
-                          className="w-full bg-orange-600 hover:bg-orange-500 text-black p-3 rounded-xl font-black text-xs uppercase tracking-widest transition-all disabled:opacity-30 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                          className="w-full bg-brand-gold hover:bg-brand-gold-light text-black p-3 rounded-xl font-black text-xs uppercase tracking-widest transition-all disabled:opacity-30 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                         >
                           <ShoppingCart className={`w-4 h-4 ${buyingId === p.id ? "animate-spin" : ""}`} />
                           {buyingId === p.id ? 'Processing...' : 'Buy Now'}
@@ -600,7 +600,7 @@ function ShopContent() {
                   <button
                     onClick={() => handleBuy(selectedProduct)}
                     disabled={buyingId === selectedProduct.id || selectedProduct.stock_level <= 0}
-                    className="w-full h-14 bg-orange-600 hover:bg-orange-500 text-black rounded-2xl font-black text-sm uppercase tracking-[0.2em] transition-all disabled:opacity-30 disabled:cursor-not-allowed flex items-center justify-center gap-3 shadow-2xl shadow-orange-500/20"
+                    className="w-full h-14 bg-brand-gold hover:bg-brand-gold-light text-black rounded-2xl font-black text-sm uppercase tracking-[0.2em] transition-all disabled:opacity-30 disabled:cursor-not-allowed flex items-center justify-center gap-3 shadow-2xl shadow-brand-gold/20"
                   >
                     <ShoppingCart className={`w-5 h-5 ${buyingId === selectedProduct.id ? "animate-spin" : ""}`} />
                     {buyingId === selectedProduct.id ? 'Starting Secure Checkout...' : 'Buy This Part Now'}
