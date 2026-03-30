@@ -6,9 +6,16 @@
 
 :root {
   --background: #050505;
-  --foreground: #fcfcfc;
+  --foreground: #f0f0f0;
   --primary: #d3c065;
+  --primary-foreground: #050505;
   --primary-muted: rgba(211, 192, 101, 0.2);
+  --card: #1c1c1c;
+  --card-foreground: #f0f0f0;
+  --secondary: #2e2e2e;
+  --secondary-foreground: #f0f0f0;
+  --muted: #999999;
+  --border: rgba(211, 192, 101, 0.2);
 }
 
 html {
@@ -39,34 +46,57 @@ h1, h2, h3, h4, h5, h6 {
 
 /* Scrollbar */
 ::-webkit-scrollbar {
-  width: 5px;
+  width: 8px;
 }
 ::-webkit-scrollbar-track {
-  background: #050505;
+  background: var(--background);
 }
 ::-webkit-scrollbar-thumb {
-  background: linear-gradient(to bottom, var(--primary), #BF9B30);
+  background: rgba(211, 192, 101, 0.3);
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(211, 192, 101, 0.5);
+}
+
+@layer base {
+  * {
+    border-color: var(--border);
+  }
 }
 
 @layer components {
+  /* Chamfered clip-path — the signature BL industrial look */
+  .clip-chamfer {
+    clip-path: polygon(
+      10px 0, 100% 0,
+      100% calc(100% - 10px), calc(100% - 10px) 100%,
+      0 100%, 0 10px
+    );
+  }
+
+  /* Tech border with corner accents */
   .tech-border {
     @apply border border-brand-gold/20 relative;
   }
-  
-  /* Corner accents for cards */
-  .tech-corner::before {
+
+  .tech-border::before {
     content: '';
-    position: absolute;
-    top: -1px;
-    left: -1px;
-    width: 10px;
-    height: 10px;
-    border-top: 2px solid theme('colors.brand.gold');
-    border-left: 2px solid theme('colors.brand.gold');
+    @apply absolute top-0 left-0 w-2 h-2 border-t border-l border-brand-gold opacity-50;
   }
 
+  .tech-border::after {
+    content: '';
+    @apply absolute bottom-0 right-0 w-2 h-2 border-b border-r border-brand-gold opacity-50;
+  }
+
+  /* Legacy alias */
   .btn-chamfer {
     clip-path: polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px);
+  }
+
+  /* Gold gradient divider */
+  .gold-divider {
+    @apply h-px bg-gradient-to-r from-transparent via-brand-gold/50 to-transparent;
   }
 }
 
@@ -76,5 +106,8 @@ h1, h2, h3, h4, h5, h6 {
   }
   .gold-glow {
     filter: drop-shadow(0 0 15px rgba(211, 192, 101, 0.3));
+  }
+  .gold-glow-lg {
+    filter: drop-shadow(0 0 25px rgba(211, 192, 101, 0.4));
   }
 }
