@@ -1,0 +1,432 @@
+# Claude Code Handover: BL Motorcycles Enterprise Restyling
+
+**Created:** 30 March 2026
+**Purpose:** Complete implementation guide for restyling the Next.js enterprise site to match the original Vite site's industrial/kinetic design. Everything Claude Code needs is in this document.
+
+---
+
+## MISSION
+
+Restyle the enterprise Next.js site (`BL-Motorcycles-Enterprise/website/`) to match the original Vite site's (`blwebsite as of 010326/`) industrial "Kinetic Precision" design language. **DO NOT break any shop, admin, Supabase, or Stripe functionality.**
+
+## REPO
+
+- **GitHub:** `https://github.com/jonnyallum/blwebsite`
+- **Working branch:** Create `enterprise-restyled` from `enterprise-rebuild`
+- **Tag current state** as `pre-restyling-backup` before any changes
+
+## ENV FILES
+
+- Website env: `BL-Motorcycles-Enterprise/website/.env` (Supabase public URL + anon key)
+- Master env: `BL-Motorcycles-Enterprise/.env` (all keys — Supabase, eBay, suppliers, Stripe)
+- Google Maps GCP project: `outstanding-box-450907-s8`
+- Additional env/keys if needed: `../JonnyAI_JaiOS_4.0/.env` and `../JonnyAI_JaiOS_4.0/Clients/BL Motorcycles ltd/BL-Motorcycles-Enterprise/.env`
+
+## ARCHITECTURE
+
+### Enterprise Site (Next.js 15 — THE BASE)
+```
+website/
+├── app/
+│   ├── page.tsx          # Home page
+│   ├── layout.tsx        # Root layout
+│   ├── globals.css       # Global styles
+│   ├── shop/page.tsx     # Full product catalogue (Supabase)
+│   ├── admin/page.tsx    # Order management dashboard
+│   ├── api/send-email/   # Email API route
+│   ├── auth-*/           # Auth callback pages
+│   └── privacy-policy/   # Privacy page
+├── components/
+│   ├── Navbar.tsx
+│   ├── Hero.tsx
+│   ├── Services.tsx
+│   ├── Categories.tsx
+│   ├── About.tsx
+│   ├── Footer.tsx
+│   ├── TrustBar.tsx
+│   └── WhyChoose.tsx
+├── public/images/        # MISSING many images (see below)
+├── tailwind.config.js    # Tailwind v3
+├── next.config.mjs
+└── package.json          # Next.js 15, Supabase, Framer Motion
+```
+
+### Old Site (Vite — THE LOOK)
+```
+blwebsite as of 010326/
+├── client/src/
+│   ├── pages/
+│   │   ├── Home.tsx              # Full home page with all sections
+│   │   └── services/
+│   │       ├── BrakeRestoration.tsx
+│   │       ├── CarbSpecialist.tsx
+│   │       ├── Recommissioning.tsx
+│   │       ├── ServiceRepairs.tsx
+│   │       ├── SpecialistRestoration.tsx
+│   │       └── UltrasonicCleaning.tsx
+│   ├── components/
+│   │   ├── Layout.tsx            # Nav + footer (complete)
+│   │   ├── BookingForm.tsx       # Service booking form
+│   │   ├── Map.tsx               # Google Maps component
+│   │   └── ui/
+│   │       └── tech-components.tsx  # TechButton, TechCard, SectionTitle
+│   └── index.css                 # Complete design system CSS
+├── client/public/images/         # Full image set (28 images)
+└── server/                       # Express backend (not needed)
+```
+
+---
+
+## PHASE 0: SAFETY (DO FIRST)
+
+```bash
+git clone https://github.com/jonnyallum/blwebsite.git
+cd blwebsite
+git checkout enterprise-rebuild
+git tag pre-restyling-backup
+git checkout -b enterprise-restyled
+cd website
+npm install
+npm run build  # Verify it builds before any changes
+```
+
+---
+
+## PHASE 1: DESIGN SYSTEM
+
+### 1A. Replace `tailwind.config.js`
+
+```js
+/** @type {import('tailwindcss').Config} */
+module.exports = {
+  content: [
+    "./app/**/*.{js,ts,jsx,tsx,mdx}",
+    "./components/**/*.{js,ts,jsx,tsx,mdx}",
+  ],
+  theme: {
+    extend: {
+      colors: {
+        brand: {
+          gold: "#d3c065",
+          "gold-light": "#E2C35C",
+          "gold-dark": "#BF9B30",
+          dark: "#050505",
+          gray: "#1a1a1a",
+        },
+        background: "#050505",
+        foreground: "#f0f0f0",
+        card: "#1c1c1c",
+        secondary: "#2e2e2e",
+        muted: "#999999",
+        primary: "#d3c065",
+        "primary-foreground": "#050505",
+      },
+      fontFamily: {
+        sans: ["Inter", "system-ui", "sans-serif"],
+        heading: ["Oswald", "sans-serif"],
+        mono: ["JetBrains Mono", "monospace"],
+      },
+      borderRadius: {
+        none: "0",
+        DEFAULT: "0",
+      },
+    },
+  },
+  plugins: [],
+}
+```
+
+### 1B. Replace `app/globals.css`
+
+Port the COMPLETE CSS from the old site's `client/src/index.css`. Key additions:
+- oklch color variables in `:root`
+- `--radius: 0` (sharp corners everywhere)
+- `.clip-chamfer` clip-path utility
+- `.tech-border` with `::before` and `::after` corner accents
+- Custom scrollbar (gold-themed)
+- Heading font rules (`font-heading uppercase tracking-wide`)
+- Selection color (gold bg, black text)
+
+**CRITICAL:** Keep the existing `@tailwind base/components/utilities` directives and the font imports that are already in globals.css. Merge, don't replace blindly.
+
+### 1C. Create UI Components
+
+Create `components/ui/TechButton.tsx`:
+```tsx
+// PORT EXACTLY from old site: client/src/components/ui/tech-components.tsx
+// The TechButton component with clip-chamfer, primary/outline variants
+// Sizes: sm (h-8), md (h-10), lg (h-12)
+// Font: font-heading font-bold uppercase tracking-wider
+```
+
+Create `components/ui/TechCard.tsx`:
+```tsx
+// PORT EXACTLY — tech-border class, hover glow effect
+// hover:border-primary/50 hover:shadow-[0_0_20px_rgba(211,192,101,0.1)]
+```
+
+Create `components/ui/SectionTitle.tsx`:
+```tsx
+// PORT EXACTLY — gold mono subtitle + large heading + gold underline bar
+// "use client" not needed unless it uses hooks
+```
+
+---
+
+## PHASE 2: COMPONENT RESTYLING
+
+### 2A. Navbar — REWRITE to match old Layout.tsx nav
+
+**Source:** Old site `client/src/components/Layout.tsx` (nav section, lines 1-100)
+
+Key changes:
+- Add "B&L MOTORCYCLES" text + "Parts & Repairs" mono subtitle next to logo
+- Navigation links: Home, Shop Parts, Garage Services, About Us, Contact Us
+- Gold underline animation on active link (scale-x-0 → scale-x-100)
+- CTA: "eBay Store" button with clip-chamfer, gold bg, black text
+- On scroll: `bg-black/95 backdrop-blur-sm border-primary/20`
+- Mobile: full-width dropdown, `bg-black/98 border-primary/20 backdrop-blur-xl`
+- Sharp corners everywhere (remove all `rounded-*`)
+
+### 2B. Hero — REWRITE to match old Home.tsx hero
+
+**Source:** Old site `client/src/pages/Home.tsx` (hero section)
+
+Replace the current split-layout hero with:
+- Full-screen (`h-screen min-h-[600px]`) centered layout
+- Background: `hero-bg-v2.jpg` with `bg-black/70` overlay + gradient
+- Centered: Logo (w-64) with gold glow `drop-shadow-[0_0_25px_rgba(211,192,101,0.4)]`
+- Heading: "Welcome to **BL Motorcycles**" (gold span)
+- Subtitle: "Quality Used Motorcycle Parts & Repairs" (mono, tracking-widest, uppercase)
+- Description paragraph
+- Two CTAs: "Shop Parts" (TechButton primary) + "Garage Services" (TechButton outline)
+- Link "Shop Parts" to `/shop`, "Garage Services" to `/services`
+- Remove the search bar (that belongs on the shop page)
+
+### 2C. Add Missing Home Page Sections
+
+**Source:** Old site `client/src/pages/Home.tsx`
+
+The home page currently has: Hero → TrustBar → Services → Categories → About → Footer
+
+It needs to become: Hero → Our Story → Services → Shop Parts → Our Products → Gallery → Mission → Footer
+
+**Sections to port from old Home.tsx:**
+
+1. **"Our Story"** (replaces current About section) — 2-column grid with grayscale image + text + 3 trust icons (ShieldCheck, Truck, Star). Include "Established 2020" badge.
+
+2. **Services** — Restyle with images, circular icon badges, tech borders (see 2D below)
+
+3. **"Shop Parts"** — NOW link to actual `/shop` page instead of "Coming Soon". Keep the visual style (gold accents, ShoppingBag icon) but update CTA to go to `/shop`.
+
+4. **"Our Products"** — Image + text section about product quality, link to eBay store
+
+5. **Gallery** — 6-image grid (3 cols on desktop) with:
+   - `grayscale hover:grayscale-0` on images
+   - `group-hover:scale-110` zoom effect
+   - Overlay: `bg-black/50 opacity-0 group-hover:opacity-100` with "View Project" text
+
+6. **Mission** — Centered quote section with decorative quote marks, gold dividers top/bottom
+
+### 2D. Services — RESTYLE with images
+
+**Source:** Old site `client/src/pages/Home.tsx` (services section)
+
+Replace text-only cards with image-header cards:
+- Each card: image header (h-48, object-cover, zoom on hover), circular icon badge, heading + description
+- 7 services (not 6): Service & Repairs, Specialist Restoration, Carb Specialist, Ultrasonic Cleaning, New & Used Parts, Brake Restoration, Recommissioning
+- Grid: `md:grid-cols-3`
+- Link each to its service page (or eBay for "New & Used Parts")
+- Add "View Full Services" outline CTA at bottom
+- Background: `bg-secondary` with faded background image overlay
+
+### 2E. Footer — RESTYLE to match old Layout.tsx footer
+
+**Source:** Old site `client/src/components/Layout.tsx` (footer section)
+
+Key changes:
+- 4-column grid: Brand | Quick Links | Contact | Opening Hours
+- **Opening Hours:** Mon–Fri 10:00am–5:30pm, Saturday Closed, Sunday Closed (font-mono)
+- Add `blmotorcyclesltd@gmail.com` to contact section
+- Instagram feed section: 6 images in grid (2→4→6 cols), hover overlay with Instagram icon
+- Facebook feed section: 6 images in grid, hover overlay with Facebook icon
+- Gold gradient dividers between sections (`border-primary/20`)
+- Sharp corners, no rounded anything
+- Monospace copyright: "© 2026 B&L Motorcycles Ltd. All rights reserved."
+
+### 2F. Shop Page — VISUAL RESTYLE ONLY
+
+**CRITICAL: Do not change any Supabase queries, cart logic, or Stripe integration.**
+
+Changes (CSS/class only):
+- Remove all `rounded-*` classes → sharp corners
+- Product cards: `tech-border` with corner accents, `hover:border-primary/50`
+- Product images: add `grayscale hover:grayscale-0 transition-all duration-500`
+- Buttons: Replace with TechButton component or apply `clip-chamfer` + gold styling
+- Search input: sharp corners, `border-primary/20` focus ring
+- Filter sidebar: dark bg with gold accents
+- Modal/detail view: sharp corners, tech borders
+- Keep ALL JavaScript logic exactly as-is
+
+### 2G. Admin Dashboard — LOW PRIORITY VISUAL RESTYLE
+
+Same approach as shop: replace `rounded-*` with sharp corners, apply gold accents, tech borders.
+
+---
+
+## PHASE 3: PORT SERVICE PAGES
+
+### 3A. Create service pages
+
+**Source files:** Old site `client/src/pages/services/*.tsx`
+
+Create in enterprise site:
+```
+app/services/page.tsx                    # Services index (grid of all services)
+app/services/service-repairs/page.tsx
+app/services/specialist-restoration/page.tsx
+app/services/carb-specialist/page.tsx
+app/services/ultrasonic-cleaning/page.tsx
+app/services/brake-restoration/page.tsx
+app/services/recommissioning/page.tsx
+```
+
+**Conversion notes:**
+- Change `import { Link } from "wouter"` → use Next.js `<Link>`
+- Change `import { TechButton, ... }` to point to new `components/ui/` paths
+- These pages are purely presentational (no Supabase/Stripe) so low risk
+- Each page should include Navbar + Footer
+
+### 3B. Port BookingForm
+
+**Source:** Old site `client/src/components/BookingForm.tsx`
+
+Port to `components/BookingForm.tsx`. Changes needed:
+- Replace `@/components/ui/input` etc. with simple HTML inputs or create minimal UI components
+- The form uses `mailto:` link (client-side only, no backend needed)
+- Services dropdown: Service & Repairs, Specialist Restoration, Carb Specialist, Ultrasonic Cleaning, Brake Restoration, Recommissioning
+- Date picker: Can simplify to HTML `<input type="date">` if the old Radix calendar is too complex to port
+
+### 3C. Port Google Maps
+
+**Source:** Old site `client/src/components/Map.tsx`
+
+The old Map component uses a proxy (`forge.butterfly-effect.dev`). For the enterprise site, use a simpler Google Maps embed:
+
+```tsx
+// Simple iframe embed for BL Motorcycles location
+// 95 Newgate Lane, Peel Common, Fareham, Hampshire, PO14 1BA
+// Lat: 50.8198, Lng: -1.2068 (approximate)
+<iframe
+  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2526.xxx!2d-1.2068!3d50.8198!..."
+  width="100%"
+  height="400"
+  style={{ border: 0 }}
+  allowFullScreen
+  loading="lazy"
+/>
+```
+
+Or use the Google Maps JavaScript API with the GCP project `outstanding-box-450907-s8` if a richer map is needed.
+
+### 3D. Copy Missing Images
+
+Copy these from `blwebsite as of 010326/client/public/images/` to enterprise `website/public/images/`:
+- `balancing-gauges.jpg`
+- `commissioning-new.jpg`
+- `products-new.jpg`
+- `services-bg.jpg`
+- `user-image-1.png` through `user-image-13.jpg`
+
+The enterprise site already has: `about-workshop.jpg`, `garage-vintage.jpg`, `hero-bg-v2.jpg`, `hero-bg.jpg`, `logo-original.png`, `logo-transparent.png`, `mechanic-work.jpg`, `parts-bg.jpg`, `ultrasonic-clean.jpg`
+
+---
+
+## PHASE 4: LAYOUT WRAPPER
+
+Modify `app/layout.tsx` to wrap all pages with Navbar + Footer. Currently, `page.tsx` manually includes them, but service pages and shop need them too.
+
+Option A (simpler): Keep manual includes on each page
+Option B (cleaner): Put Navbar + Footer in layout.tsx, remove from individual pages
+
+Recommended: Option A for now to avoid breaking existing pages. Can refactor later.
+
+---
+
+## PHASE 5: TESTING CHECKLIST
+
+- [ ] `npm run build` succeeds with no errors
+- [ ] Home page: all sections render, all images load
+- [ ] Shop page: products load from Supabase, search works, filters work
+- [ ] Shop page: product detail modal opens, image gallery works
+- [ ] Shop page: add to cart works
+- [ ] Admin page: loads, shows orders, stats display correctly
+- [ ] Service pages: all 7 render correctly
+- [ ] Navigation: all links work (internal + external)
+- [ ] Mobile: hamburger menu works, responsive layout correct
+- [ ] Footer: opening hours display, social links work, contact info correct
+- [ ] Images: no 404s, grayscale hover effect works
+- [ ] Buttons: chamfered clip-path renders correctly
+- [ ] Tech borders: corner accents visible on cards
+
+---
+
+## PHASE 6: DEPLOYMENT
+
+1. Commit all changes to `enterprise-restyled` branch
+2. Push to GitHub
+3. Merge to `enterprise-rebuild` (or make `enterprise-restyled` the default)
+4. Deploy to Hostinger:
+   - FTP: `92.112.189.250:21` / user `u384342620`
+   - Node.js on Passenger at `/domains/blmotorcyclesltd.co.uk/nodejs/`
+   - Run `npm run build` on server, touch `tmp/restart.txt`
+   - **Purge CDN cache** (Hostinger hcdn, `s-maxage=31536000`)
+
+---
+
+## CRITICAL REMINDERS
+
+1. **NEVER modify Supabase queries or Stripe integration code** — only change CSS classes and JSX structure
+2. **The shop page's `supabase` client is hardcoded** (not using env vars) — don't change this unless explicitly asked
+3. **The admin page uses env vars** (`process.env.NEXT_PUBLIC_*`) — these are correct, don't change
+4. **Test the build after every major change** — `npm run build`
+5. **All images from old site must be copied** before components will render correctly
+6. **The old site uses Tailwind v4** (oklch, `@theme inline`) — the enterprise site uses **Tailwind v3** (hex, `theme.extend`). Don't copy CSS syntax directly — translate it.
+7. **The old site uses `wouter`** for routing — the enterprise site uses **Next.js App Router**. Don't copy router code directly.
+
+---
+
+## REFERENCE: Old Site CSS Variables (translate to Tailwind v3 equivalents)
+
+| Old Site (oklch) | Hex Equivalent | Tailwind Token |
+|---|---|---|
+| `oklch(0.15 0 0)` | `#050505` | `brand-dark` / `background` |
+| `oklch(0.95 0 0)` | `#f0f0f0` | `foreground` |
+| `oklch(0.82 0.13 85)` | `#d3c065` | `brand-gold` / `primary` |
+| `oklch(0.18 0 0)` | `#1c1c1c` | `card` |
+| `oklch(0.25 0 0)` | `#2e2e2e` | `secondary` |
+| `oklch(0.70 0 0)` | `#999999` | `muted` |
+
+## REFERENCE: Key Visual Effects to Implement
+
+1. **Chamfered buttons:** `clip-path: polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px)`
+2. **Gold glow on logo:** `drop-shadow-[0_0_25px_rgba(211,192,101,0.4)]`
+3. **Grayscale images:** `grayscale hover:grayscale-0 transition-all duration-500`
+4. **Image zoom:** `group-hover:scale-110 transition-transform duration-500`
+5. **Gallery overlay:** `bg-black/50 opacity-0 group-hover:opacity-100`
+6. **Tech border corners:** `::before` (top-left) and `::after` (bottom-right) with 2px gold borders
+7. **Gold gradient dividers:** `bg-gradient-to-r from-transparent via-primary/50 to-transparent`
+8. **Nav link underline:** `scale-x-0 hover:scale-x-100 origin-right` with gold bg
+9. **Sharp corners:** Remove ALL `rounded-*` classes across entire codebase
+
+## REFERENCE: Business Details
+
+- **Business:** B&L Motorcycles Ltd (Company No: 14122962)
+- **Address:** 95 Newgate Lane, Peel Common, Fareham, Hampshire, PO14 1BA
+- **Phone:** 07881 274193
+- **Email:** blmotorcyclesltd@gmail.com
+- **eBay:** https://www.ebay.co.uk/str/bnlmotorcycles
+- **Facebook:** https://www.facebook.com/brettfarley8206
+- **Instagram:** https://www.instagram.com/blmotorcycles/
+- **Hours:** Mon–Fri 10:00am–5:30pm (hours might differ), Sat–Sun Closed
+- **Established:** 2020
