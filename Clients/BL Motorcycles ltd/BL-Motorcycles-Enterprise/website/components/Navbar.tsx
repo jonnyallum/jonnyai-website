@@ -1,108 +1,110 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Phone, Menu, X } from "lucide-react";
+import { Menu, X, ShoppingBag } from "lucide-react";
+import Link from "next/link";
+import { cn } from "@/lib/utils";
 
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
-  const [mobileOpen, setMobileOpen] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 40);
-    window.addEventListener("scroll", onScroll);
-    return () => window.removeEventListener("scroll", onScroll);
+    const handleScroll = () => setScrolled(window.scrollY > 50);
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
   const navLinks = [
-    { label: "Parts Catalogue", href: "/shop", external: false },
-    { label: "eBay Store", href: "https://www.ebay.co.uk/str/bnlmotorcycles", external: true },
-    { label: "About", href: "#about", external: false },
-    { label: "Contact", href: "#contact", external: false },
+    { name: "Home", href: "/" },
+    { name: "Shop Parts", href: "/shop" },
+    { name: "Garage Services", href: "/services" },
+    { name: "About Us", href: "#about" },
+    { name: "Contact Us", href: "#contact" },
   ];
 
   return (
     <header
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${scrolled ? "bg-brand-dark/95 backdrop-blur-md border-b border-white/5 py-3" : "bg-transparent py-4"
-        }`}
+      className={cn(
+        "fixed w-full z-50 transition-all duration-300 border-b border-transparent",
+        scrolled
+          ? "bg-black/95 backdrop-blur-sm border-brand-gold/20 py-2"
+          : "bg-transparent py-4"
+      )}
     >
       <div className="max-w-7xl mx-auto px-6 flex items-center justify-between">
-        {/* Logo — prominent */}
-        <a href="/" className="flex items-center group">
+        {/* Logo + Brand */}
+        <Link href="/" className="flex items-center gap-3 group">
           <img
             src="/images/logo-transparent.png"
             alt="B&L Motorcycles"
-            className="h-16 w-auto transition-opacity group-hover:opacity-90"
+            className="w-12 h-12 object-contain transition-transform group-hover:scale-105"
           />
-        </a>
+          <div className="hidden sm:block">
+            <span className="text-xl font-heading font-bold text-primary tracking-wider leading-none block">
+              B&L MOTORCYCLES
+            </span>
+            <span className="text-[10px] font-mono text-gray-400 tracking-[0.2em] uppercase block">
+              Parts & Repairs
+            </span>
+          </div>
+        </Link>
 
-        {/* Desktop nav */}
+        {/* Desktop Nav */}
         <nav className="hidden md:flex items-center gap-8">
           {navLinks.map((link) => (
-            <a
-              key={link.label}
+            <Link
+              key={link.name}
               href={link.href}
-              target={link.external ? "_blank" : undefined}
-              rel={link.external ? "noopener noreferrer" : undefined}
-              className="text-sm font-medium text-gray-400 hover:text-white transition-colors"
+              className="text-sm font-heading font-medium uppercase tracking-wider transition-colors hover:text-primary relative py-1 text-white group"
             >
-              {link.label}
-            </a>
+              {link.name}
+              <span className="absolute bottom-0 left-0 w-full h-[1px] bg-primary transform scale-x-0 transition-transform duration-300 origin-right group-hover:scale-x-100 group-hover:origin-left" />
+            </Link>
           ))}
+          <a
+            href="https://www.ebay.co.uk/str/bnlmotorcycles"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="bg-primary text-black px-4 py-2 font-heading font-bold text-sm uppercase tracking-wider clip-chamfer hover:bg-white transition-colors"
+          >
+            eBay Store
+          </a>
         </nav>
 
-        {/* CTA */}
-        <div className="hidden md:flex items-center gap-4">
-          <a
-            href="tel:07881274193"
-            className="flex items-center gap-2 text-sm font-medium text-gray-400 hover:text-brand-gold transition-colors"
-          >
-            <Phone className="w-4 h-4" />
-            07881 274193
-          </a>
-          <a
-            href="/shop"
-            className="bg-gradient-to-r from-brand-gold to-brand-gold-dark text-black px-5 py-2.5 rounded-full text-sm font-bold hover:from-brand-gold-dark hover:to-[#A8891E] transition-all shadow-lg shadow-brand-gold/20"
-          >
-            Shop Parts
-          </a>
-        </div>
-
-        {/* Mobile toggle */}
+        {/* Mobile Menu Button */}
         <button
-          onClick={() => setMobileOpen(!mobileOpen)}
-          className="md:hidden text-white p-2"
+          onClick={() => setMenuOpen(!menuOpen)}
+          className="md:hidden text-white hover:text-primary transition-colors"
           aria-label="Toggle menu"
         >
-          {mobileOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+          {menuOpen ? <X className="w-8 h-8" /> : <Menu className="w-8 h-8" />}
         </button>
       </div>
 
-      {/* Mobile menu */}
-      {mobileOpen && (
-        <div className="md:hidden bg-brand-dark/98 border-t border-white/5 px-6 py-6 flex flex-col gap-5">
-          {navLinks.map((link) => (
+      {/* Mobile Menu */}
+      {menuOpen && (
+        <div className="md:hidden absolute top-full left-0 w-full bg-black/98 border-b border-brand-gold/20 backdrop-blur-xl">
+          <div className="flex flex-col p-6 gap-4">
+            {navLinks.map((link) => (
+              <Link
+                key={link.name}
+                href={link.href}
+                className="text-lg font-heading font-bold uppercase text-white hover:text-primary transition-colors"
+                onClick={() => setMenuOpen(false)}
+              >
+                {link.name}
+              </Link>
+            ))}
             <a
-              key={link.label}
-              href={link.href}
-              onClick={() => setMobileOpen(false)}
-              className="text-base font-medium text-gray-300 hover:text-brand-gold transition-colors"
+              href="https://www.ebay.co.uk/str/bnlmotorcycles"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-lg font-heading font-bold uppercase text-primary hover:text-white transition-colors flex items-center gap-2"
             >
-              {link.label}
+              Visit eBay Store <ShoppingBag className="w-5 h-5" />
             </a>
-          ))}
-          <a
-            href="tel:07881274193"
-            className="flex items-center gap-2 text-brand-gold font-semibold"
-          >
-            <Phone className="w-4 h-4" />
-            07881 274193
-          </a>
-          <a
-            href="/shop"
-            className="bg-gradient-to-r from-brand-gold to-brand-gold-dark text-black text-center py-3 rounded-full font-bold"
-          >
-            Shop Parts
-          </a>
+          </div>
         </div>
       )}
     </header>
