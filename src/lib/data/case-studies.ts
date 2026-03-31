@@ -108,7 +108,7 @@ A single CLI command triggers the full chain.`,
         content: `455 passing tests across routing integrity, agent load, eval gate behaviour, memory store, and pipeline execution. An LLM-as-judge eval gate scores outputs 1\u201310 on relevance, completeness, and clarity, failing closed if quality drops below threshold. The full stack runs containerised via Docker, served through FastAPI.`,
       },
     ],
-    screenshots: [],
+    screenshots: ["/portfolio/jailbreakos.png"],
   },
 
   // ═══════════════════════════════════════════════════════════════
@@ -214,7 +214,7 @@ Each agent has a human name, a nickname, a defined role, and a learning log. Org
         content: `ElevenLabs voice synthesis and Meta Graph API social distribution. A chatroom listener polls Supabase every 5 seconds. Tagged messages trigger Claude Haiku to generate social copy, publishing to Facebook and Instagram within 5 seconds. Every deployment automatically becomes social proof.`,
       },
     ],
-    screenshots: ["/portfolio/jonnyai-hero.png", "/portfolio/jonnyai-2.png", "/portfolio/jonnyai-3.png", "/portfolio/jonnyai-4.png"],
+    screenshots: ["/portfolio/antigravity-orchestra.png", "/portfolio/jonnyai-hero.png", "/portfolio/jonnyai-2.png", "/portfolio/jonnyai-3.png", "/portfolio/jonnyai-4.png"],
   },
 
   // ═══════════════════════════════════════════════════════════════
@@ -258,7 +258,7 @@ Each agent has a human name, a nickname, a defined role, and a learning log. Org
         content: `A trading infrastructure that combines AI speed with human judgment. Paper trading validation before live capital. Position sizing, exposure limits, and drawdown controls baked into the architecture.`,
       },
     ],
-    screenshots: ["/portfolio/insydetradar-hero.jpg", "/portfolio/insydetradar-2.jpg", "/portfolio/insydetradar-3.jpg", "/portfolio/insydetradar-4.jpg"],
+    screenshots: ["/portfolio/insydetradar-hero.jpg", "/portfolio/insydetradar-2.jpg", "/portfolio/insydetradar-3.jpg", "/portfolio/insydetradar-4.jpg", "/portfolio/insydetradar-5.jpg", "/portfolio/insydetradar-6.jpg"],
   },
 
   // ═══════════════════════════════════════════════════════════════
@@ -357,7 +357,7 @@ Each agent has a human name, a nickname, a defined role, and a learning log. Org
       { id: "build", title: "The Build", content: `React Native with Expo for cross-platform mobile. Supabase handles real-time backend \u2014 listings, user profiles, messaging, and transactions through PostgreSQL with real-time subscriptions.` },
       { id: "result", title: "The Result", content: `A purpose-built mobile marketplace that speaks the language of the UK building trade. The best software comes from understanding the domain first.` },
     ],
-    screenshots: [],
+    screenshots: ["/portfolio/poundtrades.png"],
   },
 
   // ═══════════════════════════════════════════════════════════════
@@ -441,7 +441,7 @@ Each agent has a human name, a nickname, a defined role, and a learning log. Org
       { id: "solution", title: "The Solution", content: `Four-gate system: G1 Payload Base-X (encoded jailbreaks), G2 Persona Drift (identity consistency), G3 Zero-Trust Schema (system metadata blocking), G4 Recursive Loop (token-burning detection). Three pillars: Identity Anchoring, Latent-Space Locks, Output Parity / Truth-Lock.` },
       { id: "result", title: "The Result", content: `Deterministic security layer handling encoded, semantic, persona-drift, and structural attacks. Identity Anchoring means the agent cannot process contradictory instructions. Built from a documented Adversarial Vector Map, not theoretical research.` },
     ],
-    screenshots: [],
+    screenshots: ["/portfolio/injection-guard.png"],
   },
 
   // ═══════════════════════════════════════════════════════════════
@@ -468,7 +468,7 @@ Each agent has a human name, a nickname, a defined role, and a learning log. Org
       { id: "curriculum", title: "The Curriculum", content: `Week 1: Jai.OS Foundation. Week 2: First Agent \u2014 SKILL.md authoring, persona design. Week 3: Multi-Agent Orchestration \u2014 routing, quality gates. Week 4: Monetisation \u2014 Empire Builder system. Final projects assessed by @Vigil using the 13-gate checklist.` },
       { id: "result", title: "The Result", content: `Course platform with tiered pricing, full curriculum breakdown, six learning outcomes. The monetisation module teaches the Empire Builder system with 5 revenue streams \u2014 students learn to build and sell agents.` },
     ],
-    screenshots: [],
+    screenshots: ["/portfolio/antigravity-academy.png"],
   },
 
   // ═══════════════════════════════════════════════════════════════
@@ -495,7 +495,7 @@ Each agent has a human name, a nickname, a defined role, and a learning log. Org
       { id: "problem", title: "The Problem", content: `AI agent failures \u2014 hallucination, identity fragmentation, prompt injection, data leakage \u2014 create real financial and reputational risk. No credible third-party certification standard exists.` },
       { id: "solution", title: "The Solution", content: `Three-tier product with 13-gate methodology. Enterprise tier includes executive briefing and insurer-formatted risk schedule. The Antigravity Checksum seal turns a one-off audit into an ongoing marketing asset for clients.` },
     ],
-    screenshots: [],
+    screenshots: ["/portfolio/antigravity-assurance.png"],
   },
 
   // ═══════════════════════════════════════════════════════════════
@@ -522,7 +522,7 @@ Each agent has a human name, a nickname, a defined role, and a learning log. Org
       { id: "build", title: "The Build", content: `Full Next.js 15 dashboard functioning like a trading terminal. Live Scavenger Pulse feed, GRAVY_SCORE metrics (0\u20131 opportunity ranking), active flips ticker. Glass-panel cards with Signal Green glow effects and scanning animations.` },
       { id: "result", title: "The Result", content: `A cyber-industrial HUD aesthetic that stands alone in the domain arbitrage space. GRAVY_SCORE is proprietary opportunity-ranking. "We don\u2019t build sites. We build equity from digital waste."` },
     ],
-    screenshots: [],
+    screenshots: ["/portfolio/agentflip.png"],
   },
 
   // ═══════════════════════════════════════════════════════════════
@@ -603,7 +603,7 @@ Each agent has a human name, a nickname, a defined role, and a learning log. Org
       { id: "solution", title: "The Solution", content: `7 full service pages: Interior Feature Walls, Exterior Facades, Fireplace & Chimney, Garden Rockery, Commercial Stone, New Build Features, Faux Timber Beams. Each with unique positioning, specs, process details, and FAQ schema. Brand philosophy: stone as permanence, not decoration.` },
       { id: "result", title: "The Result", content: `All copy written from scratch. 7 service pages with full product specs and FAQ. UK-wide coverage with city-level targeting across South Coast, London, Midlands, North.` },
     ],
-    screenshots: ["/portfolio/primordial-stone.png"],
+    screenshots: ["/portfolio/primordial-stone-hero.png", "/portfolio/primordial-stone.png"],
   },
 
   // ═══════════════════════════════════════════════════════════════
