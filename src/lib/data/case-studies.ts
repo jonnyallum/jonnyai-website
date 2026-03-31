@@ -385,7 +385,7 @@ Each agent has a human name, a nickname, a defined role, and a learning log. Org
       { id: "solution", title: "The Solution", content: `30+ page content site separating building services and FM into distinct service trees. 8 location pages for local SEO. Case studies hub with Butlins, Portsmouth kitchen, and Portsmouth Academy projects.` },
       { id: "result", title: "The Result", content: `30+ unique pages. 8 area pages for Hampshire-wide SEO. Real project case studies with full detail. Dual service tree cleanly separates buyers.` },
     ],
-    screenshots: [],
+    screenshots: ["/portfolio/construct-fm.png"],
   },
 
   // ═══════════════════════════════════════════════════════════════
@@ -549,7 +549,7 @@ Each agent has a human name, a nickname, a defined role, and a learning log. Org
       { id: "build", title: "The Build", content: `Premium Next.js 15 static export deployed to Hostinger via custom Python script. Full page suite: home, about, services, case studies, areas, contact. Mobile-responsive with Framer Motion animations throughout.` },
       { id: "result", title: "The Result", content: `Deployed and live. Established the Antigravity static-export pattern: Next.js build \u2192 static export \u2192 Python SSH deploy \u2192 Hostinger. One command, zero downtime, repeatable for every client.` },
     ],
-    screenshots: [],
+    screenshots: ["/portfolio/jsc-hero.png"],
   },
 
   // ═══════════════════════════════════════════════════════════════
@@ -576,7 +576,7 @@ Each agent has a human name, a nickname, a defined role, and a learning log. Org
       { id: "build", title: "The Build", content: `Full-stack static website: Hero, TrustBar, Services, Projects gallery, Testimonials, About, Coverage map, CTA. Mobile-responsive with Framer Motion micro-animations. SVG logo integration.` },
       { id: "result", title: "The Result", content: `Complete digital foundation \u2014 domain, DNS, SSL, hosting, forms, analytics. The client got everything, not just a website they need to figure out how to host.` },
     ],
-    screenshots: ["/portfolio/marzer.png"],
+    screenshots: ["/portfolio/marzer.png", "/portfolio/marzer-logo.png"],
   },
 
   // ═══════════════════════════════════════════════════════════════
@@ -603,7 +603,7 @@ Each agent has a human name, a nickname, a defined role, and a learning log. Org
       { id: "solution", title: "The Solution", content: `7 full service pages: Interior Feature Walls, Exterior Facades, Fireplace & Chimney, Garden Rockery, Commercial Stone, New Build Features, Faux Timber Beams. Each with unique positioning, specs, process details, and FAQ schema. Brand philosophy: stone as permanence, not decoration.` },
       { id: "result", title: "The Result", content: `All copy written from scratch. 7 service pages with full product specs and FAQ. UK-wide coverage with city-level targeting across South Coast, London, Midlands, North.` },
     ],
-    screenshots: [],
+    screenshots: ["/portfolio/primordial-stone.png"],
   },
 
   // ═══════════════════════════════════════════════════════════════

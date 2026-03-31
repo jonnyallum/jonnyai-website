@@ -14,6 +14,13 @@ const gradients: Record<string, string> = {
   "antigravity-orchestra": "linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 50%, #2d1b4e 100%)",
   "insydetradar": "linear-gradient(135deg, #0d1117 0%, #161b22 50%, #21262d 100%)",
   "jonnyai-website": "linear-gradient(135deg, #070708 0%, #1a1510 50%, #070708 100%)",
+  "poundtrades": "linear-gradient(135deg, #1a2a1a 0%, #2d3d2d 50%, #1a2a1a 100%)",
+  "injection-guard": "linear-gradient(135deg, #2e1a1a 0%, #3e1616 50%, #601010 100%)",
+  "antigravity-academy": "linear-gradient(135deg, #1a1a2e 0%, #2e1a3e 50%, #1a1a2e 100%)",
+  "antigravity-assurance": "linear-gradient(135deg, #0a1a0a 0%, #1a2e1a 50%, #0a1a0a 100%)",
+  "agentflip": "linear-gradient(135deg, #1a1510 0%, #2e2010 50%, #1a1510 100%)",
+  "translate-r": "linear-gradient(135deg, #0d1520 0%, #162235 50%, #0d1520 100%)",
+  "safeguardian": "linear-gradient(135deg, #101a2e 0%, #0f2848 50%, #101a2e 100%)",
   default: "linear-gradient(135deg, #111 0%, #1a1a1a 50%, #111 100%)",
 };
 
