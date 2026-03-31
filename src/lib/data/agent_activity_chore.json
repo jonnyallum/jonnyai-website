@@ -1,0 +1,20 @@
+﻿[
+  {
+    "sha": "71c31a6e93cb6ac2162048831f5f0a5b38f50cc7",
+    "author": "Test User",
+    "date": "2026-02-21T18:48:20Z",
+    "message": "chore: miscellaneous updates\n\n- Updated 46 other file(s)\n\n[AgOS Auto-Sync 2026-02-21 18:48]"
+  },
+  {
+    "sha": "02d32c74daf7de6859cb3d28c9547ee2b16638cf",
+    "author": "Jonny Allum",
+    "date": "2026-02-23T11:02:44Z",
+    "message": "chore: delete junk files + update .gitignore\n\n- Deleted: build_matrix.py (old AgOS 3.0 template path), imageresults*.txt, all_images_history*.txt (Construct-fm scan outputs)\n- .gitignore: added .claude/, imageresults*.txt, all_images_history*.txt, build_matrix.py, *.pyc, node_modules/, .DS_Store\n\nCo-Authored-By: Claude Sonnet 4.6 <noreply@anthropic.com>"
+  },
+  {
+    "sha": "a8f2d685323ab911998938b8cddf27d3e6938ffe",
+    "author": "Jonny Allum",
+    "date": "2026-02-23T10:49:38Z",
+    "message": "chore: full legacy alignment ??? 59-Agent Orchestra, AGENT_REGISTRY complete, protocol docs updated to Jai.OS 5.0\n\n- CLAUDE.md, AGENTS.md, GEMINI.md: 57???59 agent count across all 4 occurrences each\n- AGENT_REGISTRY.md: @successbot + @coursewright added to completed table, Total 57???59, Legacy section cleared (0 remaining), Batch 3 marked complete\n- QUALITY_GATES_PROTOCOL.md: footer AgOS 3.0 ??? Jai.OS 5.0\n- DECISION_LOG.md: title updated to Jai.OS 5.0 Decision Log\n- build_skills_matrix.py: comment updated 57???59 agents\n\nAll 59 agents at Jai.OS 5.0 Gold Standard. Zero legacy stubs.\n\nCo-Authored-By: Claude Sonnet 4.6 <noreply@anthropic.com>"
+  }
+]

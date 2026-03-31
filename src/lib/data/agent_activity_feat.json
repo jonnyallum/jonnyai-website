@@ -1,0 +1,104 @@
+﻿[
+  {
+    "sha": "fa1dd50fe898ce7e367846822319e8269ed945c3",
+    "author": "Jonny Allum",
+    "date": "2026-02-23T18:34:29Z",
+    "message": "feat(sync): full_sync.py ??? one-command validate+Supabase+GitHub sync\n\nCo-Authored-By: Claude Sonnet 4.6 <noreply@anthropic.com>"
+  },
+  {
+    "sha": "4f1558c2f6198768464b782721c358ab6d47faf0",
+    "author": "Jonny Allum",
+    "date": "2026-02-23T10:36:55Z",
+    "message": "feat: @marcus upgraded to Command-Tier Platinum ??? 8 SOPs, Ralph Loop mastery, cross-AI handoff coordination\n\nCo-Authored-By: Claude Sonnet 4.6 <noreply@anthropic.com>"
+  },
+  {
+    "sha": "e36fc20ad4cdb3dea4254ed953961e517246dd27",
+    "author": "Jonny Allum",
+    "date": "2026-02-23T10:41:43Z",
+    "message": "feat: @coursewright rewritten to gold standard + @successbot feedback loop fix + AGENTS/GEMINI @parser sync\n\n- @coursewright: full rewrite ??? modern YAML tools, 4 SOPs, Quality Gates, Feedback Loop code blocks, correct section order\n- @successbot: Feedback Loop converted to code blocks\n- AGENTS.md + GEMINI.md: Intelligence & Research Tier (5???6), @parser row added\n\nCo-Authored-By: Claude Sonnet 4.6 <noreply@anthropic.com>"
+  },
+  {
+    "sha": "4637e61c6c0dabe38089da9e9752a878f2a39ba7",
+    "author": "Jonny Allum",
+    "date": "2026-02-23T11:12:17Z",
+    "message": "feat(library): 16 new AI-Engineering methodology skills + updated SKILL_CATALOG\n\nNew methodology SOPs covering modern AI/LLM operations:\n  agent-observability-telemetry, agent-runbook-incident-response,\n  ai-agent-security-hardening, compliance-evidence-packager,\n  cost-anomaly-detection, hallucination-detection-pipeline,\n  llm-evaluation-harness, mcp-gateway-operations,\n  model-routing-optimization, multimodal-content-qc,\n  policy-as-code-guardrails, prompt-version-control,\n  retrieval-quality-audit, skill-supply-chain-vetting,\n  source-confidence-scoring, synthetic-test-data-generator\n\nSKILL_CATALOG.md updated with AI Engineering section referencing\nthese skills with owning agents (@sam, @vigil, @milo, @adrian, etc.)\n\nCo-Authored-By: Claude Sonnet 4.6 <noreply@anthropic.com>"
+  },
+  {
+    "sha": "a92d059679915fcc979455dc727d57452fbeded5",
+    "author": "Jonny Allum",
+    "date": "2026-02-23T11:11:36Z",
+    "message": "feat(supabase): full Shared Brain cleanup + chatroom persistence\n\n- sync_chatroom.py: new script to parse chatroom.md (166 messages) and\n  upsert to Supabase with deterministic UUID5 IDs (idempotent re-runs)\n  Handles legacy handle mapping + nullable agent_id for old agent names\n- brain_sync.py: add @parser + @neo to agent_meta (now 59/59 correct),\n  remove 'methodology' ghost from heartbeat sync\n- Supabase DB: purged 5 ghost agents (blitz, eckhart, jonny,\n  learning-coordinator, methodology) ??? 58???59 clean\n- Supabase DB: categorized 900 NULL-category learnings as 'skill-log'\n  ??? 100% of 963 learnings now have a category\n\nCo-Authored-By: Claude Sonnet 4.6 <noreply@anthropic.com>"
+  },
+  {
+    "sha": "fa8853857096e29358b9bc3c95b2a5ab3117c058",
+    "author": "Jonny Allum",
+    "date": "2026-02-23T10:32:03Z",
+    "message": "feat: multi-author agent audit complete ??? @sophie fixed, @alex/@mason/@arthur upgraded from txt rewrites\n\n- @sophie: fixed YAML corruption on line 1, added Quality Gates, fixed Feedback Loop format\n- @alex: replaced with upgraded txt version ??? 4 SOPs, L2 authority, stronger personality, 5-agent Inner Circle\n- @mason: replaced with upgraded txt version ??? tier corrected to Development, 4 SOPs, security audit SOP chain\n- @arthur: replaced with upgraded txt version ??? 4 SOPs, new Philosophy Quote, full gold standard\n- @parser: patched Feedback Loop to code blocks, Never prefix on Do NOT items\n- CLAUDE.md: added @parser to Intelligence & Research Tier (now 6 agents)\n- All 58 agents synced to Supabase Shared Brain\n\nCo-Authored-By: Claude Sonnet 4.6 <noreply@anthropic.com>"
+  },
+  {
+    "sha": "bf10624a9355fe87911a5457cf35e51a2ed84962",
+    "author": "Jonny Allum",
+    "date": "2026-02-22T19:14:25Z",
+    "message": "feat(brain): wire jonnyai-mcp to Claude Code + add populate_sections.py\n\nPhase C complete:\n- .mcp.json: registers jonnyai-mcp server for this workspace ??? Antigravity Brain\n  is now live and queryable via query_brain, sync_agent_philosophy, post_broadcast\n- MCP connects to lkwydqtfbdjhxaarelaz (Shared Brain Supabase) with service role\n- MCP server confirmed working: starts on stdio with credentials loaded\n\nAlso:\n- populate_sections.py: comprehensive section populator with AGENT_MASTER data\n  for all 57 agents ??? fills empty Identity, Capabilities, Collaboration, etc.\n- build_skills_matrix.py: fixed to only scan .agent/skills/ (not client dirs)\n- SKILLS_MATRIX.md: regenerated ??? 57/57 agents at 11/11\n\nNext: Phase B ??? systematic 1-by-1 agent rewrites (core workers first)\n\nCo-Authored-By: Claude Sonnet 4.6 <noreply@anthropic.com>"
+  },
+  {
+    "sha": "ddf609841f5b90c2f1b2f807d68003a2e49aa38e",
+    "author": "Jonny Allum",
+    "date": "2026-02-23T11:44:10Z",
+    "message": "feat(agent): @dashboard ??? Mila-Honey \"The Dashboard Architect\" live at gold standard\n\nNew 60th agent ??? Business Intelligence & Dashboard Architecture:\n- Philosophy Quote: \"Every pixel earns its place or it costs a decision...\"\n- 4 SOPs: Intake & Spec, Data Modeling, Visual Architecture Handoff, Post-Launch Review\n- 5 Can Do (KPI mapping, pipeline design, visual architecture, cross-domain BI, embedded portals)\n- 4 Cannot Do with routing (sebastian/priya/diana+victor/patrick+sophie)\n- Performance metrics: 5-second clarity 100%, queries <2s, mobile >90 Lighthouse\n- Restrictions: 7-panel cap enforced, pie chart blacklist, undefined KPIs banned\n- Inner Circle: @sebastian, @priya, @diana, @maya, @nina, @victor\n\nRegistry: 59???60, all docs updated (README, CLAUDE, AGENTS, GEMINI)\nbrain_sync.py: @dashboard added to agent_meta (now 60 agents)\nSupabase: 60/60 agents synced (heartbeat + full philosophy)\n\nCo-Authored-By: Claude Sonnet 4.6 <noreply@anthropic.com>"
+  },
+  {
+    "sha": "c9e5ca3e87d9f64505af81762a228d27affb6461",
+    "author": "Jonny Allum",
+    "date": "2026-02-22T18:38:59Z",
+    "message": "feat(orchestra): full agent hydration ??? 8 stub rewrites + governing directives injected across all 57 agents\n\n- Rewrote 8 stub SKILL.md files to full Jai.OS 5.0 standard: victor, blaise, jasper, finops, successbot, intelhub, vigil, derek\n- Each rewrite includes: Identity (7 fields), Personality (4 subsections), Can Do/Cannot Do, 3 SOPs with triggers, Inner Circle, Feedback Loop, Learning Log\n- Corrected wrong roles: blaise was \"Funnel Engineer\" ??? Creative Director; jasper was \"Market Intelligence\" ??? Sales & BD\n- Preserved all real learning log entries from 2026-02-18 (vigil) and 2026-02-21 (derek)\n- Ran apply_directives.py: Governing Directives section injected into 55 agents (2 already had it)\n- All 57 agents synced to Supabase Shared Brain via sync_all_skills_full.py\n- Fixed git author from test@example.com ??? jonnyallum@gmail.com\n\nCo-Authored-By: Claude Sonnet 4.6 <noreply@anthropic.com>"
+  },
+  {
+    "sha": "8c1b626ef1ea251418b56bd805f37d2468f63237",
+    "author": "Jonny Allum",
+    "date": "2026-02-23T11:21:25Z",
+    "message": "feat(collab): full Jai.OS 5.0 collaboration alignment\n\nPROTOCOL.md:\n- Replaced all AgOS 2.0 handles (Conductor, Pixel, Sentinel, Goldie,\n  Echo, DevOps, Forge, Scout, Archivist, etc.) with current Jai.OS 5.0\n  handles (@marcus, @priya, @sam, @grace, @elena, @derek, @felix, @sophie)\n- Summoning matrix expanded to cover 13 project types incl. betting/courses\n- Added chatroom persistence note + sync_chatroom.py reference\n\nsync.md (POSTSYNC):\n- Step 7 now includes sync_chatroom.py after posting chatroom summary\n\nSKILL_CATALOG.md:\n- Fixed garbled text in jonnyai-mcp section\n- Step 4 now references sync_skill_catalog.py (correct script)\n\nsync_skill_catalog.py (new):\n- Parses SKILL_CATALOG.md and upserts 48 skills to Supabase skills table\n  (table created: id, domain, catalog_section, description, owned_by[],\n  has_sop, sop_path, updated_at)\n- 45/48 skills have methodology SOP files on disk\n\nCo-Authored-By: Claude Sonnet 4.6 <noreply@anthropic.com>"
+  },
+  {
+    "sha": "b02e6e1f574021679e2c58a0cd8e3055816f433a",
+    "author": "Jonny Allum",
+    "date": "2026-02-23T18:31:27Z",
+    "message": "feat(catalog+agents): 63-agent orchestra, 135-skill catalog, full SOP coverage\n\nAgent changes:\n- @boyce, @rocket, @dreamer onboarded (Jai.OS 5.0 gold standard)\n- Fixed @dreamer YAML: name: @dreamer (was missing @)\n- Fixed validate_agents.py: removed stale neo exclusion ??? now 63/63 pass\n- Updated CLAUDE.md, AGENTS.md, GEMINI.md: 60???63 agent count, all tier tables correct\n- Added agent-onboarding.md: 10-step mandatory checklist to prevent missed wiring\n\nSkill catalog:\n- Added 4 new sections: Betting & Sports (10), BI/Dashboard (6), Education (6), Client Success (6)\n- 135 total skills, 135/135 with SOP files (100% coverage)\n- Created 33 new methodology SOP stubs in .agent/skills/methodology/\n- sync_skill_catalog.py: added 4 new catalog sections to SECTION_MAP + orphan purge step\n\nSupabase:\n- brain_sync.py: 63 agents synced\n- sync_all_skills_full.py: 63 philosophy columns populated\n- sync_skill_catalog.py: 135 skills clean (no orphans)\n\nCo-Authored-By: Claude Sonnet 4.6 <noreply@anthropic.com>"
+  },
+  {
+    "sha": "a1e7334d5a00803bbacd45f1e63a9ff9e8c89230",
+    "author": "Jonny Allum",
+    "date": "2026-02-23T10:59:02Z",
+    "message": "feat: Jai.OS 5.0 full system alignment ??? new README, 73 legacy scripts purged, all docs updated\n\nAGENT SYSTEM:\n- 59/59 agents at Jai.OS 5.0 Gold Standard (0 legacy, 0 partial)\n- AGENT_REGISTRY.md: @successbot + @coursewright added, Total 59/59, Build Queue closed\n\nDOCS:\n- README.md: full rewrite ??? 59-agent roster, architecture, active scripts, tech stack\n- CLAUDE.md/AGENTS.md/GEMINI.md: workspace commands updated to reflect actual scripts\n- All 57???59 agent count refs updated across all mirror files\n\nEXECUTION ENGINE:\n- Pruned from 103 scripts to 30 active core scripts\n- Deleted: AgOS 2.0/3.0 duplicates, one-off fixers, client-specific junk (kwizz/HACCP), migration scripts\n- Kept: validate_agents, sync_all_skills_full, brain_sync, ralph_loop, orchestra_heartbeat, deploy_ssh, onboard_project, + 23 others\n\nAGENT SKILL.MD UPDATES:\n- All modified SKILL.md files committed (multi-author audit batch)\n- @marcus: platinum upgrade (8 SOPs)\n- @coursewright: full gold-standard rewrite\n- @successbot, @alex, @mason, @arthur, @sophie: upgraded/fixed\n\nCo-Authored-By: Claude Sonnet 4.6 <noreply@anthropic.com>"
+  },
+  {
+    "sha": "7e3bc543bb00764fb0454b84b715b4a530fabe36",
+    "author": "Jonny Allum",
+    "date": "2026-02-23T06:43:03Z",
+    "message": "feat: Batch 1 complete ??? 5 legacy agents rewritten + @neo collaboration gate + registry updated\n\nAgents rewritten to Jai.OS 5.0 gold standard:\n- @derek: Added SOP-004 (dependency audit), expanded Restrictions to 5+/5+, fixed separator\n- @blaise: Expanded Restrictions to 5+/5+, added domain-specific Performance Metrics\n- @victor: Expanded Restrictions to 5+/5+, domain-specific sign-off pattern\n- @design-manager: Full rewrite ??? Quirks, Specializations, 4 SOPs, Quality Gates, domain metrics\n- @executor: Full rewrite ??? 4 SOPs, Quality Gates, correct tier, domain metrics, Ralph loop precision\n\n@neo updates:\n- SOP-001 Collaboration Gate added: consult @marcus + @sebastian before every build\n- @sebastian added to Inner Circle with Architecture Gate handoff pattern\n- Feedback Loop updated: collaboration gate as mandatory pre-build step\n- Restrictions updated: never bypass collaboration gate\n\nperfect_agent_template.md:\n- Pre-Build Collaboration Protocol section added (5-step gate, why it exists, what it produces)\n\nAGENT_REGISTRY.md:\n- 5 new agents added to ??? Completed (total: 26/58)\n- Batch 1 marked complete in build queue\n- Supabase source of truth note added\n\nCo-Authored-By: Claude Sonnet 4.6 <noreply@anthropic.com>"
+  },
+  {
+    "sha": "89a7369157f546e08d11d899e00add0cd2af6364",
+    "author": "Jonny Allum",
+    "date": "2026-02-23T06:29:06Z",
+    "message": "feat: Jai.OS 5.0 Phase B complete ??? @neo online, agent creation system live\n\n## What's in this commit\n\n### New agents\n- @neo (Morpheus Anderson \"The Architect of Minds\") ??? dedicated Agent Creation Specialist\n  - Trained on perfect_agent_template.md\n  - Ralph Loop, Feedback Loop, Collaboration Logic, External AI Audit SOPs\n  - Full Jai.OS 5.0 gold standard\n\n### New infrastructure files\n- .agent/skills/methodology/perfect_agent_template.md ??? annotated build bible\n- .agent/.temp_template.md ??? updated gold standard scaffold\n- .agent/AGENT_REGISTRY.md ??? complete agent status, dos/don'ts, audit checklist\n- .agent/BUILD_QUEUE.md ??? rewrite priority queue\n\n### Rewrites completed (Jai.OS 5.0 gold standard)\n- Betting tier: @gareth, @sterling, @daniel, @terry, @harry\n- Ecosystem: @genesis (rebuilt from AgOS 2.0 legacy)\n\n### System improvements\n- execution/validate_agents.py ??? fixed regex for padded table headers + italic quotes\n- .agent/boardroom/chatroom.md ??? full agent creation protocol posted as DSP\n- CLAUDE.md ??? @neo added to Specialized Ecosystems Tier\n\n58/58 agents pass validation. 21 at full gold standard.\n\nCo-Authored-By: Claude Sonnet 4.6 <noreply@anthropic.com>"
+  },
+  {
+    "sha": "167825673d901095bd2ecc1375304694931c8deb",
+    "author": "Jonny Allum",
+    "date": "2026-02-23T08:59:03Z",
+    "message": "feat: Batch 2 complete ??? @finops, @qualityguard, @riskguard, @contentforge rewritten\n\nAll 4 agents fully rewritten from legacy to Jai.OS 5.0 gold standard:\n\n@finops:\n- Orphan Spend Register quirk, 4 SOPs (weekly snapshot, invoice gen, sub audit, ROI audit)\n- Domain-specific metrics: invoice accuracy, orphan detection, invoice-to-payment days\n- Correct toolset (python, supabase, desktop-commander)\n\n@qualityguard:\n- Tier corrected to Quality & Verification\n- Bug Pattern Archive established as core quirk and workflow tool\n- 4 SOPs: visual regression, E2E smoke, performance stress gate, bug pattern analysis\n- @sam and @milo added to Inner Circle with correct handoff patterns\n\n@riskguard:\n- Sentinel Log established as tamper-proof audit trail\n- 4 SOPs: pre-execution scan, drawdown protocol, GDPR audit, monthly model review\n- Kelly Criterion embedded in risk scoring methodology\n- Domain metrics: true positive rate, false positive rate, SEV-1 response time\n\n@contentforge:\n- Hook Library established as data-backed opening line archive\n- 4 SOPs: multimodal sprint, A/B variant engine, hook optimisation, performance feedback loop\n- @elena added to Inner Circle for voice drift correction\n\nAGENT_REGISTRY.md: 31/59 complete, Batch 2 marked done, legacy count down to 2\n\nCo-Authored-By: Claude Sonnet 4.6 <noreply@anthropic.com>"
+  },
+  {
+    "sha": "5df20dfed5cf9e25ad390c59ffe37d8b5a58fb7e",
+    "author": "Jonny Allum",
+    "date": "2026-02-22T18:55:04Z",
+    "message": "feat(orchestra): 57/57 agents at 11/11 ??? full Jai.OS 5.0 compliance achieved\n\nValidation: python execution/validate_agents.py ??? 57/57 VALID, 0 invalid\n\nChanges:\n- inject_missing_sections.py: new script ??? injects The Creed, Performance Metrics,\n  Restrictions, Tools & Resources, Personality, SOPs, Feedback Loop, Learning Log\n  to any agent missing them (222 sections injected across 50 agents)\n- Fixed 4 remaining invalids: chronos/quartermaster/watcher (added Identity + Capabilities\n  tables), alex (added Collaboration section)\n- SKILLS_MATRIX.md: new ??? definitive 57-agent matrix showing all tiers and 11/11 status\n- build_skills_matrix.py: new ??? generates SKILLS_MATRIX.md from .agent/skills/ only\n- SKILL_CATALOG.md: new skill library at .agent/library/ ??? 30+ composable skills\n  organized by domain, separate from all agent files, MCP-queryable via jonnyai-mcp\n\nRoot cause of \"only 7/57 valid\":\n- apply_directives.py only added Governing Directives ??? did NOT add The Creed,\n  Performance Metrics, Restrictions, or Tools & Resources\n- No upgrade script covered all 11 required sections until inject_missing_sections.py\n- upgrade_agent_skills.py was filling missing content with \"Pending initialization...\"\n  creating the placeholder loop that required the previous purge\n\nCo-Authored-By: Claude Sonnet 4.6 <noreply@anthropic.com>"
+  },
+  {
+    "sha": "b29bf38eedffb7bd8d0b2df8a9ffa9811e49e8ec",
+    "author": "Jonny Allum",
+    "date": "2026-02-23T11:34:50Z",
+    "message": "feat(library): expand SKILL_CATALOG from 48 to 107 skills\n\nNew skills across all domains:\n- Development: +20 (agent-memory-architecture, tool-contract-testing,\n  workflow-simulation-lab, context-window-optimization, prompt-caching-strategy,\n  inference-cost-profiler, api-contract-evolution-planner, schema-drift-monitor,\n  vector-index-lifecycle-manager, edge-runtime-optimization, ci-pipeline-flakiness-hunter,\n  dependency-risk-auditor, feature-flag-governance, realtime-streaming-architecture,\n  data-pipeline-backfill-planner, frontend-bundle-budget-enforcer,\n  test-suite-prioritization, release-candidate-hardening, + more)\n- Intelligence: +12 (competitive-intel-signal-mining, evidence-trace-graphing,\n  market-sentiment-fusion, contradiction-detection-engine, source-bias-audit,\n  forecast-scenario-modeling, narrative-gap-analysis, weak-signal-tracking,\n  benchmark-intelligence-synthesis, legal-change-monitoring, partner-landscape-mapping,\n  decision-quality-retrospective)\n- Operations: +17 (execution-risk-scoring, automation-rollback-orchestrator,\n  sla-slo-policy-management, queue-backpressure-orchestration, chaos-testing-orchestration,\n  credential-rotation-automation, backup-restore-validation, + more)\n- Marketing: +6 (conversion-funnel-diagnostics, offer-positioning-lab,\n  pricing-experiment-orchestration, lifecycle-email-optimization,\n  audience-segmentation-strategy, social-proof-experimentation)\n- Design: +6 (design-system-drift-detection, ux-friction-heatmapping,\n  accessibility-first-prototyping, brand-message-consistency-audit,\n  design-token-governance, motion-system-rationalization)\n\nAll 107 skills synced to Supabase skills table.\n\nCo-Authored-By: Claude Sonnet 4.6 <noreply@anthropic.com>"
+  }
+]
