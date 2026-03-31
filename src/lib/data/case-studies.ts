@@ -214,7 +214,7 @@ Each agent has a human name, a nickname, a defined role, and a learning log. Org
         content: `ElevenLabs voice synthesis and Meta Graph API social distribution. A chatroom listener polls Supabase every 5 seconds. Tagged messages trigger Claude Haiku to generate social copy, publishing to Facebook and Instagram within 5 seconds. Every deployment automatically becomes social proof.`,
       },
     ],
-    screenshots: ["/portfolio/jonnyai-hero.png", "/portfolio/jonnyai2.png", "/portfolio/jonnyai3.png", "/portfolio/jonnyai4.png"],
+    screenshots: ["/portfolio/jonnyai-hero.png", "/portfolio/jonnyai-2.png", "/portfolio/jonnyai-3.png", "/portfolio/jonnyai-4.png"],
   },
 
   // ═══════════════════════════════════════════════════════════════
@@ -258,7 +258,7 @@ Each agent has a human name, a nickname, a defined role, and a learning log. Org
         content: `A trading infrastructure that combines AI speed with human judgment. Paper trading validation before live capital. Position sizing, exposure limits, and drawdown controls baked into the architecture.`,
       },
     ],
-    screenshots: ["/portfolio/insydetradar-hero.jpg", "/portfolio/insydetradar2.jpg", "/portfolio/insydetradar3.jpg", "/portfolio/insydetradar4.jpg"],
+    screenshots: ["/portfolio/insydetradar-hero.jpg", "/portfolio/insydetradar-2.jpg", "/portfolio/insydetradar-3.jpg", "/portfolio/insydetradar-4.jpg"],
   },
 
   // ═══════════════════════════════════════════════════════════════
@@ -302,7 +302,7 @@ Each agent has a human name, a nickname, a defined role, and a learning log. Org
         content: `15+ live routes \u2014 a full platform, not a brochure. The site demonstrates that the agency practices what it sells: built using the same multi-agent system it showcases.`,
       },
     ],
-    screenshots: ["/portfolio/jonnyai-hero.png", "/portfolio/jonnyai2.png", "/portfolio/jonnyai3.png", "/portfolio/jonnyai4.png"],
+    screenshots: ["/portfolio/jonnyai-hero.png", "/portfolio/jonnyai-2.png", "/portfolio/jonnyai-3.png", "/portfolio/jonnyai-4.png"],
   },
 
   // ═══════════════════════════════════════════════════════════════

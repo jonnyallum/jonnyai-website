@@ -33,15 +33,28 @@ export default function PortfolioLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div
-      className={`${instrumentSerif.variable} ${inter.variable} portfolio-root`}
-      style={{
-        background: "#000",
-        color: "#FFFFFF",
-        fontFamily: "var(--font-inter), Inter, sans-serif",
-      }}
-    >
-      {children}
-    </div>
+    <>
+      {/* Kill the main site's FiberCanvas and GlassNavbar on portfolio pages */}
+      <style>{`
+        body:has(.portfolio-root) > canvas[aria-hidden="true"],
+        body:has(.portfolio-root) nav.fixed {
+          display: none !important;
+        }
+      `}</style>
+      <div
+        className={`${instrumentSerif.variable} ${inter.variable} portfolio-root`}
+        style={{
+          position: "relative",
+          zIndex: 50,
+          background: "#000",
+          color: "#FFFFFF",
+          fontFamily: "var(--font-inter), Inter, sans-serif",
+          minHeight: "100vh",
+          isolation: "isolate",
+        }}
+      >
+        {children}
+      </div>
+    </>
   );
 }
