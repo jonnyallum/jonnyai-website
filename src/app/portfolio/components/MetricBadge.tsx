@@ -10,7 +10,7 @@ export default function MetricBadge({
   size = "md",
 }: MetricBadgeProps) {
   const sizeClasses = {
-    sm: { value: "text-xl", label: "text-[10px]", pad: "px-3 py-2" },
+    sm: { value: "text-xl", label: "text-[10px]", pad: "px-3 py-2.5" },
     md: { value: "text-2xl", label: "text-xs", pad: "px-4 py-3" },
     lg: { value: "text-4xl", label: "text-sm", pad: "px-6 py-4" },
   };
@@ -19,15 +19,15 @@ export default function MetricBadge({
 
   return (
     <div
-      className={`flex flex-col items-center text-center ${s.pad} rounded-sm`}
+      className={`flex flex-col items-center text-center ${s.pad} rounded-lg`}
       style={{
         border: "1px solid rgba(255,255,255,0.08)",
-        background: "rgba(255,255,255,0.02)",
+        background: "rgba(255,255,255,0.03)",
       }}
     >
       <span
         className={`${s.value} font-bold leading-none tabular-nums`}
-        style={{ color: "#D97757" }}
+        style={{ color: "#fff" }}
       >
         {value}
       </span>

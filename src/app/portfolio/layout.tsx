@@ -16,12 +16,12 @@ const inter = Inter({
 export const metadata: Metadata = {
   title: "Portfolio — Jonny Allum | AI Systems Architect",
   description:
-    "Production AI infrastructure, multi-agent orchestration, and full-stack systems for real businesses. 10+ clients automated. Built by an operator, not a consultant.",
+    "18 case studies. Production AI infrastructure, multi-agent orchestration, and full-stack systems for real businesses. Built by an operator, not a consultant.",
   metadataBase: new URL("https://jonnyai.co.uk"),
   openGraph: {
     title: "Portfolio — Jonny Allum | AI Systems Architect",
     description:
-      "Production AI infrastructure, multi-agent orchestration, and full-stack systems for real businesses.",
+      "18 case studies. Production AI infrastructure, multi-agent orchestration, and full-stack systems for real businesses.",
     url: "https://jonnyai.co.uk/portfolio",
     siteName: "JonnyAI",
   },
@@ -36,7 +36,7 @@ export default function PortfolioLayout({
     <div
       className={`${instrumentSerif.variable} ${inter.variable} portfolio-root`}
       style={{
-        background: "#0A0A0A",
+        background: "#000",
         color: "#FFFFFF",
         fontFamily: "var(--font-inter), Inter, sans-serif",
       }}

@@ -36,95 +36,99 @@ export default async function CaseStudyPage({ params }: Props) {
   const nextStudy =
     currentIndex < caseStudies.length - 1 ? caseStudies[currentIndex + 1] : null;
 
+  const hasHeroScreenshot = study.screenshots && study.screenshots.length > 0;
+
   return (
-    <div className="min-h-screen" style={{ background: "#0A0A0A", color: "#fff" }}>
+    <div className="min-h-screen" style={{ background: "#000", color: "#fff" }}>
       <PortfolioNav />
 
       {/* ─── HERO ─── */}
-      <section className="pt-28 pb-0">
-        <div className="max-w-6xl mx-auto px-6 md:px-10">
+      <section className="pt-32 pb-0">
+        <div className="max-w-5xl mx-auto px-6 md:px-10">
           {/* Breadcrumb */}
           <Link
             href="/portfolio/case-studies"
-            className="inline-flex items-center gap-2 text-xs uppercase tracking-widest mb-8 transition-colors duration-200"
+            className="inline-flex items-center gap-2 text-xs uppercase tracking-widest mb-10 transition-colors duration-200 hover:text-white"
             style={{ color: "rgba(255,255,255,0.35)" }}
           >
             <ArrowLeft className="w-3 h-3" />
-            Case Studies
+            All Case Studies
           </Link>
 
           {/* Category + Title */}
           <div className="mb-6">
             <span
-              className="inline-block text-[10px] uppercase tracking-[0.3em] px-2.5 py-1 rounded-sm mb-4 font-medium"
-              style={{
-                background: "rgba(217,119,87,0.1)",
-                color: "#D97757",
-                border: "1px solid rgba(217,119,87,0.2)",
-              }}
+              className="inline-block text-[10px] uppercase tracking-[0.3em] mb-4 font-semibold"
+              style={{ color: "rgba(255,255,255,0.4)" }}
             >
               {study.category}
             </span>
             <h1
-              className="text-3xl md:text-5xl lg:text-6xl font-bold leading-tight mb-2"
+              className="text-3xl md:text-5xl lg:text-6xl font-bold leading-tight mb-3"
               style={{ fontFamily: "var(--font-instrument-serif, serif)" }}
             >
               {study.title}
             </h1>
-            <p
-              className="text-lg md:text-xl font-medium"
-              style={{ color: "#D97757", fontFamily: "var(--font-instrument-serif, serif)" }}
-            >
-              {study.subtitle}
-            </p>
+            {study.subtitle && (
+              <p
+                className="text-lg md:text-xl"
+                style={{ color: "rgba(255,255,255,0.5)", fontFamily: "var(--font-instrument-serif, serif)" }}
+              >
+                {study.subtitle}
+              </p>
+            )}
           </div>
 
           <p
-            className="text-base md:text-lg leading-relaxed max-w-3xl mb-10"
+            className="text-base md:text-lg leading-relaxed max-w-3xl mb-12"
             style={{ color: "rgba(255,255,255,0.55)" }}
           >
             {study.hook}
           </p>
 
           {/* Metrics row */}
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3 mb-10">
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3 mb-12">
             {study.metrics.map((m) => (
               <MetricBadge key={m.label} value={m.value} label={m.label} size="sm" />
             ))}
           </div>
         </div>
 
-        {/* Hero image */}
+        {/* Hero image or gradient */}
         <div
           className="relative w-full h-64 md:h-96 lg:h-[480px] overflow-hidden"
-          style={{ borderTop: "1px solid rgba(255,255,255,0.06)", borderBottom: "1px solid rgba(255,255,255,0.06)" }}
+          style={{
+            borderTop: "1px solid rgba(255,255,255,0.08)",
+            borderBottom: "1px solid rgba(255,255,255,0.08)",
+            background: hasHeroScreenshot ? "#111" : "linear-gradient(135deg, #111 0%, #1a1a2e 50%, #111 100%)",
+          }}
         >
-          <Image
-            src={study.heroImage}
-            alt={study.title}
-            fill
-            className="object-cover"
-            priority
-            sizes="100vw"
-          />
+          {hasHeroScreenshot && (
+            <Image
+              src={study.screenshots[0]}
+              alt={study.title}
+              fill
+              className="object-cover"
+              priority
+              sizes="100vw"
+            />
+          )}
           <div
             className="absolute inset-0"
             style={{
               background:
-                "linear-gradient(to bottom, rgba(10,10,10,0.3) 0%, transparent 40%, rgba(10,10,10,0.5) 100%)",
+                "linear-gradient(to bottom, rgba(0,0,0,0.3) 0%, transparent 40%, rgba(0,0,0,0.5) 100%)",
             }}
           />
         </div>
       </section>
 
       {/* ─── CONTENT ─── */}
-      <div className="max-w-6xl mx-auto px-6 md:px-10 py-16">
-        <div className="grid grid-cols-1 lg:grid-cols-[1fr_300px] gap-12">
+      <div className="max-w-5xl mx-auto px-6 md:px-10 py-20">
+        <div className="grid grid-cols-1 lg:grid-cols-[1fr_280px] gap-16">
 
           {/* Main content */}
-          <main className="flex flex-col gap-12">
-
-            {/* Sections */}
+          <main className="flex flex-col gap-14">
             {study.sections.map((section) => (
               <article
                 key={section.id}
@@ -132,39 +136,36 @@ export default async function CaseStudyPage({ params }: Props) {
                 className="scroll-mt-24"
               >
                 <h2
-                  className="text-xl md:text-2xl font-semibold mb-4 pb-3"
+                  className="text-xl md:text-2xl font-bold mb-5 pb-4"
                   style={{
-                    borderBottom: "1px solid rgba(255,255,255,0.07)",
+                    borderBottom: "1px solid rgba(255,255,255,0.08)",
                     fontFamily: "var(--font-instrument-serif, serif)",
                   }}
                 >
                   {section.title}
                 </h2>
                 <div
-                  className="text-sm md:text-base leading-relaxed whitespace-pre-line"
+                  className="text-sm md:text-base leading-[1.8] whitespace-pre-line"
                   style={{ color: "rgba(255,255,255,0.65)" }}
                 >
                   {section.content}
                 </div>
               </article>
             ))}
-
           </main>
 
           {/* Sidebar */}
           <aside className="flex flex-col gap-8">
-
-            {/* Tech stack */}
             <div
-              className="p-5 rounded-sm sticky top-24"
+              className="p-6 rounded-xl sticky top-24"
               style={{
-                border: "1px solid rgba(255,255,255,0.07)",
+                border: "1px solid rgba(255,255,255,0.08)",
                 background: "rgba(255,255,255,0.02)",
               }}
             >
               <p
-                className="text-[10px] uppercase tracking-[0.3em] mb-4 font-medium"
-                style={{ color: "rgba(255,255,255,0.3)" }}
+                className="text-[10px] uppercase tracking-[0.3em] mb-4 font-semibold"
+                style={{ color: "rgba(255,255,255,0.35)" }}
               >
                 Tech Stack
               </p>
@@ -172,11 +173,11 @@ export default async function CaseStudyPage({ params }: Props) {
                 {study.techStack.map((tech) => (
                   <span
                     key={tech}
-                    className="text-[11px] px-2 py-1 rounded-sm"
+                    className="text-[11px] px-2.5 py-1 rounded-full"
                     style={{
-                      background: "rgba(255,255,255,0.04)",
-                      color: "rgba(255,255,255,0.55)",
-                      border: "1px solid rgba(255,255,255,0.07)",
+                      background: "rgba(255,255,255,0.05)",
+                      color: "rgba(255,255,255,0.6)",
+                      border: "1px solid rgba(255,255,255,0.08)",
                     }}
                   >
                     {tech}
@@ -185,10 +186,10 @@ export default async function CaseStudyPage({ params }: Props) {
               </div>
 
               {/* Jump links */}
-              <div className="mt-6 pt-6" style={{ borderTop: "1px solid rgba(255,255,255,0.07)" }}>
+              <div className="mt-6 pt-6" style={{ borderTop: "1px solid rgba(255,255,255,0.08)" }}>
                 <p
-                  className="text-[10px] uppercase tracking-[0.3em] mb-3 font-medium"
-                  style={{ color: "rgba(255,255,255,0.3)" }}
+                  className="text-[10px] uppercase tracking-[0.3em] mb-3 font-semibold"
+                  style={{ color: "rgba(255,255,255,0.35)" }}
                 >
                   Sections
                 </p>
@@ -207,11 +208,11 @@ export default async function CaseStudyPage({ params }: Props) {
               </div>
 
               {/* CTA */}
-              <div className="mt-6 pt-6" style={{ borderTop: "1px solid rgba(255,255,255,0.07)" }}>
+              <div className="mt-6 pt-6" style={{ borderTop: "1px solid rgba(255,255,255,0.08)" }}>
                 <a
                   href="mailto:jonnyallum@gmail.com"
-                  className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-sm text-xs font-medium transition-opacity hover:opacity-80"
-                  style={{ background: "#D97757", color: "#0A0A0A" }}
+                  className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-full text-xs font-semibold transition-opacity hover:opacity-80"
+                  style={{ background: "#fff", color: "#000" }}
                 >
                   Discuss a project →
                 </a>
@@ -224,12 +225,12 @@ export default async function CaseStudyPage({ params }: Props) {
       {/* ─── SCREENSHOTS GALLERY ─── */}
       {study.screenshots && study.screenshots.length > 1 && (
         <section
-          className="py-16 px-6 md:px-10 max-w-6xl mx-auto"
-          style={{ borderTop: "1px solid rgba(255,255,255,0.06)" }}
+          className="py-20 px-6 md:px-10 max-w-5xl mx-auto"
+          style={{ borderTop: "1px solid rgba(255,255,255,0.08)" }}
         >
           <p
-            className="text-[10px] uppercase tracking-[0.35em] mb-8 font-medium"
-            style={{ color: "rgba(255,255,255,0.3)" }}
+            className="text-xs uppercase tracking-[0.3em] mb-10 font-semibold"
+            style={{ color: "rgba(255,255,255,0.35)" }}
           >
             Screenshots
           </p>
@@ -237,8 +238,8 @@ export default async function CaseStudyPage({ params }: Props) {
             {study.screenshots.slice(1).map((src, i) => (
               <div
                 key={i}
-                className="relative h-56 md:h-72 overflow-hidden rounded-sm"
-                style={{ border: "1px solid rgba(255,255,255,0.07)" }}
+                className="relative h-56 md:h-72 overflow-hidden rounded-lg"
+                style={{ border: "1px solid rgba(255,255,255,0.08)" }}
               >
                 <Image
                   src={src}
@@ -255,8 +256,8 @@ export default async function CaseStudyPage({ params }: Props) {
 
       {/* ─── PREV / NEXT ─── */}
       <section
-        className="py-12 px-6 md:px-10 max-w-6xl mx-auto"
-        style={{ borderTop: "1px solid rgba(255,255,255,0.06)" }}
+        className="py-14 px-6 md:px-10 max-w-5xl mx-auto"
+        style={{ borderTop: "1px solid rgba(255,255,255,0.08)" }}
       >
         <div className="flex items-center justify-between gap-6">
           {prevStudy ? (
@@ -266,7 +267,7 @@ export default async function CaseStudyPage({ params }: Props) {
             >
               <ArrowLeft
                 className="w-4 h-4 flex-shrink-0 transition-transform group-hover:-translate-x-1"
-                style={{ color: "#D97757" }}
+                style={{ color: "rgba(255,255,255,0.5)" }}
               />
               <div>
                 <p
@@ -302,7 +303,7 @@ export default async function CaseStudyPage({ params }: Props) {
               </div>
               <ArrowRight
                 className="w-4 h-4 flex-shrink-0 transition-transform group-hover:translate-x-1"
-                style={{ color: "#D97757" }}
+                style={{ color: "rgba(255,255,255,0.5)" }}
               />
             </Link>
           ) : (

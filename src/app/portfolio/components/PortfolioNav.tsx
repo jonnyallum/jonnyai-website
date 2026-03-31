@@ -18,27 +18,21 @@ export default function PortfolioNav() {
     <nav
       className="fixed top-0 left-0 right-0 z-50"
       style={{
-        background: "rgba(10, 10, 10, 0.92)",
-        backdropFilter: "blur(12px)",
-        borderBottom: "1px solid rgba(255,255,255,0.06)",
+        background: "rgba(0, 0, 0, 0.9)",
+        backdropFilter: "blur(16px)",
+        borderBottom: "1px solid rgba(255,255,255,0.08)",
       }}
     >
-      <div className="max-w-6xl mx-auto px-6 md:px-10 py-4 flex items-center justify-between">
+      <div className="max-w-5xl mx-auto px-6 md:px-10 py-4 flex items-center justify-between">
         {/* Logo */}
         <Link
           href="/portfolio"
           className="flex items-center gap-3 group"
           style={{ textDecoration: "none" }}
         >
-          <div
-            className="w-7 h-7 rounded flex items-center justify-center text-black font-black text-[10px] tracking-tight"
-            style={{ background: "#D97757" }}
-          >
-            JA
-          </div>
           <span
-            className="text-xs uppercase tracking-[0.3em] font-medium hidden sm:block"
-            style={{ color: "rgba(255,255,255,0.7)" }}
+            className="text-sm uppercase tracking-[0.2em] font-bold"
+            style={{ color: "#fff" }}
           >
             Jonny Allum
           </span>
@@ -52,37 +46,24 @@ export default function PortfolioNav() {
               <Link
                 key={link.href}
                 href={link.href}
-                className="text-xs uppercase tracking-[0.25em] transition-colors duration-200"
+                className="text-xs uppercase tracking-[0.2em] font-medium transition-colors duration-200 hover:text-white"
                 style={{
-                  color: isActive ? "#D97757" : "rgba(255,255,255,0.5)",
+                  color: isActive ? "#fff" : "rgba(255,255,255,0.5)",
                 }}
               >
                 {link.label}
               </Link>
             );
           })}
-          <Link
-            href="https://jonnyai.co.uk"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-xs uppercase tracking-[0.25em] transition-colors duration-200"
-            style={{ color: "rgba(255,255,255,0.3)" }}
-          >
-            ← Main Site
-          </Link>
-        </div>
-
-        {/* CTA */}
-        <div className="hidden md:flex items-center gap-4">
           <a
             href="mailto:jonnyallum@gmail.com"
-            className="text-xs px-4 py-2 rounded font-medium transition-all duration-200 hover:opacity-80"
+            className="text-xs px-5 py-2 rounded-full font-semibold transition-all duration-200 hover:opacity-80"
             style={{
-              background: "#D97757",
-              color: "#0A0A0A",
+              background: "#fff",
+              color: "#000",
             }}
           >
-            Hire Me
+            Get In Touch
           </a>
         </div>
 
@@ -100,7 +81,7 @@ export default function PortfolioNav() {
       {menuOpen && (
         <div
           className="md:hidden px-6 pb-6 flex flex-col gap-4"
-          style={{ borderTop: "1px solid rgba(255,255,255,0.06)" }}
+          style={{ borderTop: "1px solid rgba(255,255,255,0.08)" }}
         >
           {navLinks.map((link) => (
             <Link
@@ -115,10 +96,10 @@ export default function PortfolioNav() {
           ))}
           <a
             href="mailto:jonnyallum@gmail.com"
-            className="text-sm px-4 py-2 rounded font-medium text-center"
-            style={{ background: "#D97757", color: "#0A0A0A" }}
+            className="text-sm px-5 py-2.5 rounded-full font-semibold text-center"
+            style={{ background: "#fff", color: "#000" }}
           >
-            Hire Me
+            Get In Touch
           </a>
         </div>
       )}
