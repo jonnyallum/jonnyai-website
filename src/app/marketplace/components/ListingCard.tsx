@@ -18,7 +18,7 @@ export default function ListingCard({ listing }: { listing: MarketplaceListing }
       ? `Interested in acquiring ${listing.title}`
       : `Interested in ${listing.title} (fund / acquire)`
   );
-  const mailto = `mailto:jonny@littlejonnys.co.uk?subject=${subject}`;
+  const mailto = `mailto:info@jonnyai.co.uk?subject=${subject}`;
 
   return (
     <article

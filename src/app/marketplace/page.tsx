@@ -128,11 +128,11 @@ export default function MarketplacePage() {
         </p>
         <div className="flex flex-wrap justify-center gap-3">
           <a
-            href="mailto:jonny@littlejonnys.co.uk?subject=Marketplace%20enquiry"
+            href="mailto:info@jonnyai.co.uk?subject=Marketplace%20enquiry"
             className="inline-flex items-center gap-2 px-6 py-3 rounded font-medium transition-opacity hover:opacity-85"
             style={{ background: "#D97757", color: "#0A0A0A" }}
           >
-            jonny@littlejonnys.co.uk <ArrowRight className="w-3 h-3" />
+            info@jonnyai.co.uk <ArrowRight className="w-3 h-3" />
           </a>
           <Link
             href="/brief"
