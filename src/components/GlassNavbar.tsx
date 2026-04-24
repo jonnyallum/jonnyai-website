@@ -12,6 +12,7 @@ const navLinks = [
   { label: 'YouTube', href: '/youtube' },
   { label: 'Workforce', href: '/workforce' },
   { label: 'Empire', href: '/empire' },
+  { label: 'Marketplace', href: '/marketplace' },
   { label: 'Blog', href: '/blog' },
 ];
 
