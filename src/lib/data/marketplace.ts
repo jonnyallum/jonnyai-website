@@ -261,7 +261,7 @@ export const marketplaceListings: MarketplaceListing[] = [
     liveUrl: "https://www.molingexpert.co.uk",
     repoUrl: null,
     priceGbp: { low: 600, high: 1200 },
-    fundingGbp: { low: 1500, high: 3000 },
+    fundingGbp: null,
     tagline: "Trenchless / no-dig moling service site — domain secured, build in progress.",
     summary:
       "Lead-gen site for a specialist moling contractor: pneumatic-mole pipe installation and replacement under driveways, lawns and roads without excavation. Target audience is homeowners with failed water mains, plus plumbing and groundwork firms subcontracting moling work. Domain is live on Hostinger, build is mid-flight — funding takes it from skeleton to a fully-photographed, SEO-optimised local-service site ready for Google Ads.",
@@ -298,7 +298,7 @@ export const marketplaceListings: MarketplaceListing[] = [
     liveUrl: "https://marineflex.co.uk",
     repoUrl: "https://github.com/jonnyallum/marineflex.com",
     priceGbp: { low: 600, high: 1400 },
-    fundingGbp: { low: 2000, high: 4500 },
+    fundingGbp: null,
     tagline: "Marine-grade sealant & adhesive product site — domain secured, build in progress.",
     summary:
       "Product-led site for a marine polyurethane sealant / adhesive line: above and below waterline, deck bedding, hull repairs, chandlery distribution. Audience is boat builders, marine trades, chandleries and DIY boat owners. Domain is live on Hostinger and the GitHub repo is reserved — funding completes the product pages, datasheet downloads, stockist locator and B2B trade-account flow.",
