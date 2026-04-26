@@ -91,40 +91,6 @@ export const marketplaceListings: MarketplaceListing[] = [
     ],
     buyerProfile: "Building contractor wanting a turn-key polished site. Or a flipper who will add the contact form + images and resell for £2k–£2.5k.",
   },
-  {
-    slug: "village-bakery-cafe",
-    title: "Village Bakery & Cafe",
-    domain: "villagebakeryandcafe.co.uk",
-    kind: "website",
-    track: "for-sale",
-    status: "paid-not-settled",
-    percentComplete: 88,
-    stack: ["Vite", "React 19", "TypeScript", "Tailwind v3", "Framer Motion"],
-    liveUrl: "https://villagebakeryandcafe.co.uk",
-    repoUrl: "https://github.com/jonnyallum/villagebakeryandcafe.co.uk",
-    priceGbp: { low: 500, high: 1100 },
-    fundingGbp: null,
-    tagline: "Warm, modern café & bakery site with live Instagram feed.",
-    summary:
-      "Finished Vite+React cafe site with menu, buffets, home and Instagram embed. Google Analytics 4 wired, compliance pass already done on menu copy. Deployed and running.",
-    includes: [
-      "Domain: villagebakeryandcafe.co.uk",
-      "Matching email inbox",
-      "Google Business Profile listing",
-      "GitHub repository transfer",
-      "Hostinger deployment",
-    ],
-    builtFeatures: [
-      "Home, Menu, Buffets pages",
-      "Instagram feed embed",
-      "Google Analytics 4 (G-PH6XCLJMX0)",
-      "Apache (.htaccess) + IIS (web.config) compatible",
-      "Compliance-reviewed copy (post-regulatory pass)",
-    ],
-    remaining: ["Optional: add reservation / contact form"],
-    buyerProfile: "Cafe, bakery or tea-room owner wanting to rebrand. Or a hospitality group wanting a clean franchise-ready template.",
-  },
-
   // ─────────────────────── FUND / ACQUIRE ───────────────────────
   {
     slug: "construct-fm-estimate-generator",
