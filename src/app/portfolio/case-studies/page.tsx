@@ -7,7 +7,7 @@ import type { Metadata } from "next";
 export const metadata: Metadata = {
   title: "Case Studies — Jonny Allum Portfolio",
   description:
-    "18 in-depth case studies: multi-agent orchestration, e-commerce automation, AI trading, mobile apps, web development, and AI security.",
+    "21 in-depth case studies: multi-agent orchestration, e-commerce automation, AI trading, mobile apps, web development, AI security, and multi-tenant SaaS platforms.",
 };
 
 export default function CaseStudiesPage() {
@@ -24,7 +24,7 @@ export default function CaseStudiesPage() {
           className="text-xs uppercase tracking-[0.3em] mb-4 font-semibold"
           style={{ color: "rgba(255,255,255,0.35)" }}
         >
-          18 Case Studies
+          21 Case Studies
         </p>
         <h1
           className="text-3xl md:text-5xl lg:text-6xl font-bold leading-tight mb-6"

@@ -1,16 +1,34 @@
+export type SaasPricingTier = {
+  name: "Starter" | "Professional" | "Enterprise (white-label)";
+  monthlyGbp: number;
+  setupGbp: number | null;
+  includesUserCap: string;
+  includesSiteCap: string;
+  perks: string[];
+};
+
+export type SaasPricing = {
+  tiers: SaasPricingTier[];
+  overagePerUserGbp: number;
+  caseStudySlug: string;
+  liveAppUrl: string;
+  demoLogin: { email: string; password: string };
+};
+
 export type MarketplaceListing = {
   slug: string;
   title: string;
   domain: string | null;
-  kind: "website" | "saas-tool" | "mobile-app" | "platform";
-  track: "for-sale" | "fund-or-acquire";
-  status: "paid-not-settled" | "unfinished";
+  kind: "website" | "saas-tool" | "mobile-app" | "platform" | "saas-product";
+  track: "for-sale" | "fund-or-acquire" | "saas";
+  status: "paid-not-settled" | "unfinished" | "live-saas";
   percentComplete: number;
   stack: string[];
   liveUrl: string | null;
   repoUrl: string | null;
   priceGbp: { low: number; high: number } | null;
   fundingGbp: { low: number; high: number } | null;
+  saasPricing?: SaasPricing | null;
   tagline: string;
   summary: string;
   includes: string[];
@@ -325,6 +343,209 @@ export const marketplaceListings: MarketplaceListing[] = [
       "Deploy + DNS cutover",
     ],
     buyerProfile: "Marine sealant manufacturer or chandlery distributor wanting an owned digital storefront. Or a brand operator backing the build to launch a UK marine-products line.",
+  },
+  // ─────────────────────────────── SaaS ───────────────────────────────
+  {
+    slug: "compliance-hub-saas",
+    title: "Compliance Hub",
+    domain: "compliance-hub.jonnyai.co.uk",
+    kind: "saas-product",
+    track: "saas",
+    status: "live-saas",
+    percentComplete: 100,
+    stack: ["Next.js 15", "React 19", "TypeScript 5.7 strict", "Supabase Postgres 17", "Row-Level Security", "Server Actions", "Zod", "Tailwind 3.4", "pg_cron", "Resend", "PM2 + nginx"],
+    liveUrl: "https://compliance-hub.jonnyai.co.uk",
+    repoUrl: null,
+    priceGbp: null,
+    fundingGbp: null,
+    tagline: "Statutory compliance operating system for UK facilities management — LOLER, PUWER, RIDDOR, RAMS, Fire, L8, CDM, EICR, Gas, H&S, Asbestos.",
+    summary:
+      "A multi-tenant SaaS for UK facilities, estates and H&S teams. RLS-first, RAG-as-data, audit-by-default. Delegation workflows with acceptance/decline/escalation on both inspections and actions. Time tracking, photo evidence, threaded comments with @mentions, calendar with cadence projections, mobile-responsive PWA. Live now at compliance-hub.jonnyai.co.uk.",
+    includes: [
+      "Hosted instance on your subdomain (or your own domain on Enterprise)",
+      "Supabase project + 11 statutory frameworks pre-wired",
+      "Magic-link auth, invite flow, super-admin / compliance-manager / site-manager / staff / contractor roles",
+      "Email notifications (Resend), PDF inspection export, PWA install, dark mode",
+      "Onboarding call + ongoing email support",
+    ],
+    builtFeatures: [
+      "11 statutory regimes (LOLER, PUWER, RIDDOR, RAMS, Fire, L8, CDM, EICR, Gas, H&S, Asbestos)",
+      "Delegation workflow on actions + inspections (accept / decline / escalate)",
+      "Time tracking — clock on/off with single-task rule + history",
+      "Auto-recurring inspections (sign-off → next cadence)",
+      "Photo evidence on incidents + comment attachments",
+      "Compliance score per site with breakdown UI",
+      "Audit log on every operational write (previous + new values)",
+    ],
+    remaining: [],
+    buyerProfile: "UK facilities manager, estate ops director, or H&S lead replacing spreadsheets with a defensible system of record. White-label for FM consultancies and TFM contractors.",
+    saasPricing: {
+      tiers: [
+        {
+          name: "Starter",
+          monthlyGbp: 99,
+          setupGbp: null,
+          includesUserCap: "1 super admin + up to 5 users",
+          includesSiteCap: "1 site",
+          perks: ["All 11 frameworks", "Email support", "Hosted on your subdomain"],
+        },
+        {
+          name: "Professional",
+          monthlyGbp: 299,
+          setupGbp: null,
+          includesUserCap: "1 super admin + up to 25 users",
+          includesSiteCap: "Up to 5 sites",
+          perks: ["Priority email + chat support", "Contractor accounts included", "PDF export + PWA install"],
+        },
+        {
+          name: "Enterprise (white-label)",
+          monthlyGbp: 999,
+          setupGbp: 1500,
+          includesUserCap: "Unlimited users",
+          includesSiteCap: "Unlimited sites",
+          perks: ["Your brand, your domain", "Custom onboarding + training", "SLA + dedicated support", "One-off £1,500 setup fee"],
+        },
+      ],
+      overagePerUserGbp: 15,
+      caseStudySlug: "compliance-hub",
+      liveAppUrl: "https://compliance-hub.jonnyai.co.uk",
+      demoLogin: { email: "demo@jonnyai.co.uk", password: "Demo2026!!" },
+    },
+  },
+  {
+    slug: "fm-control-hub-saas",
+    title: "FM Control Hub",
+    domain: "fm-control-hub.jonnyai.co.uk",
+    kind: "saas-product",
+    track: "saas",
+    status: "live-saas",
+    percentComplete: 100,
+    stack: ["Next.js 15", "React 19", "TypeScript 5.7 strict", "Supabase Postgres 17", "Row-Level Security", "Server Actions", "Zod", "Tailwind 3.4", "pg_cron", "Resend", "Vercel + GCP VM mirror"],
+    liveUrl: "https://fm-control-hub.jonnyai.co.uk",
+    repoUrl: null,
+    priceGbp: null,
+    fundingGbp: null,
+    tagline: "Tailored facilities management OS for complex multi-territory estates — Compliance Hub's engine plus a Contractor Portal and premium UI tier.",
+    summary:
+      "Same RLS-first compliance engine as Compliance Hub, productised for enterprise estates with a Contractor Portal so external supply-chain partners work inside the audit trail rather than emailing certificates. Auto-recurring inspections, Longleat-class sample data, premium glassmorphism UI. Dual-deployed on Vercel and a GCP VM mirror.",
+    includes: [
+      "Hosted instance with Contractor Portal enabled",
+      "All Compliance Hub frameworks + contractor onboarding flow",
+      "Vercel deployment + GCP VM mirror for failover",
+      "Onboarding workshop tailored to your estate's structure",
+      "Quarterly compliance review with Jonny",
+    ],
+    builtFeatures: [
+      "Contractor Portal — role-gated dashboard, company KPIs, work-order queue",
+      "Automated contractor onboarding — invitation + magic-link provisioning",
+      "All 11 frameworks (Compliance Hub parity)",
+      "Auto-recurring inspections with cadence trigger",
+      "Realtime widgets, scopable per site",
+      "Premium glassmorphism UI tier",
+      "PDF export + PWA install + dark mode",
+    ],
+    remaining: [],
+    buyerProfile: "Multi-territory estate operations director (heritage estates, safari parks, mixed-use venues, university estates) or a Total Facilities Management contractor needing contractor-portal-grade audit trail.",
+    saasPricing: {
+      tiers: [
+        {
+          name: "Starter",
+          monthlyGbp: 99,
+          setupGbp: null,
+          includesUserCap: "1 super admin + up to 5 users",
+          includesSiteCap: "1 site, no contractor portal",
+          perks: ["Compliance Hub feature set", "Email support"],
+        },
+        {
+          name: "Professional",
+          monthlyGbp: 299,
+          setupGbp: null,
+          includesUserCap: "1 super admin + up to 25 users + unlimited contractor accounts",
+          includesSiteCap: "Up to 5 sites",
+          perks: ["Contractor Portal enabled", "Premium UI tier", "Priority support"],
+        },
+        {
+          name: "Enterprise (white-label)",
+          monthlyGbp: 999,
+          setupGbp: 1500,
+          includesUserCap: "Unlimited users + unlimited contractors",
+          includesSiteCap: "Unlimited sites + sub-estate territories",
+          perks: ["Your brand, your domain", "Vercel + VM mirror under your DNS", "Quarterly compliance review", "Custom contractor onboarding"],
+        },
+      ],
+      overagePerUserGbp: 15,
+      caseStudySlug: "fm-control-hub",
+      liveAppUrl: "https://fm-control-hub.jonnyai.co.uk",
+      demoLogin: { email: "demo@jonnyai.co.uk", password: "FMHub-Demo-2026!" },
+    },
+  },
+  {
+    slug: "care-hub-saas",
+    title: "Care Hub",
+    domain: "care-hub.jonnyai.co.uk",
+    kind: "saas-product",
+    track: "saas",
+    status: "live-saas",
+    percentComplete: 100,
+    stack: ["Next.js 15", "React 19", "TypeScript 5.7 strict", "Supabase Postgres 17", "Row-Level Security", "Server Actions", "Zod", "Tailwind 3", "BEFORE triggers", "Storage RLS", "PM2 + nginx"],
+    liveUrl: "https://care-hub.jonnyai.co.uk",
+    repoUrl: null,
+    priceGbp: null,
+    fundingGbp: null,
+    tagline: "Resident-centred operating system for UK CQC-regulated care homes — eMAR with dual-sign CDs, NEWS2 auto-escalation, HACCP/L8/COSHH, KLOE evidence.",
+    summary:
+      "A multi-tenant SaaS for residential and nursing care homes. 62 tables, 17 migrations, 21 industry entities. eMAR with DB-enforced dual-signature on controlled drugs. NEWS2 vitals with auto-escalation. HACCP food safety, Legionella L8, COSHH all built in. CQC KLOE evidence on every action. Manor House seed data so demos sell themselves.",
+    includes: [
+      "Hosted instance on your subdomain (or your own domain on Enterprise)",
+      "Supabase project with 17 migrations pre-applied",
+      "All 8 roles (super_admin through family_viewer) configured",
+      "Onboarding call + Manor House demo data for training",
+      "Email + chat support",
+    ],
+    builtFeatures: [
+      "Care plans + risk assessments with resident RAG triggers",
+      "eMAR with controlled drugs register (dual-signature DB constraint)",
+      "NEWS2 vitals with auto-escalation flagging",
+      "HACCP food safety, COSHH, Legionella L8 modules",
+      "Staff records with DBS / RtW / training matrix RAG",
+      "Rota with WTD view, agency bookings",
+      "CQC KLOE evidence tagging across Safe/Effective/Caring/Responsive/Well-led",
+      "Family communications + visitors register with IPC screening",
+    ],
+    remaining: [],
+    buyerProfile: "Care home owner, registered manager, or care group head of operations replacing paper MAR and spreadsheets. White-label for care groups and CQC consultancies.",
+    saasPricing: {
+      tiers: [
+        {
+          name: "Starter",
+          monthlyGbp: 99,
+          setupGbp: null,
+          includesUserCap: "1 super admin + up to 5 care staff",
+          includesSiteCap: "1 home",
+          perks: ["Full clinical + compliance modules", "Email support", "Demo data for training"],
+        },
+        {
+          name: "Professional",
+          monthlyGbp: 299,
+          setupGbp: null,
+          includesUserCap: "1 super admin + up to 25 staff + unlimited family viewers",
+          includesSiteCap: "Up to 5 homes",
+          perks: ["Group reporting across homes", "Priority email + chat", "Family portal access"],
+        },
+        {
+          name: "Enterprise (white-label)",
+          monthlyGbp: 999,
+          setupGbp: 1500,
+          includesUserCap: "Unlimited staff + family viewers",
+          includesSiteCap: "Unlimited homes",
+          perks: ["Your brand, your domain", "Custom CQC report templates", "Onboarding + training included", "SLA + dedicated support"],
+        },
+      ],
+      overagePerUserGbp: 15,
+      caseStudySlug: "care-hub",
+      liveAppUrl: "https://care-hub.jonnyai.co.uk",
+      demoLogin: { email: "demo@jonnyai.co.uk", password: "Demo2026!!" },
+    },
   },
 ];
 

@@ -5,12 +5,13 @@ import ListingCard from "./components/ListingCard";
 import { getByTrack } from "@/lib/data/marketplace";
 
 export const metadata: Metadata = {
-  title: "Marketplace — Projects For Sale & Seeking Funding · JonnyAI",
+  title: "Marketplace — SaaS Products, Projects For Sale & Seeking Funding · JonnyAI",
   description:
-    "Finished websites, tools and platforms for sale, plus unfinished products seeking acquisition or funding. Direct from the builder.",
+    "Three live multi-tenant SaaS platforms (Compliance Hub, FM Control Hub, Care Hub) plus finished websites for sale and unfinished products seeking acquisition or funding. Direct from the builder.",
 };
 
 export default function MarketplacePage() {
+  const saas = getByTrack("saas");
   const forSale = getByTrack("for-sale");
   const fundOrAcquire = getByTrack("fund-or-acquire");
 
@@ -25,19 +26,26 @@ export default function MarketplacePage() {
           Marketplace · Direct from the builder
         </p>
         <h1 className="text-4xl md:text-6xl font-bold tracking-tight mb-6">
-          Projects for sale.<br />
-          Products seeking funding.
+          SaaS products you can buy now.<br />
+          Projects for sale. Products seeking funding.
         </h1>
         <p
           className="text-lg md:text-xl max-w-3xl leading-relaxed mb-8"
           style={{ color: "rgba(255,255,255,0.7)" }}
         >
-          Some of these were built, delivered, and never paid for — they&apos;re now on the block. Others are
-          unfinished platforms with real traction or architecture, available for acquisition or a
-          funded completion sprint. Every one is a working repo, not a pitch deck.
+          Three live multi-tenant SaaS platforms ready to subscribe to today — plus finished websites
+          built and unpaid that are now on the block, and unfinished platforms available for acquisition
+          or a funded completion sprint. Every one is a working repo, not a pitch deck.
         </p>
 
         <div className="flex flex-wrap gap-4 text-xs">
+          <a
+            href="#saas"
+            className="inline-flex items-center gap-2 px-5 py-3 rounded font-medium transition-opacity hover:opacity-85"
+            style={{ background: "#6EE78B", color: "#0A0A0A" }}
+          >
+            SaaS products ({saas.length}) <ArrowRight className="w-3 h-3" />
+          </a>
           <a
             href="#for-sale"
             className="inline-flex items-center gap-2 px-5 py-3 rounded font-medium transition-opacity hover:opacity-85"
@@ -55,6 +63,43 @@ export default function MarketplacePage() {
           >
             Fund or acquire ({fundOrAcquire.length}) <ArrowRight className="w-3 h-3" />
           </a>
+        </div>
+      </section>
+
+      {/* ─── SAAS / SUBSCRIPTION ─── */}
+      <section
+        id="saas"
+        className="py-16 px-6 md:px-10 max-w-6xl mx-auto scroll-mt-24"
+      >
+        <div className="mb-10">
+          <p
+            className="text-[11px] uppercase tracking-[0.3em] mb-3"
+            style={{ color: "#6EE78B" }}
+          >
+            Track 00 — SaaS / Subscription
+          </p>
+          <h2 className="text-3xl md:text-4xl font-bold tracking-tight mb-4">
+            The Hub Suite — three operational systems of record.
+          </h2>
+          <p className="max-w-3xl text-base mb-3" style={{ color: "rgba(255,255,255,0.65)" }}>
+            Three independent multi-tenant SaaS platforms, each a defensible system of record for a
+            regulated industry. Use one, two, or all three — they don&apos;t depend on each other.
+            Same RLS-first architecture, same audit-by-default principles, different regulatory
+            regimes.
+          </p>
+          <p className="max-w-3xl text-base" style={{ color: "rgba(255,255,255,0.65)" }}>
+            <span style={{ color: "#6EE78B" }}>Compliance Hub</span> — UK facilities compliance
+            (LOLER, PUWER, RIDDOR, RAMS, Fire, L8, CDM…). <span style={{ color: "#6EE78B" }}>
+            FM Control Hub</span> — multi-territory estate ops with Contractor Portal. <span
+            style={{ color: "#6EE78B" }}>Care Hub</span> — CQC-regulated care homes with eMAR,
+            NEWS2, HACCP, L8, COSHH. Every tier is hosted, supported, and live today.
+          </p>
+        </div>
+
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {saas.map((l) => (
+            <ListingCard key={l.slug} listing={l} />
+          ))}
         </div>
       </section>
 

@@ -634,6 +634,293 @@ Each agent has a human name, a nickname, a defined role, and a learning log. Org
   },
 
   // ═══════════════════════════════════════════════════════════════
+  // 19. Compliance Hub — Statutory FM operating system
+  // ═══════════════════════════════════════════════════════════════
+  {
+    slug: "compliance-hub",
+    title: "Compliance Hub",
+    subtitle: "Statutory compliance operating system for UK facilities management",
+    client: "JonnyAI · SaaS Product",
+    category: "Multi-Tenant SaaS Platform",
+    hook: "Most \"compliance\" tools are rebranded to-do lists. This one is built around the actual obligations a UK facilities manager has under HSWA 1974 and its descendants — RAG as first-class data, delegation as a workflow, audit as automatic.",
+    heroImage: "/portfolio/compliance-hub-hero.png",
+    featured: true,
+    metrics: [
+      { label: "Compliance regimes", value: "11" },
+      { label: "Tables", value: "19" },
+      { label: "Security advisor lints", value: "0" },
+      { label: "Doc kinds", value: "14" },
+      { label: "Stack", value: "Next 15 + Supabase" },
+    ],
+    techStack: ["Next.js 15", "React 19", "TypeScript 5.7 strict", "Supabase Postgres 17", "Row-Level Security", "Server Actions", "Zod", "Tailwind 3.4", "pg_cron", "Edge Functions", "Resend", "PM2", "nginx", "GCP VM"],
+    sections: [
+      {
+        id: "the-problem",
+        title: "The Problem",
+        content: `UK facilities managers carry a stack of statutory obligations — LOLER, PUWER, RIDDOR, RAMS, Fire Safety, Legionella L8, CDM 2015, EICR, Gas Safety, H&S, Asbestos — and most of them get tracked in a spreadsheet that's missing the actor, the timestamp, the before/after, and the evidence chain. When the HSE walks in and asks "show me that the LOLER thorough examination was scheduled, completed by a competent person, defects were closed, and the equipment wasn't operated in the meantime" — a spreadsheet is a guess. The brief was to replace the spreadsheet with a defensible system of record.`,
+      },
+      {
+        id: "architecture",
+        title: "The Architecture — RLS-First, Workflow-Native",
+        content: `Next.js 15 App Router with React 19 Server Components, all mutations through Zod-validated Server Actions. Supabase Postgres 17 with row-level security on every exposed table. Six architectural principles drive the codebase:
+
+1. RLS is non-negotiable. Default-deny everywhere. Every policy is org+site scoped. Contractors are explicitly walled off to records assigned to them.
+2. RAG is first-class data, not a UI badge. Every operational row stores rag_status, rag_auto_status (BEFORE-trigger computed), rag_override_status, rag_override_reason — with a DB CHECK that makes a manual override illegal without a reason.
+3. Delegation is a workflow, not a field. Owner, assignee, delegated-by, delegated-to, escalation-user, acceptance, accepted-at, declined-at, decline-reason, escalation-due-at, escalated-at, completed-at, closed-by — real columns, real workflows on both actions and inspections.
+4. Audit is automatic. A SECURITY DEFINER trigger writes every insert/update/delete on every operational table into activity_log, stamped with auth.uid() and both previous and new values.
+5. Storage is private-first. Three private buckets with path-scoped RLS. Documents accessed via signed URLs only.
+6. One time-tracking primitive. A single time_logs table covers clock-on/off against actions and inspections via XOR check constraint.`,
+      },
+      {
+        id: "schema",
+        title: "The Data Model",
+        content: `19 tables across five domains:
+
+Identity & structure — organizations · profiles · sites · site_memberships · dutyholder_assignments
+
+Operational — assets · compliance_registers · inspections · inspection_findings · actions · incidents · contractors · contractor_site_links · contractor_documents · documents (polymorphic)
+
+Time tracking — time_logs with XOR check (action_id XOR inspection_id) + active_time_logs view
+
+Collaboration & audit — comments (threaded, with mentions uuid[]) · notifications (per-user inbox) · activity_log (every operational write with previous_values + new_values JSONB)
+
+Every operational table carries: organization_id, site_id, title, status, rag_status, rag_auto_status, rag_override_status, rag_override_reason, due_date, owner_user_id, assigned_to_user_id, created_by, created_at, updated_at, archived_at.`,
+      },
+      {
+        id: "rag-system",
+        title: "The RAG System — Auto + Override",
+        content: `calc_rag(due_date, status, dangerous, high_risk, expires_on) — pure SQL, deterministic, attached as a BEFORE trigger to every operational table. Status closed/cancelled/archived → green. Dangerous flag → red (latches). Due/expiry past today → red. Within 30 days → amber. High-risk → amber. Otherwise → green or unknown.
+
+Manual override is settable only by managers (enforced in RLS). The DB CHECK constraint guarantees override_reason is non-empty when status is overridden. Effective RAG = coalesce(override, auto). Every change writes to activity_log with previous and new values.
+
+A nightly recalc-rag edge function re-saves every open record so a register that becomes due tomorrow flips to amber today — no app-layer drift, no race conditions, no "did we remember to recompute?"`,
+      },
+      {
+        id: "delegation",
+        title: "Delegation, Acceptance, Escalation",
+        content: `The same primitives exist on both actions and inspections:
+
+owner_user_id → who's accountable
+assigned_to_user_id → who's doing it
+delegated_by_user_id / delegated_to_user_id / delegated_at / delegation_notes
+acceptance_status (pending | accepted | declined) / accepted_at / declined_at / decline_reason
+escalation_user_id / escalation_due_at / escalated_at
+completed_at / closed_by_user_id
+
+A manager creates or delegates work. The assignee gets an in-app notification. They accept, or decline with a DB-validated minimum-length reason. They clock on to start tracking time. They mark complete (actions) or sign off (inspections) with evidence notes. If acceptance stalls, the escalation edge function promotes the work to the configured escalation user. Every state change is in activity_log.`,
+      },
+      {
+        id: "compliance-score",
+        title: "The Compliance Score Model",
+        content: `Every site gets a numeric compliance score:
+
+score = 100
+      − 5 × min(overdue_inspections, 10)
+      − 4 × min(overdue_red_actions, 10)
+      − 3 × min(high_risk_open_findings, 10)
+      − 2 × min(expired_contractor_docs, 10)
+      − 4 × min(riddor_review_backlog, 5)
+
+The function returns the breakdown (counts + the formula string) alongside the score so the number is never opaque. The site detail page renders both. Weights live in plain SQL — configurable per org in v0.3.`,
+      },
+      {
+        id: "security",
+        title: "Security Review",
+        content: `RLS enabled on every exposed table. All policies are org+site scoped — no "authenticated can read all" leaks. Contractors restricted to assigned records via membership role + linked records. service_role never reaches the browser; gated by import "server-only" and confined to Edge Functions plus a single admin client. Supabase Auth for real (password, magic link, password reset). Override requires reason at the DB CHECK level, not just the UI. SECURITY DEFINER minimised — used only for calc_rag, RLS predicates, and the audit trigger. Storage: signed-URL only, path-scoped RLS, path_org() + path_site() predicates. Server-side Zod validation on every form. CSRF via Next's cookie-bound Server Action tokens. Sign-off integrity: once signed off, the UI locks and the outcome is immutable.
+
+Security advisor: 0 lints.`,
+      },
+      {
+        id: "outcome",
+        title: "The Outcome",
+        content: `Live at compliance-hub.jonnyai.co.uk on a GCP VM (PM2 + nginx + Let's Encrypt). 11 statutory compliance regimes covered. 19 tables. 14 document kinds. Photo evidence on incidents and comments. @mentions with notifications. Calendar with cadence projections forecasting up to 24 occurrences forward. Mobile-first responsive design with off-canvas drawer, native camera input for photo capture, swipe-scrollable tables. PDF export of inspection records for handing to HSE. PWA install. Dark mode.
+
+Now being productised as a SaaS: £99/mo Starter, £299/mo Pro, £999/mo + £1,500 setup white-label.`,
+      },
+    ],
+    screenshots: [],
+  },
+
+  // ═══════════════════════════════════════════════════════════════
+  // 20. FM Control Hub — Tailored estate compliance OS
+  // ═══════════════════════════════════════════════════════════════
+  {
+    slug: "fm-control-hub",
+    title: "FM Control Hub",
+    subtitle: "Tailored facilities management OS for complex multi-territory estates",
+    client: "Modelled on Longleat-class estates",
+    category: "Multi-Tenant SaaS Platform",
+    hook: "Compliance Hub's engine, productised for the kind of estate that owns a stately home, a safari park, a workshop fleet and a heritage attraction in the same postcode — with a contractor portal bolted on so the supply chain works inside the audit trail, not around it.",
+    heroImage: "/portfolio/fm-control-hub-hero.png",
+    featured: true,
+    metrics: [
+      { label: "Compliance regimes", value: "11" },
+      { label: "Contractor portal", value: "Yes" },
+      { label: "Sites supported", value: "Multi-territory" },
+      { label: "Auto-recurring inspections", value: "Yes" },
+      { label: "Stack", value: "Next 15 + Supabase" },
+    ],
+    techStack: ["Next.js 15", "React 19", "TypeScript 5.7 strict", "Supabase Postgres 17", "Row-Level Security", "Server Actions", "Zod", "Tailwind 3.4", "pg_cron", "Edge Functions", "Resend", "Vercel", "GCP VM (mirror)"],
+    sections: [
+      {
+        id: "the-brief",
+        title: "The Brief",
+        content: `A multi-territory estate where one operations team manages a stately home, a safari park, workshops, and heritage attractions — each with its own statutory regime, its own contractors, its own escalation paths. Compliance Hub solved the core problem. FM Control Hub is the tailored fork: same engine, plus a Contractor Portal so external supply-chain partners (lift engineers, water hygienists, electricians) work inside the audit trail rather than emailing certificates that never get filed.`,
+      },
+      {
+        id: "what-changed",
+        title: "What's Different From Compliance Hub",
+        content: `1. Contractor Portal — role-gated dashboard showing only inspections and actions assigned to the contractor's company. Company KPIs, work-order queue, document upload with expiry enforcement.
+
+2. Contractor Onboarding — automated invitation flow. Manager adds a contractor; the system provisions the user, scopes them to the assigned site only, sends a magic-link invite. No shared logins, no certificate-by-email.
+
+3. /inspections/new — full Zod-validated server-action form for creating new inspections (Compliance Hub originally relied on SQL seeding for inspection creation).
+
+4. Premium glassmorphism UI overhaul — heavier brand investment than the generic Compliance Hub tier, because the buyer profile is enterprise estate ops, not "FM SaaS at £99/mo".
+
+5. Longleat-class sample data — sites, assets, inspections and findings seeded against a realistic multi-territory estate so the platform sells itself in the demo.`,
+      },
+      {
+        id: "contractor-portal",
+        title: "The Contractor Portal",
+        content: `RLS does the heavy lifting. A contractor's site_memberships record gives them role = 'contractor' on exactly one or more sites. Three policy rules cover the whole thing:
+
+· can SELECT only inspections / actions where assigned_to_user_id = auth.uid() OR delegated_to_user_id = auth.uid()
+· can UPDATE acceptance_status, accepted_at, declined_at, decline_reason, clock-on/off, completion fields
+· can UPLOAD documents to /<org>/<site>/contractor-docs/<own>/ only — storage path RLS enforces it
+
+The portal UI is a thin layer on top — it doesn't add security, just hides what the contractor was never going to be able to see anyway. That's how RLS-first works: the security model is the data model.`,
+      },
+      {
+        id: "auto-recurring-inspections",
+        title: "Auto-Recurring Inspections",
+        content: `Migration 0008 adds a trigger: when an inspection is signed off (pass / advisory / fail), if its compliance register has a cadence_months value, the system inserts the next occurrence at performed_at + cadence_months, copies the asset and dutyholder references, and stamps the source_inspection_id so the audit chain is preserved. A weekly L8 sentinel-point check spawns 52 occurrences a year automatically — no human ever forgets to schedule the next one.
+
+Combined with the calendar's cadence projections (which forecast up to 24 occurrences forward visually), the FM team sees both what's actually scheduled and what's coming based on the cadence rules.`,
+      },
+      {
+        id: "deployment",
+        title: "Deployment Topology",
+        content: `Dual-deploy: production on Vercel at fm-control-hub.jonnyai.co.uk for fast edge routing, mirror on a GCP VM (PM2 + nginx + Let's Encrypt) at fm-control-hub.vercel.app for fallback. DNS in Cloudflare. Vercel env audit runbook + scripts live in ops/vercel-audit/ — runs after any Supabase key rotation. CI is strict: tsc --noEmit, next lint, next build, all hard gates on every push to main.`,
+      },
+      {
+        id: "outcome",
+        title: "The Outcome",
+        content: `Live at fm-control-hub.jonnyai.co.uk. Demo: demo@jonnyai.co.uk / FMHub-Demo-2026! All 11 statutory frameworks covered. Contractor portal active. Auto-recurring inspections firing. Realtime widgets debounced and scopable by site. Email out on notifications via Resend. PDF export of inspection records for HSE handover. PWA install. Dark mode. Premium UI tier suitable for enterprise estate ops.
+
+Sold as a tier above Compliance Hub: £299/mo Pro entry, £999/mo + £1,500 setup white-label for estates that need their own brand on their own domain.`,
+      },
+    ],
+    screenshots: [],
+  },
+
+  // ═══════════════════════════════════════════════════════════════
+  // 21. Care Hub — Resident-centred care home OS
+  // ═══════════════════════════════════════════════════════════════
+  {
+    slug: "care-hub",
+    title: "Care Hub",
+    subtitle: "A resident-centred operating system for UK CQC-regulated care homes",
+    client: "JonnyAI · SaaS Product (Manor House live)",
+    category: "Multi-Tenant SaaS Platform",
+    hook: "Care home compliance isn't 11 frameworks — it's 21 entities, 17 migrations, eMAR with dual-sign controlled drugs, NEWS2 auto-escalation, CQC KLOE evidence on every action, and HACCP/Legionella/COSHH/Fire on top. Built to the same RLS-first standard as Compliance Hub, tailored for CQC.",
+    heroImage: "/portfolio/care-hub-hero.png",
+    featured: true,
+    metrics: [
+      { label: "Tables", value: "62" },
+      { label: "Migrations", value: "17" },
+      { label: "Demo seed rows", value: "5,000+" },
+      { label: "Roles", value: "8" },
+      { label: "Security advisor lints", value: "0" },
+    ],
+    techStack: ["Next.js 15", "React 19", "TypeScript 5.7 strict", "Supabase Postgres 17", "Row-Level Security", "Server Actions", "Zod", "Tailwind 3", "BEFORE triggers (RAG)", "Storage policies", "PM2", "nginx", "GCP VM"],
+    sections: [
+      {
+        id: "the-brief",
+        title: "The Brief",
+        content: `A UK CQC-regulated residential and nursing home running on paper MAR charts, paper handover, paper everything — needing to digitise care plans, medications, incidents, safeguarding, training, audits, meals & nutrition, activities, rota, and CQC KLOE evidence into one system. Built to the same architecture standard as Compliance Hub, with the same RLS-first, RAG-as-data, audit-by-default principles, but tailored for the regulatory regime that actually matters to a care home: CQC Key Lines of Enquiry across Safe, Effective, Caring, Responsive, and Well-led.`,
+      },
+      {
+        id: "schema-21-entities",
+        title: "The Schema — 21 Industry Entities, 17 Migrations",
+        content: `0001 core — organizations, profiles, sites (care homes), memberships, audit_log, RAG helpers, RLS predicates, bootstrap-first-super trigger
+0002 residents — residents, care_plans, risk_assessments with RAG triggers (resident RAG = worst of care plan due / DoLS expiry / risk level)
+0003 medications — medications, mar_entries (MAR chart), controlled_drugs_register (dual-signature enforced via DB constraint)
+0004 incidents — incidents, safeguarding_alerts, body_maps, body_map_marks
+0005 staff — staff_records, training_courses, training_records, supervision_logs, appraisals (staff RAG = worst of DBS / RtW / mandatory training)
+0006 compliance — compliance_documents, audits, maintenance_assets (with LOLER on hoists), maintenance_jobs
+0007 meals — dietary_profiles (IDDSI / MUST), menu_plans, meal_choices, meal_intake (quartile), weight_records (auto BMI), kitchen_audits
+0008 daily logs — daily_logs, news2_observations, abc_charts, activities, activity_participation, handover_notes, visitors, family_communications
+0009 governance — complaints (28d RAG cycle), best_interests_decisions, advance_care_plans (ReSPECT), pre_admission_assessments, kloe_tags
+0010 rota — shifts, shift_assignments, time_off, agency_bookings, v_shift_fill view, v_staff_weekly_hours view (WTD)
+0011 gp_connect — gp_visits, hospital_admissions, fhir_payloads
+0012 storage — 5 private buckets (care-hub-docs, resident-photos, body-maps, evidence, menu-images), org-scoped policies via storage_path_org()
+0013 security — view security_invoker, function search_path pinning, WITH CHECK tightening
+0014 revoke_public — revokes anon/authenticated EXECUTE on RLS helpers
+0015 haccp — appliances, twice-daily temperature logs (auto in_range trigger), supplier deliveries, cleaning schedule
+0016 coshh — substances register (CLP signal + GHS pictograms + SDS), per-task assessments with controls/PPE/first-aid + RAG
+0017 legionella — ACOP L8 / HSG274: outlets, monthly temp checks (auto in_range: hot ≥ 50°C / cold ≤ 20°C), weekly flushing, quarterly descales, structured L8 RAs
+
+62 tables. 54 enums. 2 views. Security advisor: 0 lints.`,
+      },
+      {
+        id: "emar",
+        title: "eMAR with Controlled Drugs",
+        content: `mar_entries is the digital Medication Administration Record. Each entry stores resident_id, medication_id, administered_at, administered_by, dose, route, witness_id (NULL for non-CD), reason_not_given. RAG triggers compute the medication's status per resident — green if administered on time, amber if approaching window close, red if missed.
+
+For controlled drugs, the dual-signature requirement is enforced at the database level:
+
+CHECK (witness_id IS NOT NULL AND witness_id <> signed_by)
+
+You cannot insert a controlled_drugs_register entry where the witness is the same as the signer, and you cannot insert one without a witness at all. Application logic can be wrong; the database constraint cannot.`,
+      },
+      {
+        id: "news2",
+        title: "NEWS2 Vitals With Auto-Escalation",
+        content: `news2_observations stores RR, SpO2, scale, temp, BP, HR, consciousness. A SQL function computes the NEWS2 aggregate score per row. RAG status is derived: 0-4 = green, 5-6 (or any single param = 3) = amber, ≥7 = red. The dashboard surfaces every red NEWS2 observation in the last 24h as "residents needing attention" — the floor manager sees the deterioration before they walk into the room.`,
+      },
+      {
+        id: "kloe",
+        title: "CQC KLOE Evidence",
+        content: `Every operational record can be tagged with a kloe_tags row pointing at one of the five Key Lines of Enquiry: Safe, Effective, Caring, Responsive, Well-led. /reports/kloe surfaces a filtered evidence list per domain. When CQC inspectors arrive and ask for evidence under "Safe", the system produces it — incidents with corrective actions, body maps with documented mitigations, controlled drug registers with dual signatures, training matrix with current DBS and RtW.
+
+Spreadsheet evidence is a guess. This is defensible.`,
+      },
+      {
+        id: "roles",
+        title: "Roles — Eight, Granular",
+        content: `super_admin — JonnyAI ops, cross-org
+registered_manager — org-wide, full access, DoLS sign-off
+deputy_manager — org-wide, no DoLS
+nurse — clinical: meds, vitals, care plan, IBD, ACP
+senior_carer — med admin within scope, daily logs, incidents
+carer — daily logs, incidents (no med admin)
+support_staff — kitchen / domestic, limited
+family_viewer — single resident, read-only
+
+profiles.is_super_admin (boolean) is the real super-admin gate. RLS predicates: is_super_admin(), is_org_member(), is_site_member(), is_clinical(). Every policy uses them — no hand-rolled membership lookups in policy bodies.`,
+      },
+      {
+        id: "demo-data",
+        title: "Real Demo Data — Manor House",
+        content: `The live database is seeded with a real care home's HACCP dataset (Manor Barn). Generated from Manor Barn HACCP Sheet.xlsx by scripts/generate-manor-barn-seed.py and loaded by chained seed scripts.
+
+27 residents · 4,295 temperature logs · 155 supplier deliveries · 206 cleaning schedule rows · 246 menu plans · 60 medications · 142 MAR entries · 60 daily logs · 40 NEWS2 observations · 5 staff · 25 shifts · 3 controlled drug entries · 5 KLOE evidence tags · plus advance care plans, best-interests decisions, ABC charts, COSHH assessments, water outlet temp checks, fire drill records, supervision logs, appraisals.
+
+A prospective buyer logs in and sees a working care home, not a clean slate.`,
+      },
+      {
+        id: "outcome",
+        title: "The Outcome",
+        content: `Live at care-hub.jonnyai.co.uk on a GCP VM. Demo: demo@jonnyai.co.uk / Demo2026!! Strict CI: tsc --noEmit, next lint, next build — all hard gates. 22 application pages from /residents through /coshh to /reports/kloe. Mobile responsive with body-map UI in roadmap. Sage primary #4A7C59 · warm gold #D4A574 · cream surface #FAF8F4 · forest text #2C3E2D — calm clinical palette, dark mode supported.
+
+Sold as a SaaS: £99/mo Starter (1 home, up to 5 staff users), £299/mo Pro (up to 5 homes, 25 users), £999/mo + £1,500 setup white-label for groups that need their own brand.`,
+      },
+    ],
+    screenshots: [],
+  },
+
+  // ═══════════════════════════════════════════════════════════════
   // 18. SafeGuardian
   // ═══════════════════════════════════════════════════════════════
   {
