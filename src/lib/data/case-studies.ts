@@ -738,7 +738,7 @@ Security advisor: 0 lints.`,
 Now being productised as a SaaS: £99/mo Starter, £299/mo Pro, £999/mo + £1,500 setup white-label.`,
       },
     ],
-    screenshots: ["/portfolio/compliance-hub-dashboard.png"],
+    screenshots: ["/portfolio/compliance-hub.png"],
   },
 
   // ═══════════════════════════════════════════════════════════════
@@ -811,7 +811,7 @@ Combined with the calendar's cadence projections (which forecast up to 24 occurr
 Sold as a tier above Compliance Hub: £299/mo Pro entry, £999/mo + £1,500 setup white-label for estates that need their own brand on their own domain.`,
       },
     ],
-    screenshots: ["/portfolio/fm-control-hub-dashboard.png"],
+    screenshots: ["/portfolio/fm-control-hub.png"],
   },
 
   // ═══════════════════════════════════════════════════════════════
@@ -917,7 +917,7 @@ A prospective buyer logs in and sees a working care home, not a clean slate.`,
 Sold as a SaaS: £99/mo Starter (1 home, up to 5 staff users), £299/mo Pro (up to 5 homes, 25 users), £999/mo + £1,500 setup white-label for groups that need their own brand.`,
       },
     ],
-    screenshots: ["/portfolio/care-hub-dashboard.png"],
+    screenshots: ["/portfolio/care-hub.png"],
   },
 
   // ═══════════════════════════════════════════════════════════════
