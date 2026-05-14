@@ -21,6 +21,9 @@ const gradients: Record<string, string> = {
   "agentflip": "linear-gradient(135deg, #1a1510 0%, #2e2010 50%, #1a1510 100%)",
   "translate-r": "linear-gradient(135deg, #0d1520 0%, #162235 50%, #0d1520 100%)",
   "safeguardian": "linear-gradient(135deg, #101a2e 0%, #0f2848 50%, #101a2e 100%)",
+  "compliance-hub": "linear-gradient(135deg, #0a1a1a 0%, #01383d 50%, #0a1a1a 100%)",
+  "fm-control-hub": "linear-gradient(135deg, #0a1018 0%, #0f2a44 50%, #0a1018 100%)",
+  "care-hub": "linear-gradient(135deg, #0e1810 0%, #1f3a26 50%, #0e1810 100%)",
   default: "linear-gradient(135deg, #111 0%, #1a1a1a 50%, #111 100%)",
 };
 
