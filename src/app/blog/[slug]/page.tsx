@@ -13,8 +13,11 @@ interface Props {
 
 export async function generateStaticParams() {
   const livePosts = await fetchPublishedPosts();
-  const posts = livePosts.length ? livePosts : staticPosts;
-  return posts.map(post => ({ slug: post.slug }));
+  const allSlugs = [
+    ...staticPosts.map(p => p.slug),
+    ...livePosts.filter(p => !staticPosts.find(s => s.slug === p.slug)).map(p => p.slug),
+  ];
+  return allSlugs.map(slug => ({ slug }));
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
@@ -93,9 +96,9 @@ const categoryColours: Record<string, string> = {
 export default async function BlogPostPage({ params }: Props) {
   const { slug } = await params;
 
-  // Live Supabase first, static fallback
+  // Live Supabase first, always fall back to static for slug lookup
   const livePosts = await fetchPublishedPosts();
-  const allPosts = livePosts.length ? livePosts : staticPosts;
+  const allPosts = [...staticPosts, ...livePosts.filter(p => !staticPosts.find(s => s.slug === p.slug))];
   const post = (await fetchPostBySlug(slug)) ?? allPosts.find(p => p.slug === slug);
   if (!post) notFound();
 
