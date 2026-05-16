@@ -165,6 +165,100 @@ export default function HomePage() {
             </Link>
           </motion.div>
 
+          {/* ── HUBS AVAILABLE FOR ACQUISITION ── */}
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.7, delay: 1.2, ease: [0.16, 1, 0.3, 1] }}
+            className="mt-20 pt-20 border-t border-white/10 w-full max-w-4xl"
+          >
+            <p
+              className="text-xs font-bold tracking-[0.4em] uppercase mb-10 text-center"
+              style={{ color: '#D97757', fontFamily: 'monospace' }}
+            >
+              Three Vertical SaaS Hubs Available
+            </p>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              {[
+                {
+                  name: 'FM Control Hub',
+                  desc: 'Full-stack facilities management OS. 30+ modules, energy tracking, live demo, maintenance scheduling.',
+                  value: '£200k–£320k',
+                  href: '/blog/jonnyai-hub-suite-valuation',
+                },
+                {
+                  name: 'Care Hub',
+                  desc: 'Clinical AI at the core. FHIR-verified wellness summaries running live in production. PWA + clinician portal.',
+                  value: '£250k–£350k',
+                  href: '/blog/jonnyai-hub-suite-valuation',
+                },
+                {
+                  name: 'Compliance Hub',
+                  desc: 'Six industry-ready packs (FM, Care, Construction, Hospitality, Energy, Legal). White-label engine. Multi-site.',
+                  value: '£200k–£280k',
+                  href: '/blog/jonnyai-hub-suite-valuation',
+                },
+              ].map(({ name, desc, value, href }) => (
+                <motion.div
+                  key={name}
+                  initial={{ opacity: 0, y: 16 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.5 }}
+                >
+                  <Link
+                    href={href}
+                    className="group flex flex-col h-full p-5 rounded-lg transition-all duration-300 relative"
+                    style={{
+                      background: 'rgba(217,119,87,0.05)',
+                      border: '1px solid rgba(217,119,87,0.2)',
+                    }}
+                    onMouseEnter={e => {
+                      const el = e.currentTarget as HTMLAnchorElement;
+                      el.style.borderColor = 'rgba(217,119,87,0.5)';
+                      el.style.background = 'rgba(217,119,87,0.1)';
+                      el.style.transform = 'translateY(-2px)';
+                    }}
+                    onMouseLeave={e => {
+                      const el = e.currentTarget as HTMLAnchorElement;
+                      el.style.borderColor = 'rgba(217,119,87,0.2)';
+                      el.style.background = 'rgba(217,119,87,0.05)';
+                      el.style.transform = 'translateY(0)';
+                    }}
+                  >
+                    <h3
+                      className="text-sm font-bold mb-2"
+                      style={{ fontFamily: 'Outfit, sans-serif', color: '#D97757' }}
+                    >
+                      {name}
+                    </h3>
+                    <p
+                      className="text-xs leading-relaxed flex-1 mb-3"
+                      style={{ color: 'rgba(255,255,255,0.55)' }}
+                    >
+                      {desc}
+                    </p>
+                    <p
+                      className="text-[10px] font-mono font-bold"
+                      style={{ color: 'rgba(217,119,87,0.8)' }}
+                    >
+                      Valuation: {value}
+                    </p>
+                    <div
+                      className="mt-3 text-[9px] font-bold tracking-widest uppercase"
+                      style={{ color: '#D97757' }}
+                    >
+                      Read Case Study →
+                    </div>
+                  </Link>
+                </motion.div>
+              ))}
+            </div>
+            <p className="text-center text-xs mt-8" style={{ color: 'rgba(255,255,255,0.35)' }}>
+              Production-grade. Audited. Available for acquisition, pilot, or white-label licensing.
+            </p>
+          </motion.div>
+
           {/* ── Live signal ── */}
           <motion.div
             initial={{ opacity: 0 }}
