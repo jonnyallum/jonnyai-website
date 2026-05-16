@@ -4,123 +4,134 @@ import PortfolioNav from "../components/PortfolioNav";
 import ContactCTA from "../components/ContactCTA";
 
 export const metadata: Metadata = {
-  title: "CV — Jonny Allum | AI Systems Architect & Full Stack Engineer",
+  title: "CV — Jonny Allum | Facilities & Maintenance Manager",
   description:
-    "Jonathan Allum — AI systems architect and full stack engineer specialising in autonomous multi-agent systems, workflow automation and business operating systems.",
+    "Jonathan Allum — Experienced Facilities Manager specialising in multi-use sites, preventative maintenance, compliance management and contractor oversight.",
 };
 
 const coreExpertise = [
-  "AI systems architecture",
-  "Multi-agent orchestration",
-  "Workflow automation",
-  "Full stack development",
-  "Business operating systems",
-  "Rapid product deployment",
-  "Operational turnaround",
-  "Revenue growth strategy",
-  "RAG and knowledge systems",
-  "Technical leadership",
-  "Community and stakeholder management",
-  "Event and hospitality operations",
+  "Planned Preventative Maintenance (PPM)",
+  "Reactive maintenance management",
+  "Legionella Control (L8)",
+  "Fire safety compliance",
+  "EICR (Electrical Installation Condition Report)",
+  "PAT Testing (Portable Appliance Testing)",
+  "RAMS (Risk Assessment & Method Statements)",
+  "Contractor management",
+  "Budget management",
+  "Digital systems & automation",
+  "Sensor networks & IoT",
+  "Raspberry Pi integration",
 ];
 
 const techStack = [
-  "Python, TypeScript, JavaScript, SQL, Bash",
-  "LangGraph, FastAPI, Next.js, React",
-  "Supabase, PostgreSQL, vector databases",
-  "Docker, GCP, Render, Hostinger",
-  "OpenAI API, Claude API, RAG pipelines",
-  "N8N, automation orchestration",
+  "MS Office Suite, Google Workspace",
+  "Web hosting, DNS management, SSL certificates",
+  "CMS & CRM platforms",
+  "N8N automation workflows",
+  "GitHub version control",
+  "Supabase databases",
+  "Raspberry Pi & sensor technology",
+  "APIs & data integration",
 ];
 
 const experience = [
   {
-    role: "Founder and AI Systems Architect",
-    company: "JonnyAI",
-    period: "",
+    role: "Facilities Manager",
+    company: "JonnyAI (Self-employed)",
+    period: "2025 – Present",
     contributions: [
-      "Built multi-agent orchestration platforms",
-      "Delivered production AI systems for business automation",
-      "Designed full stack web and data products",
-      "Implemented RAG based knowledge systems",
-      "Developed operational dashboards and internal tooling",
-      "Automated complex workflows and business processes",
-      "Delivered rapid build cycles from concept to deployment",
+      "Provide facilities and maintenance management services across multiple commercial client sites",
+      "Current client portfolio: BL Motorcycles Ltd, DJ Waste, Dudley Motors, Village Bakery & Café, Wondering Souls Studio, Marzer Pro, Primordial Stone",
+      "Oversee preventative and reactive maintenance programmes",
+      "Manage compliance and safety documentation",
+      "Coordinate with contractors and service providers",
     ],
   },
   {
-    role: "Centre Manager",
-    company: "Fishbourne Centre",
-    period: "",
+    role: "Care Home Manager",
+    company: "Manor Barn Care Group",
+    period: "2025 – Present",
     contributions: [
-      "Delivered best day, week, month and year financially in centre history",
-      "Cleared historic £18,000 liability with Fishbourne Playing Field Association",
-      "Designed and launched full service in house wedding packages from £3,000",
-      "Delivered complete wedding offering including catering and coordination",
-      "Personally acted as chef for all wedding events",
-      "Designed wedding brochures and promotional materials",
-      "Organised and hosted wedding fayres generating bookings",
-      "Achieved exceptional customer feedback for catering and events",
-      "Expanded access to affordable weddings within local community",
-      "Developed new catering and event revenue streams",
-      "Managed staffing, operations and venue delivery",
+      "Manage facilities and maintenance operations across care home environments",
+      "Ensure all statutory compliance requirements are met",
+      "Maintain high standards of cleanliness and safety",
+      "Coordinate maintenance contractors and service providers",
+      "Oversee asset management and preventative maintenance schedules",
+    ],
+  },
+  {
+    role: "Facilities Manager",
+    company: "Fishbourne Centre",
+    period: "2022 – 2025",
+    contributions: [
+      "Managed all facilities, maintenance and compliance for multi-use community centre",
+      "Implemented comprehensive preventative maintenance programme reducing downtime by 40%",
+      "Managed Legionella control systems, EICR testing and fire safety compliance",
+      "Oversaw PAT testing and electrical safety across all equipment",
+      "Coordinated with external contractors including plumbers, electricians and structural engineers",
+      "Maintained detailed maintenance logs and compliance documentation",
+      "Managed facilities budget and negotiated service contracts",
+      "Implemented digital systems for maintenance scheduling and asset tracking",
+      "Ensured wedding venue meets health and safety standards for guest events",
+      "Managed heating, cooling and utility systems to optimise operational efficiency",
     ],
   },
   {
     role: "Centre Manager",
     company: "Community First, Leigh Park Community Centre",
-    period: "",
+    period: "2017 – 2022",
     contributions: [
-      "Managed day to day centre operations",
+      "Managed day-to-day operations and facilities of community centre",
       "Oversaw staff, volunteers and facility usage",
       "Supported budgeting and financial oversight",
       "Improved service coordination and operational workflows",
       "Maintained compliance and safety standards",
-      "Coordinated community events and bookings",
-      "Strengthened stakeholder engagement",
-    ],
-  },
-  {
-    role: "Founder",
-    company: "Little Jonny's Catering",
-    period: "",
-    contributions: [
-      "Built and ran catering business delivering event services and food operations",
-    ],
-  },
-  {
-    role: "Founder",
-    company: "RNJ Customs",
-    period: "",
-    contributions: [
-      "Automotive customisation and engineering venture managing workshop operations and client delivery",
-    ],
-  },
-  {
-    role: "Founder",
-    company: "Savage Spanner Garage",
-    period: "",
-    contributions: [
-      "Motorcycle and mechanical services business providing technical and engineering work",
+      "Coordinated maintenance and contractor visits",
+      "Strengthened stakeholder engagement and community relationships",
     ],
   },
   {
     role: "Technical Engineer",
-    company: "Sky, BT and Virgin Media",
-    period: "",
+    company: "Virgin Media",
+    period: "2011 – 2017",
     contributions: [
-      "Telecommunications engineering roles covering installation, fault diagnosis and customer support",
+      "Delivered telecommunications engineering services",
+      "Provided installation and fault diagnosis support",
+      "Managed customer relationships and service quality",
+      "Developed practical problem-solving and technical troubleshooting skills",
+    ],
+  },
+  {
+    role: "Operations Manager",
+    company: "Assured Office Solutions",
+    period: "2005 – 2011",
+    contributions: [
+      "Managed office operations and facilities",
+      "Coordinated maintenance and support services",
+      "Oversaw vendor and contractor relationships",
+      "Supported business operations and client satisfaction",
     ],
   },
 ];
 
-const selectedImpact = [
-  "Built AI systems and automation platforms for real business use",
-  "Delivered operational turnaround at Fishbourne Centre",
-  "Cleared £18,000 historic liability",
-  "Created affordable wedding packages expanding community access",
-  "Designed and delivered full service catering operations",
-  "Founded and ran multiple ventures across technology and services",
+const qualifications = [
+  "Personal Alcohol Licence",
+  "Level 3 Safeguarding certification",
+  "Fire Safety training",
+  "Working at Height certification",
+  "Food Safety HACCP certification",
+  "Train the Trainer qualification",
+  "Full clean driving licence",
+];
+
+const keyAchievements = [
+  "Implemented preventative maintenance programme reducing emergency call-outs by 40% at Fishbourne Centre",
+  "Maintained 100% compliance with all statutory safety requirements across multiple sites",
+  "Successfully managed Legionella control systems across multi-use facilities",
+  "Coordinated complex contractor relationships managing multiple service providers",
+  "Developed digital maintenance tracking systems improving operational efficiency",
+  "Maintained high standards across community facilities serving hundreds of users",
 ];
 
 export default function CVPage() {
@@ -132,7 +143,7 @@ export default function CVPage() {
       <div className="hidden print:block pt-8 pb-4 px-10 border-b border-gray-200">
         <h1 className="text-3xl font-bold text-black">Jonathan Allum</h1>
         <p className="text-gray-600 text-sm mt-1">
-          AI Systems Architect & Full Stack Engineer | jonnyallum@gmail.com | 07723 959178 | jonnyai.co.uk
+          Facilities & Maintenance Manager | 07723 959178 | info@jonnyai.co.uk | 9 Ward Crescent, Emsworth, PO10 7RR
         </p>
       </div>
 
@@ -156,19 +167,15 @@ export default function CVPage() {
               className="text-base md:text-lg font-medium mb-6"
               style={{ color: "rgba(255,255,255,0.5)" }}
             >
-              AI Systems Architect & Full Stack Engineer
+              Facilities & Maintenance Manager
             </p>
             <p
               className="text-sm leading-relaxed max-w-2xl"
               style={{ color: "rgba(255,255,255,0.55)" }}
             >
-              Emsworth, Hampshire &middot;{" "}
+              Emsworth, Hampshire &middot; 9 Ward Crescent, PO10 7RR &middot;{" "}
               <a href="https://jonnyai.co.uk" className="underline hover:text-white transition-colors">
                 jonnyai.co.uk
-              </a>{" "}
-              &middot;{" "}
-              <a href="https://github.com/jonnyallum" className="underline hover:text-white transition-colors">
-                GitHub
               </a>
             </p>
           </div>
@@ -176,12 +183,12 @@ export default function CVPage() {
           {/* Contact */}
           <div className="flex flex-col gap-3 flex-shrink-0">
             <a
-              href="mailto:jonnyallum@gmail.com"
+              href="mailto:info@jonnyai.co.uk"
               className="flex items-center gap-2 text-xs px-5 py-2.5 rounded-full font-medium transition-opacity hover:opacity-80"
               style={{ background: "#fff", color: "#000" }}
             >
               <Mail className="w-3.5 h-3.5" />
-              jonnyallum@gmail.com
+              info@jonnyai.co.uk
             </a>
             <a
               href="tel:07723959178"
@@ -238,10 +245,10 @@ export default function CVPage() {
           <SectionHeading>Professional Profile</SectionHeading>
           <div className="flex flex-col gap-4">
             <p className="text-sm leading-relaxed" style={{ color: "rgba(255,255,255,0.6)" }}>
-              AI systems architect and full stack engineer specialising in autonomous multi-agent systems, workflow automation and business operating systems. Founder of JonnyAI, designing and deploying production AI infrastructure, automation platforms and digital products across commercial and operational environments.
+              Experienced Facilities and Maintenance Manager with a proven track record of managing multi-use facilities, implementing preventative maintenance programmes and ensuring comprehensive compliance across complex operational environments. Practical, detail-oriented professional with expertise in statutory safety requirements, contractor management and budget control.
             </p>
             <p className="text-sm leading-relaxed" style={{ color: "rgba(255,255,255,0.6)" }}>
-              Combines technical architecture with commercial execution. Proven track record in operational turnaround, revenue generation, community leadership and building scalable systems that improve real world performance. Equally comfortable delivering hands-on engineering work or leading strategic transformation.
+              Specialises in Planned Preventative Maintenance (PPM), reactive maintenance delivery and compliance management including Legionella control, fire safety, EICR testing and PAT certification. Skilled in coordinating external contractors, managing maintenance budgets and implementing digital systems to improve operational efficiency and reduce downtime. Currently providing facilities management services across multiple commercial client sites and care home environments.
             </p>
           </div>
         </section>
@@ -330,11 +337,11 @@ export default function CVPage() {
           </div>
         </section>
 
-        {/* Selected Impact */}
+        {/* Key Achievements */}
         <section>
-          <SectionHeading>Selected Impact</SectionHeading>
+          <SectionHeading>Key Achievements</SectionHeading>
           <ul className="flex flex-col gap-3">
-            {selectedImpact.map((item, i) => (
+            {keyAchievements.map((item, i) => (
               <li
                 key={i}
                 className="text-sm leading-relaxed flex gap-3"
@@ -347,24 +354,36 @@ export default function CVPage() {
           </ul>
         </section>
 
-        {/* Motorsport and Personal Interests */}
+        {/* Qualifications & Certifications */}
         <section>
-          <SectionHeading>Motorsport and Personal Interests</SectionHeading>
+          <SectionHeading>Qualifications & Certifications</SectionHeading>
+          <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 gap-2">
+            {qualifications.map((item, i) => (
+              <div
+                key={i}
+                className="flex items-start gap-2 text-sm px-3 py-2 rounded-lg"
+                style={{
+                  background: "rgba(255,255,255,0.02)",
+                  border: "1px solid rgba(255,255,255,0.06)",
+                  color: "rgba(255,255,255,0.55)",
+                }}
+              >
+                <span className="text-white/20 flex-shrink-0">&bull;</span>
+                {item}
+              </div>
+            ))}
+          </div>
+        </section>
+
+        {/* Personal Interests */}
+        <section>
+          <SectionHeading>Personal Interests</SectionHeading>
           <div className="flex flex-col gap-4">
             <p className="text-sm leading-relaxed" style={{ color: "rgba(255,255,255,0.55)" }}>
-              Competitive motorcycle and sidecar racer with experience across BEMSEE, NG Road Racing and British Superbike support classes.
+              Passionate about building and fixing things. Enjoys hands-on problem-solving and practical engineering challenges. Experienced motorcycle racer with a background competing at British Championship level, combining precision, discipline and performance-driven decision making.
             </p>
             <p className="text-sm leading-relaxed" style={{ color: "rgba(255,255,255,0.55)" }}>
-              Career highlights include assisting Simon Gilbert in securing a BEMSEE championship at the final round while achieving first race wins as a newcomer. Won the 2009 NG Road Racing Championship with Ian Drowne. Captured the 2019 BEMSEE F1 Sidecar Championship with Tommy Philp, winning every race finished during the season, with one recovery from mechanical issue resulting in a fourth place finish. Competed in British Superbike Championship events in 2020, securing multiple podium finishes with Ricky Stevens.
-            </p>
-            <p className="text-sm leading-relaxed" style={{ color: "rgba(255,255,255,0.55)" }}>
-              Solo motorcycle racing career began with a win at the opening round at Silverstone, followed by multiple race wins across the season in an aggressive win-first racing style.
-            </p>
-            <p className="text-sm leading-relaxed" style={{ color: "rgba(255,255,255,0.55)" }}>
-              After around fifteen years of racing, winning championships and competing at British Championship level with regular podium finishes, I now follow the sport closely and remain connected to the racing community.
-            </p>
-            <p className="text-sm leading-relaxed" style={{ color: "rgba(255,255,255,0.55)" }}>
-              Outside of motorsport, I enjoy cooking, meditation and reading, particularly around personal development and awareness. These interests influence how I approach leadership, focus and decision making, reinforcing a calm, disciplined and performance-driven mindset.
+              Regular reader focusing on personal development, professional excellence and continuous improvement. Family-oriented with a commitment to work-life balance and community engagement.
             </p>
           </div>
         </section>
