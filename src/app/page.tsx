@@ -165,100 +165,6 @@ export default function HomePage() {
             </Link>
           </motion.div>
 
-          {/* ── HUBS AVAILABLE FOR ACQUISITION ── */}
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, delay: 1.2, ease: [0.16, 1, 0.3, 1] }}
-            className="mt-20 pt-20 border-t border-white/10 w-full max-w-4xl"
-          >
-            <p
-              className="text-xs font-bold tracking-[0.4em] uppercase mb-10 text-center"
-              style={{ color: '#D97757', fontFamily: 'monospace' }}
-            >
-              Three Vertical SaaS Hubs Available
-            </p>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              {[
-                {
-                  name: 'FM Control Hub',
-                  desc: 'Full-stack facilities management OS. 30+ modules, energy tracking, live demo, maintenance scheduling.',
-                  value: '£200k–£320k',
-                  href: '/blog/jonnyai-hub-suite-valuation',
-                },
-                {
-                  name: 'Care Hub',
-                  desc: 'Clinical AI at the core. FHIR-verified wellness summaries running live in production. PWA + clinician portal.',
-                  value: '£250k–£350k',
-                  href: '/blog/jonnyai-hub-suite-valuation',
-                },
-                {
-                  name: 'Compliance Hub',
-                  desc: 'Six industry-ready packs (FM, Care, Construction, Hospitality, Energy, Legal). White-label engine. Multi-site.',
-                  value: '£200k–£280k',
-                  href: '/blog/jonnyai-hub-suite-valuation',
-                },
-              ].map(({ name, desc, value, href }) => (
-                <motion.div
-                  key={name}
-                  initial={{ opacity: 0, y: 16 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.5 }}
-                >
-                  <Link
-                    href={href}
-                    className="group flex flex-col h-full p-5 rounded-lg transition-all duration-300 relative"
-                    style={{
-                      background: 'rgba(217,119,87,0.05)',
-                      border: '1px solid rgba(217,119,87,0.2)',
-                    }}
-                    onMouseEnter={e => {
-                      const el = e.currentTarget as HTMLAnchorElement;
-                      el.style.borderColor = 'rgba(217,119,87,0.5)';
-                      el.style.background = 'rgba(217,119,87,0.1)';
-                      el.style.transform = 'translateY(-2px)';
-                    }}
-                    onMouseLeave={e => {
-                      const el = e.currentTarget as HTMLAnchorElement;
-                      el.style.borderColor = 'rgba(217,119,87,0.2)';
-                      el.style.background = 'rgba(217,119,87,0.05)';
-                      el.style.transform = 'translateY(0)';
-                    }}
-                  >
-                    <h3
-                      className="text-sm font-bold mb-2"
-                      style={{ fontFamily: 'Outfit, sans-serif', color: '#D97757' }}
-                    >
-                      {name}
-                    </h3>
-                    <p
-                      className="text-xs leading-relaxed flex-1 mb-3"
-                      style={{ color: 'rgba(255,255,255,0.55)' }}
-                    >
-                      {desc}
-                    </p>
-                    <p
-                      className="text-[10px] font-mono font-bold"
-                      style={{ color: 'rgba(217,119,87,0.8)' }}
-                    >
-                      Valuation: {value}
-                    </p>
-                    <div
-                      className="mt-3 text-[9px] font-bold tracking-widest uppercase"
-                      style={{ color: '#D97757' }}
-                    >
-                      Read Case Study →
-                    </div>
-                  </Link>
-                </motion.div>
-              ))}
-            </div>
-            <p className="text-center text-xs mt-8" style={{ color: 'rgba(255,255,255,0.35)' }}>
-              Production-grade. Audited. Available for acquisition, pilot, or white-label licensing.
-            </p>
-          </motion.div>
-
           {/* ── Live signal ── */}
           <motion.div
             initial={{ opacity: 0 }}
@@ -488,6 +394,242 @@ export default function HomePage() {
               </div>
             </motion.div>
           </div>
+        </div>
+      </section>
+
+      {/* ════════════════════════════════════════════════════════════
+          HUB SUITE — Acquisition / Pilot / White-Label
+      ═══════════════════════════════════════════════════════════════ */}
+      <section
+        className="w-full overflow-hidden relative"
+        style={{ borderTop: '1px solid rgba(255,255,255,0.06)', background: 'rgba(217,119,87,0.02)' }}
+      >
+        {/* Ambient glow */}
+        <div className="absolute inset-0 pointer-events-none" style={{ background: 'radial-gradient(ellipse 80% 50% at 50% 0%, rgba(217,119,87,0.06) 0%, transparent 70%)' }} />
+
+        <div className="relative max-w-7xl mx-auto px-6 py-28">
+
+          {/* Section header */}
+          <motion.div
+            initial={{ opacity: 0, y: 24 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8 }}
+            className="text-center mb-6"
+          >
+            <div className="inline-flex items-center gap-2 mb-6 px-4 py-1.5 rounded-full" style={{ background: 'rgba(217,119,87,0.08)', border: '1px solid rgba(217,119,87,0.2)' }}>
+              <span className="w-1.5 h-1.5 rounded-full" style={{ background: '#22C55E', boxShadow: '0 0 8px rgba(34,197,94,0.8)' }} />
+              <span className="text-[10px] font-bold tracking-[0.3em] uppercase" style={{ color: '#D97757', fontFamily: 'monospace' }}>Live in Production · Available Now</span>
+            </div>
+            <h2
+              className="font-extrabold tracking-tight mb-5"
+              style={{ fontFamily: 'Outfit, sans-serif', fontSize: 'clamp(2.2rem, 5vw, 4rem)', lineHeight: 1.0 }}
+            >
+              Three Production-Grade SaaS Platforms.<br />
+              <span style={{ color: '#D97757' }}>Built. Audited. Available.</span>
+            </h2>
+            <p className="text-base md:text-lg max-w-2xl mx-auto leading-relaxed mb-10" style={{ color: 'rgba(255,255,255,0.4)' }}>
+              Three independent AI audits — ChatGPT, Perplexity, Claude — each used a different methodology. ChatGPT live-tested at £30k, then re-audited after a 30-hour build sprint and returned £240k–£260k. Claude verified AI running in production at database level. Central valuation: <strong style={{ color: 'rgba(255,255,255,0.75)' }}>£275k–£300k.</strong>
+            </p>
+
+            {/* Audit proof bar */}
+            <div className="inline-grid grid-cols-3 gap-px rounded-lg overflow-hidden mb-16" style={{ border: '1px solid rgba(255,255,255,0.08)', background: 'rgba(255,255,255,0.04)' }}>
+              {[
+                { ai: 'ChatGPT', verdict: '£240k–£260k', note: 'Post-sprint live audit' },
+                { ai: 'Perplexity', verdict: '£275k–£350k', note: 'Independent click-through' },
+                { ai: 'Claude', verdict: '£200k–£280k', note: 'Code + live DB verified' },
+              ].map(({ ai, verdict, note }) => (
+                <div key={ai} className="flex flex-col items-center px-6 py-4" style={{ background: 'rgba(7,7,8,0.6)' }}>
+                  <span className="text-[9px] font-mono uppercase tracking-widest mb-1" style={{ color: 'rgba(255,255,255,0.3)' }}>{ai}</span>
+                  <span className="text-base font-bold" style={{ fontFamily: 'Outfit, sans-serif', color: '#D97757' }}>{verdict}</span>
+                  <span className="text-[9px] mt-0.5" style={{ color: 'rgba(255,255,255,0.2)' }}>{note}</span>
+                </div>
+              ))}
+            </div>
+          </motion.div>
+
+          {/* Hub cards */}
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-12">
+            {[
+              {
+                badge: 'Facilities Management',
+                name: 'FM Control Hub',
+                tagline: 'A full facilities management operating system for UK estates, contractors, schools, and care groups.',
+                features: [
+                  'Helpdesk & Work Orders, PPM Schedules, Site Patrols',
+                  'PAT Register, CDM 2015, Permits to Work, RIDDOR',
+                  'Soft FM: Cleaning, Pest, Waste, Catering, Energy',
+                  'FCI reporting, SLA adherence, 10-year AMP',
+                  'Contractor management with RAMS & document expiry',
+                ],
+                buyers: 'FM companies · Estates teams · Schools · Care groups',
+                rebuild: '£65k–£110k rebuild cost',
+                valuation: '£200k–£320k',
+                demo: 'https://fm-control-hub.jonnyai.co.uk',
+                caseStudy: '/portfolio/case-studies/fm-control-hub',
+                modules: '30+',
+                label: 'modules',
+              },
+              {
+                badge: 'Crown Jewel · AI Live',
+                name: 'Care Hub',
+                tagline: 'A CQC-ready care home OS with live AI wellness summaries — verified running in production.',
+                features: [
+                  'AI Wellness Summary — Claude, live, 528 tokens per run',
+                  'Full MAR & CD Register, NEWS2 vital scoring',
+                  'KLOE reporting (Safe / Effective / Caring / Responsive / Well-led)',
+                  'HACCP, COSHH, Legionella L8, Fire Safety modules',
+                  'FHIR export, family portal, mobile PWA confirmed live',
+                ],
+                buyers: 'Independent care homes · Small care groups · Supported living',
+                rebuild: '£60k–£100k rebuild cost',
+                valuation: '£250k–£350k',
+                demo: 'https://care-hub.jonnyai.co.uk',
+                caseStudy: '/portfolio/case-studies/care-hub',
+                modules: '27',
+                label: 'residents seeded',
+                crown: true,
+              },
+              {
+                badge: 'White-Label Ready',
+                name: 'Compliance Hub',
+                tagline: 'A multi-industry statutory compliance platform with a template engine built for white-label deployment.',
+                features: [
+                  '6 industry packs × 8 registers with UK statutory cadences',
+                  'Property, Hospitality, Construction, Manufacturing, Education, Farms',
+                  'AI Compliance Briefing live on dashboard (Claude Haiku)',
+                  'Template builder — save site config → one-click reuse',
+                  'Gas Safety, Fire, H&S, Asbestos dedicated modules',
+                ],
+                buyers: 'Multi-site SMEs · Property groups · Manufacturing · Resellers',
+                rebuild: '£40k–£65k rebuild cost',
+                valuation: '£200k–£280k',
+                demo: 'https://compliance-hub.jonnyai.co.uk',
+                caseStudy: '/portfolio/case-studies/compliance-hub',
+                modules: '48',
+                label: 'compliance templates',
+              },
+            ].map(({ badge, name, tagline, features, buyers, rebuild, valuation, demo, caseStudy, modules, label, crown }, i) => (
+              <motion.div
+                key={name}
+                initial={{ opacity: 0, y: 28 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.6, delay: i * 0.1 }}
+                className="flex flex-col rounded-xl overflow-hidden"
+                style={{
+                  background: crown ? 'linear-gradient(160deg, rgba(217,119,87,0.07) 0%, rgba(255,255,255,0.02) 60%)' : 'rgba(255,255,255,0.025)',
+                  border: crown ? '1px solid rgba(217,119,87,0.25)' : '1px solid rgba(255,255,255,0.08)',
+                }}
+              >
+                {/* Card header */}
+                <div className="p-7 pb-5" style={{ borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
+                  <div className="flex items-start justify-between gap-3 mb-4">
+                    <span
+                      className="text-[9px] font-bold tracking-[0.25em] uppercase px-2.5 py-1 rounded-full"
+                      style={{
+                        background: crown ? 'rgba(217,119,87,0.15)' : 'rgba(255,255,255,0.06)',
+                        color: crown ? '#D97757' : 'rgba(255,255,255,0.4)',
+                        border: crown ? '1px solid rgba(217,119,87,0.2)' : '1px solid rgba(255,255,255,0.08)',
+                      }}
+                    >
+                      {badge}
+                    </span>
+                    <div className="text-right">
+                      <div className="text-2xl font-extrabold leading-none" style={{ fontFamily: 'Outfit, sans-serif', color: '#D97757' }}>{modules}</div>
+                      <div className="text-[9px] font-mono mt-0.5" style={{ color: 'rgba(255,255,255,0.3)' }}>{label}</div>
+                    </div>
+                  </div>
+                  <h3 className="text-2xl font-extrabold mb-2" style={{ fontFamily: 'Outfit, sans-serif' }}>{name}</h3>
+                  <p className="text-sm leading-relaxed" style={{ color: 'rgba(255,255,255,0.45)' }}>{tagline}</p>
+                </div>
+
+                {/* Features */}
+                <div className="p-7 py-5 flex-1" style={{ borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
+                  <p className="text-[9px] font-mono uppercase tracking-widest mb-4" style={{ color: 'rgba(255,255,255,0.25)' }}>What&apos;s included</p>
+                  <ul className="flex flex-col gap-2.5">
+                    {features.map((f) => (
+                      <li key={f} className="flex items-start gap-2.5 text-xs leading-relaxed" style={{ color: 'rgba(255,255,255,0.55)' }}>
+                        <span className="mt-1 w-1 h-1 rounded-full shrink-0" style={{ background: crown ? '#D97757' : 'rgba(255,255,255,0.25)' }} />
+                        {f}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+
+                {/* Buyers + valuation */}
+                <div className="p-7 pt-5 pb-5" style={{ borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
+                  <p className="text-[9px] font-mono uppercase tracking-widest mb-2" style={{ color: 'rgba(255,255,255,0.25)' }}>Target buyers</p>
+                  <p className="text-xs" style={{ color: 'rgba(255,255,255,0.4)' }}>{buyers}</p>
+                  <div className="mt-4 flex items-end justify-between">
+                    <div>
+                      <p className="text-[9px] font-mono uppercase tracking-widest mb-1" style={{ color: 'rgba(255,255,255,0.25)' }}>Acquisition range</p>
+                      <p className="text-xl font-extrabold" style={{ fontFamily: 'Outfit, sans-serif', color: '#D97757' }}>{valuation}</p>
+                    </div>
+                    <p className="text-[9px] font-mono text-right" style={{ color: 'rgba(255,255,255,0.2)' }}>{rebuild}</p>
+                  </div>
+                </div>
+
+                {/* CTAs */}
+                <div className="p-7 pt-5 flex flex-col gap-3">
+                  <a
+                    href={demo}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="w-full text-center py-2.5 px-4 rounded-lg text-xs font-bold tracking-widest uppercase transition-all duration-200"
+                    style={{
+                      background: crown ? 'rgba(217,119,87,0.15)' : 'rgba(255,255,255,0.05)',
+                      border: crown ? '1px solid rgba(217,119,87,0.3)' : '1px solid rgba(255,255,255,0.1)',
+                      color: crown ? '#D97757' : 'rgba(255,255,255,0.6)',
+                    }}
+                  >
+                    Access Live Demo →
+                  </a>
+                  <Link
+                    href={caseStudy}
+                    className="w-full text-center py-2.5 px-4 rounded-lg text-xs font-bold tracking-widest uppercase transition-all duration-200"
+                    style={{ border: '1px solid rgba(255,255,255,0.07)', color: 'rgba(255,255,255,0.3)' }}
+                  >
+                    Full Case Study
+                  </Link>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+
+          {/* Bottom bar */}
+          <motion.div
+            initial={{ opacity: 0, y: 16 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6, delay: 0.3 }}
+            className="flex flex-col sm:flex-row items-center justify-between gap-6 pt-10"
+            style={{ borderTop: '1px solid rgba(255,255,255,0.07)' }}
+          >
+            <div>
+              <p className="text-sm font-semibold mb-1">Available individually or as a suite.</p>
+              <p className="text-xs" style={{ color: 'rgba(255,255,255,0.35)' }}>
+                Acquisition · Pilot partnership · White-label licensing · <a href="https://www.compliance-hub.co.uk" target="_blank" rel="noopener noreferrer" className="underline hover:text-white transition-colors">compliance-hub.co.uk</a>
+              </p>
+            </div>
+            <div className="flex gap-3 flex-wrap justify-center sm:justify-end">
+              <Link
+                href="/blog/jonnyai-hub-suite-valuation"
+                className="px-6 py-3 rounded-lg text-xs font-bold tracking-widest uppercase transition-all duration-200"
+                style={{ background: 'rgba(217,119,87,0.12)', border: '1px solid rgba(217,119,87,0.25)', color: '#D97757' }}
+              >
+                Read Valuation Report
+              </Link>
+              <Link
+                href="/brief"
+                className="px-6 py-3 rounded-lg text-xs font-bold tracking-widest uppercase transition-all duration-200"
+                style={{ background: '#D97757', color: '#000' }}
+              >
+                Get in Touch
+              </Link>
+            </div>
+          </motion.div>
+
         </div>
       </section>
 
