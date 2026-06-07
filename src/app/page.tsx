@@ -236,59 +236,6 @@ export default function HomePage() {
       </section>
 
       {/* ════════════════════════════════════════════════════════════
-          HUBSUITE — three flagship hubs (Compliance / Care / FM Control)
-      ═══════════════════════════════════════════════════════════════ */}
-      <section className="relative w-full overflow-hidden">
-        <div className="max-w-7xl mx-auto px-6 py-24">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.8 }}
-            className="grid lg:grid-cols-2 gap-12 items-center"
-          >
-            {/* Left — HubSuite hero artwork */}
-            <div className="relative flex justify-center">
-              <Image
-                src="/brand/hub/hubsuite-hero-dark.svg"
-                alt="HubSuite — Compliance, Care, FM Control"
-                width={560}
-                height={560}
-                className="w-full max-w-[520px]"
-                style={{ filter: 'drop-shadow(0 0 80px rgba(91,141,239,0.25))' }}
-                priority={false}
-              />
-            </div>
-
-            {/* Right — copy + tri-product cards */}
-            <div>
-              <p
-                className="text-xs font-bold tracking-[0.4em] uppercase mb-6"
-                style={{ color: '#5B8DEF', fontFamily: 'monospace' }}
-              >
-                HubSuite — Operational OS
-              </p>
-              <h2
-                className="font-extrabold tracking-tight mb-6 text-white"
-                style={{ fontFamily: 'Outfit, sans-serif', fontSize: 'clamp(2rem, 4.5vw, 3.25rem)', lineHeight: 1.05 }}
-              >
-                Three connected hubs.<br />One operating system.
-              </h2>
-              <p className="text-lg leading-relaxed mb-8" style={{ color: 'rgba(255,255,255,0.5)' }}>
-                Our white-label platform for UK estates: statutory compliance, residential care, and facilities management — under one brand, one login, one source of truth.
-              </p>
-
-              <div className="grid sm:grid-cols-3 gap-4">
-                <HubCard product="compliance" label="Compliance Hub" tagline="LOLER, PUWER, RIDDOR, EICR, Gas, Fire, Legionella." href="https://compliance-hub.jonnyai.co.uk" />
-                <HubCard product="care"       label="Care Hub"       tagline="CQC-aligned residential & nursing care operations." href="https://care-hub.jonnyai.co.uk" />
-                <HubCard product="fm"         label="FM Control Hub" tagline="PPM, work orders, permits, contractor & key control." href="https://fm-control-hub.jonnyai.co.uk" />
-              </div>
-            </div>
-          </motion.div>
-        </div>
-      </section>
-
-      {/* ════════════════════════════════════════════════════════════
           FULL-BLEED BRAND VISUAL — neural network / fiber aesthetic
       ═══════════════════════════════════════════════════════════════ */}
       <section className="relative w-full overflow-hidden" style={{ height: 'clamp(320px, 45vw, 600px)' }}>
@@ -349,10 +296,10 @@ export default function HomePage() {
               lineHeight: 1.05,
             }}
           >
-            Most businesses are paying for AI<br />they don't own.
+            Most businesses are paying for AI<br />they don&apos;t own.
           </h2>
           <p className="text-lg leading-relaxed max-w-2xl mx-auto mb-4" style={{ color: 'rgba(255,255,255,0.45)' }}>
-            ChatGPT, Zapier, Make, Notion AI — you're renting access to someone else's system.
+            ChatGPT, Zapier, Make, Notion AI — you&apos;re renting access to someone else&apos;s system.
             Your data goes to their servers. Stop paying, it stops working.
             None of it is trained on how your business actually runs.
           </p>
@@ -599,7 +546,7 @@ export default function HomePage() {
 
                 {/* Features */}
                 <div className="p-7 py-5 flex-1" style={{ borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
-                  <p className="text-[9px] font-mono uppercase tracking-widest mb-4" style={{ color: 'rgba(255,255,255,0.25)' }}>What's included</p>
+                  <p className="text-[9px] font-mono uppercase tracking-widest mb-4" style={{ color: 'rgba(255,255,255,0.25)' }}>What&apos;s included</p>
                   <ul className="flex flex-col gap-2.5">
                     {features.map((f) => (
                       <li key={f} className="flex items-start gap-2.5 text-xs leading-relaxed" style={{ color: 'rgba(255,255,255,0.55)' }}>
@@ -1058,34 +1005,5 @@ export default function HomePage() {
         </div>
       </footer>
     </main>
-  );
-}
-
-function HubCard({ product, label, tagline, href }: { product: 'compliance' | 'care' | 'fm'; label: string; tagline: string; href: string }) {
-  const accent = product === 'compliance' ? '#5B8DEF' : product === 'care' ? '#31C6A9' : '#5EC86E';
-  return (
-    <a
-      href={href}
-      target="_blank"
-      rel="noreferrer"
-      className="group flex flex-col gap-3 rounded-xl p-4 transition-all"
-      style={{
-        background: 'rgba(255,255,255,0.03)',
-        border: '1px solid rgba(255,255,255,0.07)',
-      }}
-    >
-      <Image
-        src={`/brand/hub/${product === 'fm' ? 'fm' : product}-mark.svg`}
-        alt=""
-        width={48}
-        height={48}
-        className="h-12 w-12"
-      />
-      <div className="font-bold text-white text-sm" style={{ fontFamily: 'Outfit, sans-serif' }}>{label}</div>
-      <div className="text-xs leading-relaxed" style={{ color: 'rgba(255,255,255,0.45)' }}>{tagline}</div>
-      <div className="text-xs font-bold tracking-widest uppercase mt-1" style={{ color: accent }}>
-        Visit →
-      </div>
-    </a>
   );
 }
