@@ -6,13 +6,9 @@ import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const navLinks = [
-  { label: 'Install', href: '/install' },
-  { label: 'Build', href: '/build' },
-  { label: 'Automate', href: '/automate' },
-  { label: 'YouTube', href: '/youtube' },
-  { label: 'Workforce', href: '/workforce' },
-  { label: 'Empire', href: '/empire' },
-  { label: 'Resorts', href: '/resorts' },
+  { label: 'Services', href: '/#services' },
+  { label: 'Work', href: '/portfolio' },
+  { label: 'Products', href: '/#products' },
   { label: 'Marketplace', href: '/marketplace' },
   { label: 'Blog', href: '/blog' },
 ];
@@ -64,7 +60,7 @@ export default function GlassNavbar() {
 
         {/* Desktop CTA */}
         <Link href="/brief" className="hidden md:inline-flex btn-citrus py-2 px-5 text-xs shrink-0">
-          Get Started →
+          Start a project →
         </Link>
 
         {/* Mobile Hamburger */}
@@ -106,7 +102,7 @@ export default function GlassNavbar() {
                   className="btn-citrus text-xs text-center py-3 w-full block"
                   onClick={() => setMenuOpen(false)}
                 >
-                  Get Started →
+                  Start a project →
                 </Link>
               </div>
             </div>

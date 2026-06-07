@@ -6,12 +6,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
 
   return [
     { url: base, lastModified: now, changeFrequency: 'weekly', priority: 1.0 },
-    { url: `${base}/install`, lastModified: now, changeFrequency: 'weekly', priority: 0.95 },
-    { url: `${base}/build`, lastModified: now, changeFrequency: 'weekly', priority: 0.9 },
-    { url: `${base}/automate`, lastModified: now, changeFrequency: 'weekly', priority: 0.9 },
-    { url: `${base}/youtube`, lastModified: now, changeFrequency: 'weekly', priority: 0.85 },
-    { url: `${base}/workforce`, lastModified: now, changeFrequency: 'weekly', priority: 0.85 },
-    { url: `${base}/empire`, lastModified: now, changeFrequency: 'weekly', priority: 0.85 },
+    { url: `${base}/portfolio`, lastModified: now, changeFrequency: 'weekly', priority: 0.95 },
+    { url: `${base}/portfolio/case-studies`, lastModified: now, changeFrequency: 'weekly', priority: 0.9 },
+    { url: `${base}/marketplace`, lastModified: now, changeFrequency: 'weekly', priority: 0.9 },
+    { url: `${base}/install`, lastModified: now, changeFrequency: 'weekly', priority: 0.85 },
+    { url: `${base}/build`, lastModified: now, changeFrequency: 'weekly', priority: 0.85 },
+    { url: `${base}/automate`, lastModified: now, changeFrequency: 'weekly', priority: 0.85 },
     { url: `${base}/brief`, lastModified: now, changeFrequency: 'monthly', priority: 0.95 },
     { url: `${base}/blog`, lastModified: now, changeFrequency: 'weekly', priority: 0.7 },
     { url: `${base}/privacy`, lastModified: now, changeFrequency: 'yearly', priority: 0.3 },
