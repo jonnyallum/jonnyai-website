@@ -20,7 +20,113 @@ export interface CaseStudy {
   screenshots: string[];
 }
 
-export const caseStudies: CaseStudy[] = [
+// Retired "AI-agent orchestra" fiction — excluded from the live site.
+// (Source objects remain below for reference until the file is fully pruned.)
+const RETIRED_SLUGS = new Set<string>([
+  "jailbreak-os",
+  "antigravity-orchestra",
+  "antigravity-academy",
+  "antigravity-assurance",
+]);
+
+const rawCaseStudies: CaseStudy[] = [
+  // ═══════════════════════════════════════════════════════════════
+  // 0. Little Joe's Tree Services — Flagship Studio Build
+  // ═══════════════════════════════════════════════════════════════
+  {
+    slug: "little-joes-tree-services",
+    title: "Little Joe's Tree Services",
+    subtitle: "A full studio build for a Hampshire tree surgeon — rebrand, website, and an on-site content day, end to end.",
+    client: "Little Joe's Tree Services — Hampshire",
+    category: "Branding · Web · Content · Local Business",
+    hook: "A skilled, NPTC-qualified tree team that was brilliant on the tools but invisible online — living off word-of-mouth and review-site leads. We gave them the works: a new logo and brand identity, a fast lead-generation website covering 25+ Hampshire towns, and a content day on site filming the crew in the trees, cut into vertical reels and published to the site and socials. This is the whole studio offering in one job.",
+    heroImage: "/portfolio/littlejoes/hero.svg",
+    featured: true,
+    metrics: [
+      { label: "Areas Covered", value: "25+" },
+      { label: "Reviews Surfaced", value: "100+" },
+      { label: "Emergency Cover", value: "24/7" },
+      { label: "Scope", value: "Brand + Web + Film" },
+      { label: "Stack", value: "Next.js" },
+    ],
+    techStack: ["Brand Identity", "Logo Design", "Next.js", "Local SEO", "Reels / Video", "On-site Filming", "Social Publishing"],
+    sections: [
+      {
+        id: "the-brief",
+        title: "The Brief — Great at the Work, Invisible Online",
+        content: `Little Joe's Tree Services is a Hampshire tree surgery and garden clearance team. NPTC and City & Guilds qualified, fully insured, and genuinely good at the work — pruning, reductions, removals, stump grinding, hedge cutting, site clearance and 24/7 emergency call-outs across Portsmouth, Havant, Fareham, Southampton, Winchester and 20+ more towns.
+
+The problem wasn't the work. It was that nobody could find them. Their presence was a patchwork of word-of-mouth, a Facebook page and review-site listings (Bark, Google). No real brand. No website doing any selling. No content showing what they actually do. For a trade where homeowners and landlords judge you in the first five seconds, that's money walking out the door.
+
+The brief was simple: make Little Joe's look like the most serious, trustworthy tree team in Hampshire — and build the machine that turns local searches into booked jobs.`,
+      },
+      {
+        id: "the-rebrand",
+        title: "The Rebrand — A Proper Identity",
+        content: `We started with the brand, because everything else hangs off it.
+
+**Logo & mark.** Out went the plain, generic wordmark. In came a clean, confident identity — a stylised tree mark paired with a strong, modern wordmark that reads instantly on a van, a hard hat, an invoice or a phone screen.
+
+**Brand system.** A woodland-led palette (deep greens, natural tones), a bold display typeface for headlines and a clear, legible body face — all documented so it stays consistent everywhere it lands: website, social, quotes, signage, workwear.
+
+**The point of it.** A homeowner deciding who to let up a 40-foot oak in their garden is buying trust. A coherent, professional brand signals "these people are organised and safe" before a single word is read. That's the job the rebrand does.`,
+      },
+      {
+        id: "the-website",
+        title: "The Website — Built to Turn Searches Into Calls",
+        content: `Next, a fast, modern website engineered specifically for local lead generation — not a digital brochure.
+
+**Structure that ranks and converts:**
+- **Services** — pruning & reductions, removals, stump grinding, hedge cutting, site & garden clearance, fencing, and 24/7 emergency work, each clearly explained.
+- **Areas** — dedicated coverage for 25+ Hampshire towns, so the site shows up for "tree surgeon near me" across the whole patch.
+- **Reviews** — 100+ customer reviews surfaced front and centre to build instant trust.
+- **About, FAQ & Credentials** — NPTC / City & Guilds qualifications and full insurance made obvious, answering the questions that win the job.
+- **Contact & free quote** — friction-free quote requests and a tap-to-call 24/7 emergency line on every page.
+
+**Engineered properly.** Built on Next.js for speed, with local SEO and schema baked in, mobile-first (most tree-work searches happen on a phone, often urgently), and tuned so the path from Google to "Get a free quote" is as short as possible.`,
+      },
+      {
+        id: "content-and-reels",
+        title: "Content & Reels — We Came On Site and Filmed It",
+        content: `This is the part most agencies simply don't do — and it's the difference between a website that sits there and a brand that grows.
+
+We booked a content day and went out with the crew. We filmed the real thing: climbers up in the canopy, controlled rigging and dismantles, the chipper running, big tidy-ups, the satisfying before-and-afters. Then we came back and cut it into punchy vertical reels designed for how people actually scroll.
+
+Those reels went onto the website and out across social (Facebook / YouTube), giving Little Joe's a steady stream of genuine, high-trust content that shows competence and safety in a way no stock photo ever could. Real work, real team, real proof.
+
+We don't just build the shop window — we make the content that fills it and keeps people coming back.`,
+      },
+      {
+        id: "the-result",
+        title: "The Result — One Brand, One Machine",
+        content: `Little Joe's went from a scattered, word-of-mouth operation to a single, coherent brand with a proper engine behind it:
+
+- A distinctive logo and identity applied consistently across every touchpoint.
+- A fast, local-SEO-tuned website covering 25+ Hampshire towns, built to convert searches into quote requests and 24/7 emergency calls.
+- A library of real on-site reels powering the site and social channels.
+
+It's the clearest example of what the studio does: **we brand it, build it, film it and automate it** — the whole job, one team, no hand-offs.
+
+*Hard performance numbers (rankings, calls, bookings) to be added here as the data comes in.*`,
+      },
+      {
+        id: "want-the-same",
+        title: "Want the Same for Your Business?",
+        content: `If you run a real-world business — a trade, a service, a local operation — and you're great at the work but losing jobs to better-looking competitors, this is exactly what we do.
+
+Brand, website, content and automation, done end to end by one studio. Tell us what you do and we'll come back with a clear, fixed-price plan.
+
+Contact: hello@jonnyai.co.uk`,
+      },
+    ],
+    screenshots: [
+      "/portfolio/littlejoes/hero.svg",
+      "/portfolio/littlejoes/logo-before-after.svg",
+      "/portfolio/littlejoes/website.svg",
+      "/portfolio/littlejoes/reels.svg",
+    ],
+  },
+
   // ═══════════════════════════════════════════════════════════════
   // 1. FM Control Hub — Production-Grade Acquisition Product
   // ═══════════════════════════════════════════════════════════════
@@ -1324,6 +1430,10 @@ Sold as a SaaS: £99/mo Starter (1 home, up to 5 staff users), £299/mo Pro (up 
     screenshots: [],
   },
 ];
+
+export const caseStudies: CaseStudy[] = rawCaseStudies.filter(
+  (study) => !RETIRED_SLUGS.has(study.slug)
+);
 
 export function getFeaturedCaseStudies(): CaseStudy[] {
   return caseStudies.filter((study) => study.featured);

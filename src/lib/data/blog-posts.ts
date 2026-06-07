@@ -18,7 +18,18 @@ export interface TimelineEvent {
   metric?: string;
 }
 
-export const blogPosts: BlogPost[] = [
+// Retired "AI-agent orchestra" lore — excluded from the live blog.
+const RETIRED_POST_SLUGS = new Set<string>([
+  "jarios-4-edge-cluster-new-ventures-feb-2026",
+  "agentflip-autonomous-keyword-arbitrage-engine",
+  "gold-standard-autonomous-ai-audit-agency",
+  "why-65-specialist-agents-not-one-ai",
+  "shared-brain-architecture-live-ai-coordination",
+  "jai-os-4-0-the-operating-system-for-ai-agencies",
+  "from-concept-to-65-specialist-orchestra",
+]);
+
+const rawBlogPosts: BlogPost[] = [
 
   // ── PRODUCT CASE STUDY — Three Vertical SaaS Applications ─────────────────
 
@@ -1174,6 +1185,10 @@ That's the ROI of AI-assisted specialist development. Not replacing the estimato
   },
 
 ];
+
+export const blogPosts: BlogPost[] = rawBlogPosts.filter(
+  (post) => !RETIRED_POST_SLUGS.has(post.slug)
+);
 
 export const timeline: TimelineEvent[] = [
   {

@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="675" viewBox="0 0 1200 675" role="img" aria-label="Website build">
+  <rect width="1200" height="675" fill="#0a120d"/>
+  <rect x="120" y="90" width="960" height="495" rx="14" fill="#0f1d15" stroke="#3DA35D" stroke-opacity="0.3" stroke-width="2"/>
+  <rect x="120" y="90" width="960" height="64" rx="14" fill="#10241a"/>
+  <circle cx="160" cy="122" r="7" fill="#ffffff" opacity="0.25"/>
+  <circle cx="186" cy="122" r="7" fill="#ffffff" opacity="0.25"/>
+  <circle cx="212" cy="122" r="7" fill="#ffffff" opacity="0.25"/>
+  <rect x="640" y="112" width="400" height="20" rx="10" fill="#ffffff" opacity="0.08"/>
+  <rect x="170" y="210" width="420" height="44" rx="8" fill="#ffffff" opacity="0.85"/>
+  <rect x="170" y="276" width="520" height="16" rx="8" fill="#ffffff" opacity="0.25"/>
+  <rect x="170" y="304" width="480" height="16" rx="8" fill="#ffffff" opacity="0.2"/>
+  <rect x="170" y="360" width="180" height="48" rx="24" fill="#3DA35D"/>
+  <g fill="#10241a" stroke="#3DA35D" stroke-opacity="0.4" stroke-width="2">
+    <rect x="720" y="210" width="320" height="200" rx="12"/>
+  </g>
+  <text x="600" y="640" text-anchor="middle" font-family="monospace" font-size="15" fill="#ffffff" opacity="0.3">placeholder — replace with live site screenshots</text>
+</svg>

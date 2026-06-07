@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="675" viewBox="0 0 1200 675" role="img" aria-label="Logo before and after">
+  <rect width="1200" height="675" fill="#0a120d"/>
+  <line x1="600" y1="60" x2="600" y2="615" stroke="#ffffff" stroke-opacity="0.1" stroke-width="2"/>
+  <text x="300" y="90" text-anchor="middle" font-family="monospace" font-size="18" letter-spacing="4" fill="#ffffff" opacity="0.4">BEFORE</text>
+  <text x="900" y="90" text-anchor="middle" font-family="monospace" font-size="18" letter-spacing="4" fill="#7FD89A">AFTER</text>
+  <!-- before: plain -->
+  <text x="300" y="350" text-anchor="middle" font-family="Arial, sans-serif" font-size="40" fill="#ffffff" opacity="0.45">little joes</text>
+  <text x="300" y="395" text-anchor="middle" font-family="Arial, sans-serif" font-size="18" fill="#ffffff" opacity="0.3">tree services</text>
+  <!-- after: branded -->
+  <g transform="translate(900 300)" fill="none" stroke="#3DA35D" stroke-width="8" stroke-linecap="round">
+    <path d="M0 80 L0 -20"/>
+    <circle cx="0" cy="-70" r="46"/>
+    <circle cx="-58" cy="-10" r="30" opacity="0.8"/>
+    <circle cx="58" cy="-10" r="30" opacity="0.8"/>
+  </g>
+  <text x="900" y="430" text-anchor="middle" font-family="Outfit, Arial, sans-serif" font-size="44" font-weight="800" fill="#ffffff">LITTLE JOE&#39;S</text>
+  <text x="900" y="465" text-anchor="middle" font-family="Outfit, Arial, sans-serif" font-size="16" letter-spacing="5" fill="#7FD89A">TREE SERVICES</text>
+  <text x="600" y="640" text-anchor="middle" font-family="monospace" font-size="15" fill="#ffffff" opacity="0.3">placeholder — replace with real logo files</text>
+</svg>

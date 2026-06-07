@@ -6,9 +6,9 @@ import FiberCanvas from "@/components/FiberCanvas";
 import { ModeProvider } from "@/context/ModeContext";
 
 export const metadata: Metadata = {
-  title: "JonnyAI | Private AI Installation for UK Businesses",
-  description: "We install a private AI system inside your business — configured for your workflows, trained on your data, running on your hardware. Not a SaaS. Yours forever. From £997.",
-  keywords: "private AI install UK, AI for small business UK, business AI system, AI installation service UK, n8n automation UK, AI workforce UK, custom AI build UK",
+  title: "JonnyAI | We brand it, build it, film it & automate it",
+  description: "An AI-native creative + tech studio for local businesses. Rebrands, websites & apps, on-site content & reels, and AI automation — done end to end. Plus our own SaaS: the HubSuite.",
+  keywords: "creative studio UK, web design UK, rebrand UK, logo design UK, content and reels UK, local business marketing UK, AI automation UK, vertical SaaS UK, Hampshire web design",
   metadataBase: new URL("https://jonnyai.co.uk"),
   alternates: { canonical: "https://jonnyai.co.uk/" },
   robots: { index: true, follow: true, googleBot: { index: true, follow: true } },
@@ -16,13 +16,13 @@ export const metadata: Metadata = {
     google: process.env.GOOGLE_SITE_VERIFICATION,
   },
   openGraph: {
-    title: "JonnyAI | Private AI Installation for UK Businesses",
-    description: "We install a private AI system inside your business — configured for your workflows, trained on your data, on your hardware. From £997.",
+    title: "JonnyAI | We brand it, build it, film it & automate it",
+    description: "An AI-native creative + tech studio for local businesses — rebrands, websites & apps, content & reels, and AI automation. Plus our own SaaS product line.",
     type: "website",
     url: "https://jonnyai.co.uk",
     locale: "en_GB",
     siteName: "JonnyAI",
-    images: [{ url: "/brand/og_card.png", width: 1200, height: 630, alt: "JonnyAI — Private AI Installation for UK Businesses" }],
+    images: [{ url: "/brand/og_card.png", width: 1200, height: 630, alt: "JonnyAI — We brand it, build it, film it & automate it" }],
   },
 };
 
@@ -33,38 +33,31 @@ const jsonLd = {
   "url": "https://jonnyai.co.uk",
   "logo": "https://jonnyai.co.uk/jai_logo_clean.png",
   "image": "https://jonnyai.co.uk/brand/og_card.png",
-  "description": "Private AI installation, automation, and AI workforce services for UK small businesses. We build AI systems that live inside your business — on your hardware, trained on your data.",
-  "priceRange": "£297-£1997",
+  "description": "An AI-native creative and technology studio for local businesses — rebrands, logos, websites and apps, on-site content and reels, and AI automation. We also build and sell our own vertical SaaS (the HubSuite).",
+  "priceRange": "££",
   "address": { "@type": "PostalAddress", "addressCountry": "GB", "addressRegion": "United Kingdom" },
   "areaServed": { "@type": "Country", "name": "United Kingdom" },
   "email": "hello@jonnyai.co.uk",
   "founder": { "@type": "Person", "name": "Jonny Allum" },
   "hasOfferCatalog": {
     "@type": "OfferCatalog",
-    "name": "AI Services for UK Businesses",
+    "name": "Studio services for local businesses",
     "itemListElement": [
       {
         "@type": "Offer",
-        "itemOffered": {
-          "@type": "Service",
-          "name": "Private AI Install",
-          "description": "A private AI system installed on your hardware, configured for your workflows, trained on your data.",
-        },
-        "price": "997",
-        "priceCurrency": "GBP",
-        "priceSpecification": { "@type": "PriceSpecification", "minPrice": "997", "maxPrice": "1997", "priceCurrency": "GBP" },
+        "itemOffered": { "@type": "Service", "name": "Branding & Rebrands", "description": "Logo design, brand identity and full rebrands that make local businesses look serious." },
       },
       {
         "@type": "Offer",
-        "itemOffered": { "@type": "Service", "name": "Automation Packs", "description": "n8n workflows that eliminate repetitive business tasks." },
-        "price": "297",
-        "priceCurrency": "GBP",
+        "itemOffered": { "@type": "Service", "name": "Websites & Apps", "description": "Fast, modern Next.js websites and web apps built to convert, with local SEO baked in." },
       },
       {
         "@type": "Offer",
-        "itemOffered": { "@type": "Service", "name": "AI Workforce", "description": "A dedicated AI agent trained on your business, running 24/7." },
-        "price": "1000",
-        "priceCurrency": "GBP",
+        "itemOffered": { "@type": "Service", "name": "Content & Reels", "description": "On-site filming, vertical reels and social content — produced and published for you." },
+      },
+      {
+        "@type": "Offer",
+        "itemOffered": { "@type": "Service", "name": "AI & Automation", "description": "Private AI systems and automations that remove repetitive work and run 24/7." },
       },
     ],
   },
