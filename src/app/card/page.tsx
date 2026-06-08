@@ -12,6 +12,9 @@ const LINKS = {
   whatsappDirect: 'https://wa.me/447723959178?text=Hi%20Jonny%2C%20I%20found%20your%20profile%20and%20I%27d%20like%20to%20discuss%20a%20project.',
   fbPersonal: 'https://www.facebook.com/share/18bPPjmPvg/',
   fbBusiness: 'https://www.facebook.com/share/1JT92LVV3M/',
+  // Replace with your verified GMB review link: https://g.page/r/XXXXXXX/review
+  googleReview: 'https://www.google.com/search?q=Jonny+Allum+Innovations+JonnyAI&hl=en#lrd=,1,,,',
+  fbReview: 'https://www.facebook.com/share/1JT92LVV3M/',
   tiktok: 'https://www.tiktok.com/@jonnyai',
   igPersonal: 'https://www.instagram.com/jonnyallum',
   igBusiness: 'https://www.instagram.com/jonnyai.co.uk',
@@ -50,7 +53,7 @@ function StarRating() {
 
   function handleStar(n: number) {
     if (n >= 4) {
-      window.open('https://g.page/r/review', '_blank');
+      window.open(LINKS.googleReview, '_blank');
     } else {
       window.open(`mailto:info@jonnyai.co.uk?subject=Feedback&body=Rating: ${n}/5 - `, '_blank');
     }
@@ -304,6 +307,28 @@ export default function CardPage() {
           style={{ border: '1px solid #c8830020', background: '#0f0d0a' }}
         >
           <StarRating />
+        </div>
+
+        {/* Review shortcuts */}
+        <div className="w-full mt-3 grid grid-cols-2 gap-2">
+          <a
+            href={LINKS.googleReview}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center justify-center gap-2 py-3 px-4 rounded-2xl font-semibold text-sm transition-all hover:scale-105 active:scale-95"
+            style={{ background: '#1a1a1a', border: '1px solid #4285F420', color: '#fff' }}
+          >
+            <span className="text-lg">⭐</span> Google Review
+          </a>
+          <a
+            href={LINKS.fbReview}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center justify-center gap-2 py-3 px-4 rounded-2xl font-semibold text-sm transition-all hover:scale-105 active:scale-95"
+            style={{ background: '#1a1a1a', border: '1px solid #1877F220', color: '#fff' }}
+          >
+            <span className="text-lg">👍</span> Facebook
+          </a>
         </div>
 
         {/* Services teaser */}
