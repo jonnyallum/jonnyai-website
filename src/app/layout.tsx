@@ -6,8 +6,8 @@ import FiberCanvas from "@/components/FiberCanvas";
 import { ModeProvider } from "@/context/ModeContext";
 
 export const metadata: Metadata = {
-  title: "JonnyAI | We brand it, build it, film it & automate it",
-  description: "An AI-native creative + tech studio for local businesses. Rebrands, websites & apps, on-site content & reels, and AI automation — done end to end. Plus our own SaaS: the HubSuite.",
+  title: "JonnyAI | We brand it, build it, film it & automate it.",
+  description: "AI-native creative + tech studio for local businesses. Full-stack branding, websites, content & reels, and AI automation — plus our own SaaS products.",
   keywords: "creative studio UK, web design UK, rebrand UK, logo design UK, content and reels UK, local business marketing UK, AI automation UK, vertical SaaS UK, Hampshire web design",
   metadataBase: new URL("https://jonnyai.co.uk"),
   alternates: { canonical: "https://jonnyai.co.uk/" },
@@ -16,7 +16,7 @@ export const metadata: Metadata = {
     google: process.env.GOOGLE_SITE_VERIFICATION,
   },
   openGraph: {
-    title: "JonnyAI | We brand it, build it, film it & automate it",
+    title: "JonnyAI | We brand it, build it, film it & automate it.",
     description: "An AI-native creative + tech studio for local businesses — rebrands, websites & apps, content & reels, and AI automation. Plus our own SaaS product line.",
     type: "website",
     url: "https://jonnyai.co.uk",
@@ -28,12 +28,12 @@ export const metadata: Metadata = {
 
 const jsonLd = {
   "@context": "https://schema.org",
-  "@type": ["ProfessionalService", "LocalBusiness"],
+  "@type": "ProfessionalService",
   "name": "JonnyAI",
   "url": "https://jonnyai.co.uk",
   "logo": "https://jonnyai.co.uk/jai_logo_clean.png",
   "image": "https://jonnyai.co.uk/brand/og_card.png",
-  "description": "An AI-native creative and technology studio for local businesses — rebrands, logos, websites and apps, on-site content and reels, and AI automation. We also build and sell our own vertical SaaS (the HubSuite).",
+  "description": "AI-native creative + tech studio for local businesses. Full-stack branding, websites, content & reels, and AI automation — plus our own SaaS products.",
   "priceRange": "££",
   "address": { "@type": "PostalAddress", "addressCountry": "GB", "addressRegion": "United Kingdom" },
   "areaServed": { "@type": "Country", "name": "United Kingdom" },
