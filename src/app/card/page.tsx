@@ -366,8 +366,32 @@ export default function CardPage() {
           </Link>
         </div>
 
+        {/* Get yours CTA */}
+        <a
+          href="https://kliqt.co.uk"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="w-full mt-3 flex items-center justify-between px-5 py-4 rounded-2xl transition-all hover:scale-[1.02] active:scale-[0.98] group"
+          style={{
+            background: 'linear-gradient(135deg, #0f0d0a 0%, #1a1000 100%)',
+            border: '1px solid #c8830040',
+            boxShadow: '0 0 20px #c8830010',
+          }}
+        >
+          <div>
+            <p className="text-sm font-semibold text-white">Want one of these?</p>
+            <p className="text-xs text-white/40 mt-0.5">Smart profiles for your business</p>
+          </div>
+          <div
+            className="px-3 py-1.5 rounded-lg text-xs font-bold tracking-wide transition-all group-hover:scale-105"
+            style={{ background: 'linear-gradient(90deg, #c88300, #e8a020)', color: '#000' }}
+          >
+            kliqt.co.uk →
+          </div>
+        </a>
+
         {/* Footer */}
-        <p className="mt-6 mb-2 text-[10px] text-white/20 text-center">
+        <p className="mt-4 mb-2 text-[10px] text-white/20 text-center">
           jonnyai.co.uk · Jonny Allum Innovations Ltd
         </p>
       </div>
