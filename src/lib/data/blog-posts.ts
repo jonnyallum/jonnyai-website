@@ -18,7 +18,7 @@ export interface TimelineEvent {
   metric?: string;
 }
 
-// Retired "AI-agent orchestra" lore — excluded from the live blog.
+// Retired agent-lore and off-brand posts — excluded from the live blog.
 const RETIRED_POST_SLUGS = new Set<string>([
   "jarios-4-edge-cluster-new-ventures-feb-2026",
   "agentflip-autonomous-keyword-arbitrage-engine",
@@ -27,6 +27,11 @@ const RETIRED_POST_SLUGS = new Set<string>([
   "shared-brain-architecture-live-ai-coordination",
   "jai-os-4-0-the-operating-system-for-ai-agencies",
   "from-concept-to-65-specialist-orchestra",
+  "safeguardian-child-safety-app",
+  "week-in-ai-23-feb-2026",
+  "48-hour-build-discipline",
+  "the-glass-box-why-we-show-you-everything",
+  "why-we-stopped-building-general-purpose-ai-tools",
 ]);
 
 const rawBlogPosts: BlogPost[] = [

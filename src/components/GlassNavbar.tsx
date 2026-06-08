@@ -9,8 +9,8 @@ const navLinks = [
   { label: 'Services', href: '/#services' },
   { label: 'Work', href: '/portfolio' },
   { label: 'Products', href: '/#products' },
-  { label: 'Marketplace', href: '/marketplace' },
   { label: 'Blog', href: '/blog' },
+  { label: 'Contact', href: '/brief' },
 ];
 
 export default function GlassNavbar() {

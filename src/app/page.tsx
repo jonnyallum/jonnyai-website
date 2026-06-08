@@ -629,8 +629,8 @@ export default function HomePage() {
               ['Services', '/#services'],
               ['Work', '/portfolio'],
               ['Products', '/#products'],
-              ['Marketplace', '/marketplace'],
               ['Blog', '/blog'],
+              ['Contact', '/brief'],
               ['Privacy', '/privacy'],
               ['Terms', '/terms'],
             ].map(([label, href]) => (
