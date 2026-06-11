@@ -13,7 +13,7 @@ const LINKS = {
   whatsappDirect: 'https://wa.me/447723959178?text=Hi%20Jonny%2C%20I%20found%20your%20profile%20and%20I%27d%20like%20to%20discuss%20a%20project.',
   fbPersonal: 'https://www.facebook.com/share/18bPPjmPvg/',
   fbBusiness: 'https://www.facebook.com/share/1JT92LVV3M/',
-  googleReview: 'https://www.google.com/search?q=Jonny+Allum+Innovations+JonnyAI&hl=en#lrd=,1,,,',
+  googleReview: 'https://g.page/r/CR8p8wmFKwVYEBI/review',
   fbReview: 'https://www.facebook.com/share/1JT92LVV3M/',
   tiktok: 'https://www.tiktok.com/@jonnyai',
   igPersonal: 'https://www.instagram.com/jonnyallum',
@@ -461,27 +461,33 @@ export default function CardPage() {
           <StarRating />
         </div>
 
-        {/* Review shortcuts */}
-        <div className="w-full mt-3 grid grid-cols-2 gap-2">
-          <a
-            href={LINKS.googleReview}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center justify-center gap-2 py-3 px-4 rounded-2xl font-semibold text-sm transition-all hover:scale-105 active:scale-95"
-            style={{ background: '#1a1a1a', border: '1px solid #4285F420', color: '#fff' }}
-          >
-            <GoogleIcon className="w-5 h-5" /> Google Review
-          </a>
-          <a
-            href={LINKS.fbReview}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center justify-center gap-2 py-3 px-4 rounded-2xl font-semibold text-sm transition-all hover:scale-105 active:scale-95"
-            style={{ background: '#1a1a1a', border: '1px solid #1877F220', color: '#fff' }}
-          >
-            <FacebookIcon className="w-5 h-5 text-[#1877F2]" /> Facebook
-          </a>
-        </div>
+        {/* Google review — primary CTA */}
+        <a
+          href={LINKS.googleReview}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="w-full mt-3 flex items-center justify-center gap-3 py-4 px-6 rounded-2xl font-bold text-base transition-all hover:scale-[1.03] active:scale-[0.97]"
+          style={{
+            background: '#fff',
+            color: '#1a1a1a',
+            boxShadow: '0 4px 24px #4285F430',
+          }}
+        >
+          <GoogleIcon className="w-6 h-6 flex-shrink-0" />
+          <span>Review us on Google</span>
+          <span className="ml-1 text-yellow-500">⭐</span>
+        </a>
+
+        {/* Facebook review — secondary */}
+        <a
+          href={LINKS.fbReview}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="w-full mt-2 flex items-center justify-center gap-2 py-3 px-4 rounded-2xl font-semibold text-sm transition-all hover:scale-105 active:scale-95"
+          style={{ background: '#1a1a1a', border: '1px solid #1877F230', color: '#fff' }}
+        >
+          <FacebookIcon className="w-5 h-5 text-[#1877F2]" /> Facebook Review
+        </a>
 
         {/* Services teaser */}
         <div
