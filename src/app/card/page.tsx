@@ -313,24 +313,28 @@ export default function CardPage() {
           }}
         >
           {/* Backdrop strip */}
-          <div
-            className="relative w-full h-36"
-            style={{
-              background:
-                'linear-gradient(135deg, #0f0d0a 0%, #1a1000 40%, #2d1800 70%, #1a0e00 100%)',
-            }}
-          >
-            {/* Circuit pattern overlay */}
+          <div className="relative w-full h-36 overflow-hidden bg-black">
+            {/* Banner video */}
+            <video
+              autoPlay
+              muted
+              loop
+              playsInline
+              className="absolute inset-0 w-full h-full object-cover"
+            >
+              <source src="/card-banner.mp4" type="video/mp4" />
+            </video>
+            {/* Dark gradient overlay */}
             <div
-              className="absolute inset-0 opacity-20"
+              className="absolute inset-0"
               style={{
-                backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' stroke='%23c88300' stroke-width='0.5'%3E%3Cpath d='M10 30h10M40 30h10M30 10v10M30 40v10'/%3E%3Ccircle cx='30' cy='30' r='3'/%3E%3Ccircle cx='10' cy='30' r='2'/%3E%3Ccircle cx='50' cy='30' r='2'/%3E%3Ccircle cx='30' cy='10' r='2'/%3E%3Ccircle cx='30' cy='50' r='2'/%3E%3C/g%3E%3C/svg%3E")`,
-                backgroundSize: '60px 60px',
+                background:
+                  'linear-gradient(135deg, rgba(15,13,10,0.55) 0%, rgba(26,16,0,0.45) 50%, rgba(15,13,10,0.55) 100%)',
               }}
             />
             {/* Logo top-right */}
             <div className="absolute top-4 right-4">
-              <Image src="/jai_logo_clean.png" alt="JAI" width={80} height={30} className="opacity-80" />
+              <Image src="/jai_logo_clean.png" alt="JAI" width={80} height={30} className="opacity-90" />
             </div>
           </div>
 
