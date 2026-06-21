@@ -11,14 +11,30 @@ interface Props {
   params: Promise<{ slug: string }>;
 }
 
-// Render inline **bold** markup as real <strong> elements.
+// Render inline **bold** and [label](url) links as real elements.
 function renderInline(text: string): React.ReactNode[] {
-  return text.split(/(\*\*[^*]+\*\*)/g).map((part, i) => {
+  return text.split(/(\*\*[^*]+\*\*|\[[^\]]+\]\([^)]+\))/g).map((part, i) => {
     if (part.startsWith("**") && part.endsWith("**")) {
       return (
         <strong key={i} style={{ color: "rgba(255,255,255,0.92)", fontWeight: 700 }}>
           {part.slice(2, -2)}
         </strong>
+      );
+    }
+    const link = part.match(/^\[([^\]]+)\]\(([^)]+)\)$/);
+    if (link) {
+      const [, label, href] = link;
+      const external = href.startsWith("http");
+      return (
+        <a
+          key={i}
+          href={href}
+          target={external ? "_blank" : undefined}
+          rel={external ? "noopener noreferrer" : undefined}
+          style={{ color: "#D97757", textDecoration: "underline", textDecorationColor: "rgba(217,119,87,0.4)" }}
+        >
+          {label}
+        </a>
       );
     }
     return <span key={i}>{part}</span>;

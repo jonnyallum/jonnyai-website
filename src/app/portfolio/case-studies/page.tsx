@@ -21,7 +21,7 @@ export default function CaseStudiesPage() {
           className="text-xs uppercase tracking-[0.3em] mb-4 font-semibold"
           style={{ color: "#D97757", fontFamily: "monospace" }}
         >
-          21 Case Studies
+          22 Case Studies
         </p>
         <h1
           className="text-3xl md:text-5xl lg:text-6xl font-extrabold leading-tight mb-6 tracking-tight"
