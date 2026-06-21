@@ -147,6 +147,87 @@ Contact: hello@jonnyai.co.uk`,
   },
 
   // ═══════════════════════════════════════════════════════════════
+  // 0b. KLIQT — Smart digital business cards & profiles
+  // ═══════════════════════════════════════════════════════════════
+  {
+    slug: "kliqt",
+    title: "KLIQT",
+    subtitle: "A smart digital business card and profile platform — one tap to share everything, straight to a phone.",
+    client: "KLIQT — JonnyAI venture",
+    category: "Product · Web App · Smart Profiles",
+    hook: "Paper business cards get lost, binned, or out of date the moment they're printed. KLIQT replaces them with a smart digital profile: one tap or scan opens your card on someone's phone, saves your details to their contacts, and puts every link, social and review in one branded place — with no app to download.",
+    heroImage: "",
+    featured: true,
+    metrics: [
+      { label: "Format", value: "Web · QR · NFC" },
+      { label: "Save to phone", value: "One tap" },
+      { label: "App needed", value: "None" },
+      { label: "Branding", value: "Fully custom" },
+      { label: "Status", value: "Live" },
+    ],
+    techStack: ["Next.js", "React", "TypeScript", "Supabase", "Tailwind CSS", "vCard (.vcf)", "QR + NFC", "Resend", "Vercel"],
+    sections: [
+      {
+        id: "the-brief",
+        title: "The Brief — Kill the Paper Card",
+        content: `Everyone still hands out paper business cards, and almost everyone loses them. They're expensive to reprint, impossible to update, and they tell you nothing — you never know if a card led to anything.
+
+KLIQT was built to replace that ritual with something modern. The goal was simple:
+
+- **One tap or scan** to share everything about you — instantly, on the other person's phone.
+- **No app to download** — it just opens in their browser.
+- **Always current** — update once and every card you've ever shared updates with it.
+- **Trackable** — finally know that your card is actually being used.`,
+      },
+      {
+        id: "the-build",
+        title: "The Build — A Profile That Does the Networking for You",
+        content: `KLIQT is a smart profile that lives on the web, opened by a tap (NFC) or a scan (QR). Built on Next.js and Supabase for speed and reliability, it pulls everything a contact needs into one clean, branded page:
+
+- **Save to contacts in one tap** — a proper vCard (.vcf) drops your name, number, email, company and socials straight into their phone, photo and all.
+- **Every link in one place** — website, socials, WhatsApp, booking link, portfolio, payment — laid out as tidy tap-tiles, not a wall of text.
+- **Reviews built in** — a review prompt funnels happy customers straight to your Google profile, turning a handshake into a five-star review.
+- **Your brand, front and centre** — colours, logo, banner and photo, so the card looks like *you*, not a template.
+
+It's the same engine behind JonnyAI's own digital card — proven on a real profile before it was offered to anyone else.`,
+      },
+      {
+        id: "tap-and-scan",
+        title: "Tap, Scan, Done — How People Actually Use It",
+        content: `The whole point is friction-free sharing in the real world:
+
+- **NFC** — tap a KLIQT card or tag on someone's phone and the profile opens immediately. No app, no fuss.
+- **QR** — drop the code on a sticker, a shop window, a van, a slide or an email signature; one scan opens the same profile.
+- **A shareable link** — text or email it when you're not face to face.
+
+Because it's all one profile behind the scenes, you print or program the card once and never reprint again. Change jobs, numbers, or add a new social? Update it in seconds and every card you've handed out is instantly up to date.`,
+      },
+      {
+        id: "the-result",
+        title: "The Result — A Networking Tool That Pays for Itself",
+        content: `KLIQT is live at **kliqt.co.uk** as a standalone JonnyAI venture: a smart digital business card and profile platform that turns a quick tap into a saved contact, a followed social, or a booked job.
+
+- One branded profile, shared by tap, scan or link.
+- Save-to-phone vCard so you never live in someone's "I'll add you later" pile.
+- Review capture that grows your reputation automatically.
+- Built to be white-labelled, so businesses can roll smart cards out across a whole team.
+
+It's a clean example of the JonnyAI model: spot a tired, everyday problem, build a sharp product around it, and ship it live.`,
+      },
+      {
+        id: "want-one",
+        title: "Want a Smart Card of Your Own?",
+        content: `If you still hand out paper cards — or you want your whole team on branded smart profiles — KLIQT is ready to go.
+
+See it live at kliqt.co.uk, or get in touch and I'll set you up.
+
+Contact: hello@jonnyai.co.uk`,
+      },
+    ],
+    screenshots: [],
+  },
+
+  // ═══════════════════════════════════════════════════════════════
   // 1. Compliance Hub — Statutory FM operating system
   // ═══════════════════════════════════════════════════════════════
   {
@@ -579,6 +660,7 @@ This wasn't a website project — it was a business transformation.`,
 // Live URLs for case studies that have a public site/product to link out to.
 export const caseStudyLiveUrls: Record<string, string> = {
   "little-joes-tree-services": "https://www.littlejoestreeservices.co.uk",
+  "kliqt": "https://www.kliqt.co.uk",
   "compliance-hub": "https://compliance-hub.co.uk",
   "care-hub": "https://care-hub.app",
   "fm-control-hub": "https://fm-control-hub.co.uk",

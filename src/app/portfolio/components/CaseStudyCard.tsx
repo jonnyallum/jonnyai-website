@@ -11,6 +11,7 @@ interface CaseStudyCardProps {
 const gradients: Record<string, string> = {
   "jailbreak-os": "linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%)",
   "bl-motorcycles": "linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 50%, #1a1a1a 100%)",
+  "kliqt": "linear-gradient(135deg, #1a1510 0%, #2a1a10 45%, #0a1a18 100%)",
   "antigravity-orchestra": "linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 50%, #2d1b4e 100%)",
   "insydetradar": "linear-gradient(135deg, #0d1117 0%, #161b22 50%, #21262d 100%)",
   "jonnyai-website": "linear-gradient(135deg, #070708 0%, #1a1510 50%, #070708 100%)",

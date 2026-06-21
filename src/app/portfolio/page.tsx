@@ -7,7 +7,7 @@ import { getFeaturedCaseStudies } from "@/lib/data/case-studies";
 const credibilityStats = [
   { value: "954", label: "Commits, March 2026" },
   { value: "108", label: "Production Agents" },
-  { value: "21", label: "Case Studies" },
+  { value: "22", label: "Case Studies" },
   { value: "54", label: "Active Repos" },
   { value: "1,583", label: "Contributions (12mo)" },
 ];
@@ -50,7 +50,7 @@ export default function PortfolioPage() {
           className="text-xs uppercase tracking-[0.3em] mb-6 font-semibold"
           style={{ color: "#D97757", fontFamily: "monospace" }}
         >
-          The Work &middot; 21 Case Studies &middot; Built by one person
+          The Work &middot; 22 Case Studies &middot; Built by one person
         </p>
         <h1
           className="text-4xl md:text-6xl lg:text-7xl font-extrabold leading-[1.04] mb-8 mx-auto max-w-4xl tracking-tight"
@@ -153,7 +153,7 @@ export default function PortfolioPage() {
             className="flex items-center gap-2 text-xs uppercase tracking-widest font-semibold transition-colors duration-200 hover:text-white"
             style={{ color: "rgba(255,255,255,0.4)" }}
           >
-            All 21 Case Studies <ArrowRight className="w-3 h-3" />
+            All 22 Case Studies <ArrowRight className="w-3 h-3" />
           </Link>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
