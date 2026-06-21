@@ -1,8 +1,8 @@
 import { notFound } from "next/navigation";
-import Image from "next/image";
 import Link from "next/link";
 import type { Metadata } from "next";
 import { ArrowLeft, ArrowRight, ExternalLink } from "lucide-react";
+import ScreenshotFrame from "@/components/ScreenshotFrame";
 import MetricBadge from "../../components/MetricBadge";
 import ContactCTA from "../../components/ContactCTA";
 import { caseStudies, getCaseStudyBySlug, caseStudyLiveUrls } from "@/lib/data/case-studies";
@@ -75,9 +75,20 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
   const study = getCaseStudyBySlug(slug);
   if (!study) return {};
+  const url = `https://jonnyai.co.uk/portfolio/case-studies/${study.slug}`;
+  const image = study.screenshots?.[0] ?? "/brand/og_card.png";
   return {
-    title: `${study.title} — Jonny Allum Portfolio`,
+    title: `${study.title} — JonnyAI Case Study`,
     description: study.hook,
+    alternates: { canonical: url },
+    openGraph: {
+      title: `${study.title} — JonnyAI Case Study`,
+      description: study.hook,
+      url,
+      siteName: "JonnyAI",
+      type: "article",
+      images: [{ url: image, alt: study.title }],
+    },
   };
 }
 
@@ -119,14 +130,14 @@ export default async function CaseStudyPage({ params }: Props) {
             </span>
             <h1
               className="text-3xl md:text-5xl lg:text-6xl font-bold leading-tight mb-3"
-              style={{ fontFamily: "var(--font-instrument-serif, serif)" }}
+              style={{ fontFamily: "'Outfit', sans-serif" }}
             >
               {study.title}
             </h1>
             {study.subtitle && (
               <p
                 className="text-lg md:text-xl"
-                style={{ color: "rgba(255,255,255,0.5)", fontFamily: "var(--font-instrument-serif, serif)" }}
+                style={{ color: "rgba(255,255,255,0.5)", fontFamily: "'Outfit', sans-serif" }}
               >
                 {study.subtitle}
               </p>
@@ -148,33 +159,19 @@ export default async function CaseStudyPage({ params }: Props) {
           </div>
         </div>
 
-        {/* Hero image or gradient */}
-        <div
-          className="relative w-full h-64 md:h-96 lg:h-[480px] overflow-hidden"
-          style={{
-            borderTop: "1px solid rgba(255,255,255,0.08)",
-            borderBottom: "1px solid rgba(255,255,255,0.08)",
-            background: hasHeroScreenshot ? "#111" : "linear-gradient(135deg, #111 0%, #1a1a2e 50%, #111 100%)",
-          }}
-        >
-          {hasHeroScreenshot && (
-            <Image
+        {/* Hero image — staged in a glass frame */}
+        {hasHeroScreenshot && (
+          <div className="max-w-5xl mx-auto px-6 md:px-10 mt-2">
+            <ScreenshotFrame
               src={study.screenshots[0]}
               alt={study.title}
-              fill
-              className="object-cover"
+              label={liveUrl ? liveUrl.replace(/^https?:\/\/(www\.)?/, "") : study.title}
+              aspect="16 / 9"
               priority
-              sizes="100vw"
+              sizes="(max-width: 1024px) 100vw, 1000px"
             />
-          )}
-          <div
-            className="absolute inset-0"
-            style={{
-              background:
-                "linear-gradient(to bottom, rgba(0,0,0,0.3) 0%, transparent 40%, rgba(0,0,0,0.5) 100%)",
-            }}
-          />
-        </div>
+          </div>
+        )}
       </section>
 
       {/* ─── CONTENT ─── */}
@@ -193,7 +190,7 @@ export default async function CaseStudyPage({ params }: Props) {
                   className="text-xl md:text-2xl font-bold mb-5 pb-4"
                   style={{
                     borderBottom: "1px solid rgba(255,255,255,0.08)",
-                    fontFamily: "var(--font-instrument-serif, serif)",
+                    fontFamily: "'Outfit', sans-serif",
                   }}
                 >
                   {section.title}
@@ -296,25 +293,21 @@ export default async function CaseStudyPage({ params }: Props) {
         >
           <p
             className="text-xs uppercase tracking-[0.3em] mb-10 font-semibold"
-            style={{ color: "rgba(255,255,255,0.35)" }}
+            style={{ color: "#D97757", fontFamily: "monospace" }}
           >
             Screenshots
           </p>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             {study.screenshots.slice(1).map((src, i) => (
-              <div
+              <ScreenshotFrame
                 key={i}
-                className="relative h-56 md:h-72 overflow-hidden rounded-lg"
-                style={{ border: "1px solid rgba(255,255,255,0.08)" }}
-              >
-                <Image
-                  src={src}
-                  alt={`${study.title} screenshot ${i + 2}`}
-                  fill
-                  className="object-cover"
-                  sizes="(max-width: 768px) 100vw, 50vw"
-                />
-              </div>
+                src={src}
+                alt={`${study.title} screenshot ${i + 2}`}
+                label=""
+                aspect="16 / 10"
+                glow={false}
+                sizes="(max-width: 768px) 100vw, 50vw"
+              />
             ))}
           </div>
         </section>

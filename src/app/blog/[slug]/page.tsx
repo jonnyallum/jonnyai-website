@@ -24,16 +24,21 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
   const post = (await fetchPostBySlug(slug)) ?? staticPosts.find(p => p.slug === slug);
   if (!post) return {};
+  const url = `https://jonnyai.co.uk/blog/${slug}`;
   return {
-    title: `${post.title} | JonnyAi`,
+    title: `${post.title} | JonnyAI`,
     description: post.excerpt,
     keywords: post.tags.join(', '),
+    alternates: { canonical: url },
     openGraph: {
       title: post.title,
       description: post.excerpt,
+      url,
+      siteName: 'JonnyAI',
       type: 'article',
       publishedTime: post.date,
       locale: 'en_GB',
+      images: [{ url: '/brand/og_card.png', width: 1200, height: 630, alt: post.title }],
     },
   };
 }
