@@ -1,14 +1,13 @@
 import Link from "next/link";
 import { ArrowRight, Github } from "lucide-react";
-import PortfolioNav from "./components/PortfolioNav";
 import CaseStudyCard from "./components/CaseStudyCard";
 import ContactCTA from "./components/ContactCTA";
-import { getFeaturedCaseStudies, caseStudies } from "@/lib/data/case-studies";
+import { getFeaturedCaseStudies } from "@/lib/data/case-studies";
 
 const credibilityStats = [
   { value: "954", label: "Commits, March 2026" },
   { value: "108", label: "Production Agents" },
-  { value: "18", label: "Case Studies" },
+  { value: "21", label: "Case Studies" },
   { value: "54", label: "Active Repos" },
   { value: "1,583", label: "Contributions (12mo)" },
 ];
@@ -44,49 +43,43 @@ export default function PortfolioPage() {
   const featured = getFeaturedCaseStudies();
 
   return (
-    <div className="min-h-screen" style={{ background: "#000", color: "#fff" }}>
-      <PortfolioNav />
-
+    <div className="min-h-screen" style={{ background: "transparent", color: "#fff" }}>
       {/* ─── HERO ─── */}
       <section className="pt-36 pb-24 px-6 md:px-10 max-w-5xl mx-auto text-center">
         <p
           className="text-xs uppercase tracking-[0.3em] mb-6 font-semibold"
-          style={{ color: "rgba(255,255,255,0.4)" }}
+          style={{ color: "#D97757", fontFamily: "monospace" }}
         >
-          AI Infrastructure Lead &middot; 108 Production Agents &middot; 18 Case Studies
+          The Work &middot; 21 Case Studies &middot; Built by one person
         </p>
         <h1
-          className="text-4xl md:text-6xl lg:text-7xl font-bold leading-[1.08] mb-8 mx-auto max-w-4xl"
-          style={{ fontFamily: "var(--font-instrument-serif, serif)" }}
+          className="text-4xl md:text-6xl lg:text-7xl font-extrabold leading-[1.04] mb-8 mx-auto max-w-4xl tracking-tight"
+          style={{ fontFamily: "'Outfit', sans-serif" }}
         >
-          I build the AI infrastructure that makes businesses actually work.
+          Real sites. Real products.<br />
+          <span style={{ color: "#D97757" }}>Built by one person.</span>
         </h1>
         <p
           className="text-lg md:text-xl leading-relaxed mb-12 max-w-2xl mx-auto"
           style={{ color: "rgba(255,255,255,0.5)" }}
         >
-          Multi-agent orchestration. Autonomous pipelines. Production systems.
-          Built by an operator who&rsquo;s run the businesses the software
-          is meant to fix.
+          Branding and websites for local businesses, e-commerce automation, mobile
+          apps and a live SaaS line — built by an operator who&rsquo;s run the
+          businesses the software is meant to fix.
         </p>
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
           <Link
             href="/portfolio/case-studies"
-            className="flex items-center justify-center gap-2 px-8 py-3.5 rounded-full font-semibold text-sm transition-opacity duration-200 hover:opacity-80"
-            style={{ background: "#fff", color: "#000" }}
+            className="btn-citrus py-3.5 px-8 text-sm"
           >
             View Case Studies
-            <ArrowRight className="w-4 h-4" />
+            <ArrowRight className="w-4 h-4 ml-2" />
           </Link>
           <Link
-            href="/portfolio/cv"
-            className="flex items-center justify-center gap-2 px-8 py-3.5 rounded-full font-semibold text-sm transition-all duration-200 hover:bg-white/5"
-            style={{
-              border: "2px solid rgba(255,255,255,0.2)",
-              color: "rgba(255,255,255,0.8)",
-            }}
+            href="/brief"
+            className="btn-ghost py-3.5 px-8 text-sm"
           >
-            Download CV
+            Start a Project
           </Link>
         </div>
       </section>
@@ -117,26 +110,26 @@ export default function PortfolioPage() {
       </section>
 
       {/* ─── THE DIFFERENCE (Personal Narrative) ─── */}
-      <section className="py-24 px-6 md:px-10" style={{ background: "#fff", color: "#000" }}>
+      <section className="py-24 px-6 md:px-10" style={{ background: "rgba(217,119,87,0.03)", borderTop: "1px solid rgba(255,255,255,0.06)", borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
         <div className="max-w-3xl mx-auto text-center">
           <p
             className="text-xs uppercase tracking-[0.3em] mb-8 font-semibold"
-            style={{ color: "rgba(0,0,0,0.35)" }}
+            style={{ color: "#D97757", fontFamily: "monospace" }}
           >
             Founder. Builder. Operator.
           </p>
           <blockquote
-            className="text-xl md:text-3xl leading-relaxed font-medium mb-8"
-            style={{ fontFamily: "var(--font-instrument-serif, serif)" }}
+            className="text-xl md:text-3xl leading-relaxed font-bold mb-8"
+            style={{ fontFamily: "'Outfit', sans-serif", color: "#fff" }}
           >
             &ldquo;I&rsquo;ve done quotes, payroll, stock management, compliance,
-            sales, and customer service in real businesses. So when I automate
+            sales, and customer service in real businesses. So when I build
             something, I know what the actual bottlenecks look like from the
             inside.&rdquo;
           </blockquote>
           <p
             className="text-sm md:text-base leading-relaxed max-w-xl mx-auto"
-            style={{ color: "rgba(0,0,0,0.5)" }}
+            style={{ color: "rgba(255,255,255,0.5)" }}
           >
             Before the development career: a mobile catering company, a motorcycle
             repair workshop, national pub refits and trade carpentry, and community
@@ -160,7 +153,7 @@ export default function PortfolioPage() {
             className="flex items-center gap-2 text-xs uppercase tracking-widest font-semibold transition-colors duration-200 hover:text-white"
             style={{ color: "rgba(255,255,255,0.4)" }}
           >
-            All 18 Case Studies <ArrowRight className="w-3 h-3" />
+            All 21 Case Studies <ArrowRight className="w-3 h-3" />
           </Link>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-10">

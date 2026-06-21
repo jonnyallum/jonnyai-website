@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { Github, Linkedin, Mail, Phone, MapPin } from "lucide-react";
-import PortfolioNav from "../components/PortfolioNav";
 import ContactCTA from "../components/ContactCTA";
 
 export const metadata: Metadata = {
@@ -140,8 +139,7 @@ const qualifications = [
 
 export default function CVPage() {
   return (
-    <div className="min-h-screen" style={{ background: "#000", color: "#fff" }}>
-      <PortfolioNav />
+    <div className="min-h-screen" style={{ background: "transparent", color: "#fff" }}>
 
       {/* Print-only header */}
       <div className="hidden print:block pt-8 pb-4 px-10 border-b border-gray-200">
@@ -186,8 +184,8 @@ export default function CVPage() {
           <div className="flex flex-col gap-3 flex-shrink-0">
             <a
               href="mailto:info@jonnyai.co.uk"
-              className="flex items-center gap-2 text-xs px-5 py-2.5 rounded-full font-medium transition-opacity hover:opacity-80"
-              style={{ background: "#fff", color: "#000" }}
+              className="flex items-center gap-2 text-xs px-5 py-2.5 rounded-full font-semibold transition-opacity hover:opacity-80"
+              style={{ background: "#D97757", color: "#070708" }}
             >
               <Mail className="w-3.5 h-3.5" />
               info@jonnyai.co.uk

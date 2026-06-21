@@ -2,11 +2,10 @@ import { notFound } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 import type { Metadata } from "next";
-import { ArrowLeft, ArrowRight } from "lucide-react";
-import PortfolioNav from "../../components/PortfolioNav";
+import { ArrowLeft, ArrowRight, ExternalLink } from "lucide-react";
 import MetricBadge from "../../components/MetricBadge";
 import ContactCTA from "../../components/ContactCTA";
-import { caseStudies, getCaseStudyBySlug } from "@/lib/data/case-studies";
+import { caseStudies, getCaseStudyBySlug, caseStudyLiveUrls } from "@/lib/data/case-studies";
 
 interface Props {
   params: Promise<{ slug: string }>;
@@ -37,11 +36,10 @@ export default async function CaseStudyPage({ params }: Props) {
     currentIndex < caseStudies.length - 1 ? caseStudies[currentIndex + 1] : null;
 
   const hasHeroScreenshot = study.screenshots && study.screenshots.length > 0;
+  const liveUrl = caseStudyLiveUrls[study.slug];
 
   return (
-    <div className="min-h-screen" style={{ background: "#000", color: "#fff" }}>
-      <PortfolioNav />
-
+    <div className="min-h-screen" style={{ background: "transparent", color: "#fff" }}>
       {/* ─── HERO ─── */}
       <section className="pt-32 pb-0">
         <div className="max-w-5xl mx-auto px-6 md:px-10">
@@ -208,14 +206,26 @@ export default async function CaseStudyPage({ params }: Props) {
               </div>
 
               {/* CTA */}
-              <div className="mt-6 pt-6" style={{ borderTop: "1px solid rgba(255,255,255,0.08)" }}>
-                <a
-                  href="mailto:jonnyallum@gmail.com"
-                  className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-full text-xs font-semibold transition-opacity hover:opacity-80"
-                  style={{ background: "#fff", color: "#000" }}
+              <div className="mt-6 pt-6 flex flex-col gap-3" style={{ borderTop: "1px solid rgba(255,255,255,0.08)" }}>
+                {liveUrl && (
+                  <a
+                    href={liveUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-full text-xs font-semibold transition-all duration-200"
+                    style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(217,119,87,0.4)", color: "#D97757" }}
+                  >
+                    <ExternalLink className="w-3.5 h-3.5" />
+                    Visit the live site
+                  </a>
+                )}
+                <Link
+                  href="/brief"
+                  className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-full text-xs font-bold uppercase tracking-widest transition-all duration-200"
+                  style={{ background: "#D97757", color: "#070708" }}
                 >
                   Discuss a project →
-                </a>
+                </Link>
               </div>
             </div>
           </aside>

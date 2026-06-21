@@ -550,6 +550,18 @@ This wasn't a website project — it was a business transformation.`,
   },
 ];
 
+// Live URLs for case studies that have a public site/product to link out to.
+export const caseStudyLiveUrls: Record<string, string> = {
+  "little-joes-tree-services": "https://www.littlejoestreeservices.co.uk",
+  "compliance-hub": "https://compliance-hub.co.uk",
+  "care-hub": "https://care-hub.app",
+  "fm-control-hub": "https://fm-control-hub.co.uk",
+  "sparta-coatings": "https://sparta-coatings.co.uk",
+  "jsc-contractors": "https://jsccontractors.co.uk",
+  "poundtrades": "https://poundtrades.app",
+  "kwizz": "https://kwizz.co.uk",
+};
+
 export function getFeaturedCaseStudies(): CaseStudy[] {
   return caseStudies.filter((study) => study.featured);
 }
