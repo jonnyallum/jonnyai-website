@@ -203,6 +203,19 @@ It's the same engine behind JonnyAI's own digital card — proven on a real prof
 Because it's all one profile behind the scenes, you print or program the card once and never reprint again. Change jobs, numbers, or add a new social? Update it in seconds and every card you've handed out is instantly up to date.`,
       },
       {
+        id: "cards-live",
+        title: "Cards Already Live",
+        content: `Real KLIQT profiles out in the world right now:
+
+- [Daryl Jennings](https://kliqt.co.uk/card/dj-waste)
+- [Brett Farley](https://kliqt.co.uk/card/bl)
+- [Roger Holman](https://kliqt.co.uk/card/rogerholman)
+- [Jonny Allum](https://jonnyai.co.uk/card)
+- [Little Joe's Tree Services](https://littlejoestreeservices.co.uk/card)
+
+Tap any of them on your phone and you'll see exactly what a contact sees — and how fast it saves to your phone.`,
+      },
+      {
         id: "the-result",
         title: "The Result — A Networking Tool That Pays for Itself",
         content: `KLIQT is live at **kliqt.co.uk** as a standalone JonnyAI venture: a smart digital business card and profile platform that turns a quick tap into a saved contact, a followed social, or a booked job.
@@ -221,7 +234,7 @@ It's a clean example of the JonnyAI model: spot a tired, everyday problem, build
 
 See it live at kliqt.co.uk, or get in touch and I'll set you up.
 
-Contact: hello@jonnyai.co.uk`,
+Contact: hello@kliqt.co.uk`,
       },
     ],
     screenshots: [],
