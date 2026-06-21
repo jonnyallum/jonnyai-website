@@ -40,8 +40,8 @@ export default function CaseStudyCard({
       <article className="h-full flex flex-col">
         {/* Image area */}
         <div
-          className={`relative overflow-hidden ${isFeatured ? "h-56 md:h-72" : "h-48"}`}
-          style={{ background: gradient }}
+          className={`relative overflow-hidden rounded-xl ${isFeatured ? "h-56 md:h-72" : "h-48"}`}
+          style={{ background: gradient, border: "1px solid rgba(255,255,255,0.08)" }}
         >
           {hasScreenshots && (
             <Image
@@ -69,8 +69,8 @@ export default function CaseStudyCard({
           {/* Category + Title */}
           <div className="flex items-center gap-3 mb-1">
             <span
-              className="text-[10px] uppercase tracking-widest font-medium"
-              style={{ color: "rgba(255,255,255,0.35)" }}
+              className="text-[10px] uppercase tracking-widest font-semibold"
+              style={{ color: "#D97757", fontFamily: "monospace" }}
             >
               {study.category}
             </span>

@@ -6,9 +6,9 @@ import FiberCanvas from "@/components/FiberCanvas";
 import { ModeProvider } from "@/context/ModeContext";
 
 export const metadata: Metadata = {
-  title: "JonnyAI | We brand it, build it, film it & automate it.",
-  description: "AI-native creative + tech studio for local businesses. Full-stack branding, websites, content & reels, and AI automation — plus our own SaaS products.",
-  keywords: "creative studio UK, web design UK, rebrand UK, logo design UK, content and reels UK, local business marketing UK, AI automation UK, vertical SaaS UK, Hampshire web design",
+  title: "JonnyAI | A one-man, AI-native digital marketing agency",
+  description: "JonnyAI is Jonny Allum — a one-man, AI-native digital marketing agency. Branding, websites, apps, content, paid media, SEO and automation, plus a live software line: the HubSuite blades and the flagship BizOS platform.",
+  keywords: "digital marketing agency UK, one man agency, AI marketing UK, web design UK, rebrand UK, logo design UK, content and reels UK, paid media UK, SEO UK, AI automation UK, vertical SaaS UK, BizOS, HubSuite, Hampshire web design",
   metadataBase: new URL("https://jonnyai.co.uk"),
   alternates: { canonical: "https://jonnyai.co.uk/" },
   robots: { index: true, follow: true, googleBot: { index: true, follow: true } },
@@ -16,8 +16,8 @@ export const metadata: Metadata = {
     google: process.env.GOOGLE_SITE_VERIFICATION,
   },
   openGraph: {
-    title: "JonnyAI | We brand it, build it, film it & automate it.",
-    description: "An AI-native creative + tech studio for local businesses — rebrands, websites & apps, content & reels, and AI automation. Plus our own SaaS product line.",
+    title: "JonnyAI | A one-man, AI-native digital marketing agency",
+    description: "Branding, websites, apps, content, paid media, SEO and automation — plus a live software line: the HubSuite blades and the flagship BizOS platform. You hire me, you get me.",
     type: "website",
     url: "https://jonnyai.co.uk",
     locale: "en_GB",
@@ -33,7 +33,7 @@ const jsonLd = {
   "url": "https://jonnyai.co.uk",
   "logo": "https://jonnyai.co.uk/jai_logo_clean.png",
   "image": "https://jonnyai.co.uk/brand/og_card.png",
-  "description": "AI-native creative + tech studio for local businesses. Full-stack branding, websites, content & reels, and AI automation — plus our own SaaS products.",
+  "description": "A one-man, AI-native digital marketing agency. Branding, websites, apps, content, paid media, SEO and automation — plus a live software line: the HubSuite and the flagship BizOS platform.",
   "priceRange": "££",
   "address": { "@type": "PostalAddress", "addressCountry": "GB", "addressRegion": "United Kingdom" },
   "areaServed": { "@type": "Country", "name": "United Kingdom" },
@@ -57,11 +57,30 @@ const jsonLd = {
       },
       {
         "@type": "Offer",
+        "itemOffered": { "@type": "Service", "name": "Paid Media & SEO", "description": "Google, Meta and TikTok campaigns plus technical and local SEO, wired to real tracking." },
+      },
+      {
+        "@type": "Offer",
         "itemOffered": { "@type": "Service", "name": "AI & Automation", "description": "Private AI systems and automations that remove repetitive work and run 24/7." },
+      },
+      {
+        "@type": "Offer",
+        "itemOffered": { "@type": "SoftwareApplication", "name": "BizOS", "description": "Flagship white-label business operating system with 85+ modules and a 108-agent AI swarm." },
       },
     ],
   },
-  "sameAs": ["https://jonnyai.co.uk", "https://github.com/jonnyallum"],
+  "sameAs": [
+    "https://jonnyai.co.uk",
+    "https://github.com/jonnyallum",
+    "https://www.linkedin.com/in/jonnyallum/",
+    "https://www.instagram.com/jonnyai.co.uk",
+    "https://www.tiktok.com/@jonnyai",
+    "https://youtube.com/@jonnyaitube",
+    "https://hub-suite.co.uk",
+    "https://compliance-hub.co.uk",
+    "https://care-hub.app",
+    "https://fm-control-hub.co.uk"
+  ],
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
