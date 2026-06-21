@@ -254,15 +254,15 @@ export default function HomePage() {
               <p className="text-base leading-relaxed" style={{ color: 'rgba(255,255,255,0.55)' }}>
                 NPTC-qualified, fully insured, brilliant on the tools — but living off word-of-mouth
                 with no real brand. I gave them the works: a new logo and identity, a fast lead-gen
-                website covering 25+ Hampshire towns, and a content day on site cutting reels of the
-                team in the trees — published to the site and socials.
+                website covering 25+ Hampshire towns, a content day on site cutting reels of the
+                team in the trees, and a Google Ads campaign hitting the hottest postcodes.
               </p>
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                 {[
                   { v: '25+', l: 'Areas covered' },
                   { v: '100+', l: 'Reviews' },
                   { v: '24/7', l: 'Emergency line' },
-                  { v: 'Full', l: 'Rebrand + film' },
+                  { v: 'Full', l: 'Brand · Web · Film · Ads' },
                 ].map(({ v, l }) => (
                   <div key={l} className="flex flex-col gap-1 p-3 rounded-lg" style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.07)' }}>
                     <span className="text-lg font-extrabold" style={{ fontFamily: 'Outfit, sans-serif', color: '#3DA35D' }}>{v}</span>

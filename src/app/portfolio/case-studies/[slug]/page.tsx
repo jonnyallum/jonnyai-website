@@ -11,6 +11,62 @@ interface Props {
   params: Promise<{ slug: string }>;
 }
 
+// Render inline **bold** markup as real <strong> elements.
+function renderInline(text: string): React.ReactNode[] {
+  return text.split(/(\*\*[^*]+\*\*)/g).map((part, i) => {
+    if (part.startsWith("**") && part.endsWith("**")) {
+      return (
+        <strong key={i} style={{ color: "rgba(255,255,255,0.92)", fontWeight: 700 }}>
+          {part.slice(2, -2)}
+        </strong>
+      );
+    }
+    return <span key={i}>{part}</span>;
+  });
+}
+
+// Lightweight renderer for case-study section content: paragraphs and
+// "- " bullet lists, with inline **bold** — so no literal markdown shows.
+function CaseStudyContent({ content }: { content: string }) {
+  const lines = content.split("\n");
+  const blocks: React.ReactNode[] = [];
+  let bullets: string[] = [];
+  let key = 0;
+
+  const flushBullets = () => {
+    if (bullets.length === 0) return;
+    blocks.push(
+      <ul key={`ul-${key++}`} className="flex flex-col gap-2 my-2 pl-1">
+        {bullets.map((b, i) => (
+          <li key={i} className="flex gap-3 leading-[1.7]">
+            <span className="mt-2.5 w-1.5 h-1.5 rounded-full shrink-0" style={{ background: "#D97757" }} />
+            <span>{renderInline(b)}</span>
+          </li>
+        ))}
+      </ul>
+    );
+    bullets = [];
+  };
+
+  for (const raw of lines) {
+    const line = raw.trim();
+    if (line.startsWith("- ")) {
+      bullets.push(line.slice(2));
+      continue;
+    }
+    flushBullets();
+    if (line === "") continue;
+    blocks.push(
+      <p key={`p-${key++}`} className="leading-[1.8]">
+        {renderInline(line)}
+      </p>
+    );
+  }
+  flushBullets();
+
+  return <div className="flex flex-col gap-4">{blocks}</div>;
+}
+
 export async function generateStaticParams() {
   return caseStudies.map((cs) => ({ slug: cs.slug }));
 }
@@ -143,10 +199,10 @@ export default async function CaseStudyPage({ params }: Props) {
                   {section.title}
                 </h2>
                 <div
-                  className="text-sm md:text-base leading-[1.8] whitespace-pre-line"
+                  className="text-sm md:text-base"
                   style={{ color: "rgba(255,255,255,0.65)" }}
                 >
-                  {section.content}
+                  <CaseStudyContent content={section.content} />
                 </div>
               </article>
             ))}
