@@ -5,7 +5,7 @@ import Image from 'next/image';
 import { motion } from 'framer-motion';
 import { hubSuite, hubSuiteUrl } from '@/lib/data/ecosystem';
 import AtmosphereField from '@/components/AtmosphereField';
-import BackgroundVideo from '@/components/BackgroundVideo';
+import AmbientBackdrop from '@/components/AmbientBackdrop';
 
 // ── The full agency offering (the crew) ──────────────────────────
 const services = [
@@ -50,7 +50,7 @@ export default function HomePage() {
           HERO
       ═══════════════════════════════════════════════════════════════ */}
       <section className="relative min-h-screen flex flex-col items-center justify-center overflow-hidden">
-        <BackgroundVideo src="/card-banner.mp4" poster="/brand/hero_background.png" />
+        <AmbientBackdrop image="/brand/hero_background.png" />
         <div className="relative z-10 flex flex-col items-center text-center px-6 pt-20 pb-10 gap-0">
           <motion.div
             initial={{ opacity: 0, scale: 0.82 }}
