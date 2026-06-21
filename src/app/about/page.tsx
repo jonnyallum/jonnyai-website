@@ -4,6 +4,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
 import { liveProjects, hubSuite, socials, hubSuiteUrl } from '@/lib/data/ecosystem';
+import AtmosphereField from '@/components/AtmosphereField';
 
 const beliefs = [
   { t: 'You hire me, you get me', b: 'No account managers, no juniors learning on your budget, no being passed around a team. The person you brief is the person who does the work.' },
@@ -25,6 +26,7 @@ export default function AboutPage() {
 
       {/* HERO */}
       <section className="relative overflow-hidden px-6 pt-36 pb-20">
+        <AtmosphereField intensity={0.45} />
         <div className="absolute inset-0 pointer-events-none" style={{ background: 'radial-gradient(ellipse 70% 50% at 50% 0%, rgba(217,119,87,0.1) 0%, transparent 70%)' }} />
         <div className="relative z-10 max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-[auto_1fr] gap-12 items-center">
           <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.8 }} className="relative w-44 h-44 md:w-52 md:h-52 rounded-2xl overflow-hidden mx-auto md:mx-0" style={{ border: '1px solid rgba(255,255,255,0.12)', boxShadow: '0 0 60px rgba(217,119,87,0.2)' }}>

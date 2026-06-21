@@ -4,6 +4,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
 import { hubSuite, hubSuiteUrl } from '@/lib/data/ecosystem';
+import BizOSBrain from '@/components/BizOSBrain';
 
 const liveModules = [
   'Care & clinical', 'Statutory compliance', 'Facilities & PPM', 'Contractor portal',
@@ -33,7 +34,10 @@ export default function BizOSPage() {
 
       {/* HERO */}
       <section className="relative min-h-[90vh] flex flex-col items-center justify-center overflow-hidden px-6 pt-28 pb-16">
-        <div className="absolute inset-0 pointer-events-none" style={{ background: 'radial-gradient(ellipse 80% 60% at 50% 30%, rgba(217,119,87,0.12) 0%, rgba(49,198,169,0.06) 45%, transparent 75%)' }} />
+        <BizOSBrain className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[min(680px,90vw)] opacity-[0.55]" />
+        {/* Legibility scrim over the brain centre */}
+        <div className="absolute inset-0 pointer-events-none" style={{ background: 'radial-gradient(ellipse 55% 45% at 50% 48%, rgba(7,7,8,0.82) 0%, rgba(7,7,8,0.45) 45%, transparent 75%)' }} />
+        <div className="absolute inset-0 pointer-events-none" style={{ background: 'radial-gradient(ellipse 80% 60% at 50% 30%, rgba(217,119,87,0.1) 0%, rgba(49,198,169,0.05) 45%, transparent 78%)' }} />
         <motion.div initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }} className="relative z-10 max-w-4xl text-center flex flex-col items-center gap-7">
           <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full" style={{ background: 'rgba(217,119,87,0.1)', border: '1px solid rgba(217,119,87,0.25)' }}>
             <span className="w-1.5 h-1.5 rounded-full" style={{ background: '#22C55E', boxShadow: '0 0 8px rgba(34,197,94,0.8)' }} />
