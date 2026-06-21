@@ -4,6 +4,8 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
 import { hubSuite, hubSuiteUrl } from '@/lib/data/ecosystem';
+import AtmosphereField from '@/components/AtmosphereField';
+import AmbientBackdrop from '@/components/AmbientBackdrop';
 
 // ── The full agency offering (the crew) ──────────────────────────
 const services = [
@@ -48,6 +50,7 @@ export default function HomePage() {
           HERO
       ═══════════════════════════════════════════════════════════════ */}
       <section className="relative min-h-screen flex flex-col items-center justify-center overflow-hidden">
+        <AmbientBackdrop image="/brand/hero_background.png" />
         <div className="relative z-10 flex flex-col items-center text-center px-6 pt-20 pb-10 gap-0">
           <motion.div
             initial={{ opacity: 0, scale: 0.82 }}
@@ -339,6 +342,7 @@ export default function HomePage() {
           BIZOS — the flagship
       ═══════════════════════════════════════════════════════════════ */}
       <section id="bizos" className="w-full overflow-hidden relative scroll-mt-24" style={{ borderTop: '1px solid rgba(255,255,255,0.06)' }}>
+        <AtmosphereField intensity={0.4} />
         <div className="absolute inset-0 pointer-events-none" style={{ background: 'radial-gradient(ellipse 90% 60% at 50% 0%, rgba(217,119,87,0.1) 0%, rgba(49,198,169,0.05) 40%, transparent 75%)' }} />
         <div className="relative max-w-7xl mx-auto px-6 py-32">
 

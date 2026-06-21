@@ -22,7 +22,7 @@ export const metadata: Metadata = {
     url: "https://jonnyai.co.uk",
     locale: "en_GB",
     siteName: "JonnyAI",
-    images: [{ url: "/brand/og_card.png", width: 1200, height: 630, alt: "JonnyAI — We brand it, build it, film it & automate it" }],
+    // Share image is generated dynamically by src/app/opengraph-image.tsx
   },
 };
 
@@ -32,7 +32,7 @@ const jsonLd = {
   "name": "JonnyAI",
   "url": "https://jonnyai.co.uk",
   "logo": "https://jonnyai.co.uk/jai_logo_clean.png",
-  "image": "https://jonnyai.co.uk/brand/og_card.png",
+  "image": "https://jonnyai.co.uk/opengraph-image",
   "description": "A one-man, AI-native digital marketing agency. Branding, websites, apps, content, paid media, SEO and automation — plus a live software line: the HubSuite and the flagship BizOS platform.",
   "priceRange": "££",
   "address": { "@type": "PostalAddress", "addressCountry": "GB", "addressRegion": "United Kingdom" },

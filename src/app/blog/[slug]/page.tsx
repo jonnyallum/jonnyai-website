@@ -38,7 +38,6 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       type: 'article',
       publishedTime: post.date,
       locale: 'en_GB',
-      images: [{ url: '/brand/og_card.png', width: 1200, height: 630, alt: post.title }],
     },
   };
 }

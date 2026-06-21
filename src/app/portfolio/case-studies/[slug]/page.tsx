@@ -76,7 +76,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const study = getCaseStudyBySlug(slug);
   if (!study) return {};
   const url = `https://jonnyai.co.uk/portfolio/case-studies/${study.slug}`;
-  const image = study.screenshots?.[0] ?? "/brand/og_card.png";
+  const image = study.screenshots?.[0] ?? "/opengraph-image";
   return {
     title: `${study.title} — JonnyAI Case Study`,
     description: study.hook,
