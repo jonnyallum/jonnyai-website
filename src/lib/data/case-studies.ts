@@ -27,20 +27,20 @@ export const caseStudies: CaseStudy[] = [
   {
     slug: "little-joes-tree-services",
     title: "Little Joe's Tree Services",
-    subtitle: "A full studio build for a Hampshire tree surgeon — rebrand, website, and an on-site content day, end to end.",
+    subtitle: "A full studio build for a Hampshire tree surgeon — rebrand, website, on-site content day, and a comprehensive Google Ads campaign, end to end.",
     client: "Little Joe's Tree Services — Hampshire",
     category: "Branding · Web · Content · Local Business",
-    hook: "A skilled, NPTC-qualified tree team that was brilliant on the tools but invisible online — living off word-of-mouth and review-site leads. We gave them the works: a new logo and brand identity, a fast lead-generation website covering 25+ Hampshire towns, and a content day on site filming the crew in the trees, cut into vertical reels and published to the site and socials. This is the whole studio offering in one job.",
+    hook: "A skilled, NPTC-qualified tree team that was brilliant on the tools but invisible online — living off word-of-mouth and review-site leads. We gave them the works: a new logo and brand identity, a fast lead-generation website covering 25+ Hampshire towns, and a content day on site filming the crew in the trees, cut into vertical reels and published to the site and socials, and a comprehensive Google Ads campaign hitting the hottest postcodes in Hampshire. This is the whole studio offering in one job.",
     heroImage: "/portfolio/littlejoes/site-home.jpg",
     featured: true,
     metrics: [
       { label: "Areas Covered", value: "25+" },
       { label: "Reviews Surfaced", value: "100+" },
       { label: "Emergency Cover", value: "24/7" },
-      { label: "Scope", value: "Brand + Web + Film" },
-      { label: "Stack", value: "Next.js" },
+      { label: "Scope", value: "Brand · Web · Film · Ads" },
+      { label: "Paid Search", value: "25+ towns" },
     ],
-    techStack: ["Brand Identity", "Logo Design", "Next.js", "Local SEO", "Reels / Video", "On-site Filming", "Social Publishing"],
+    techStack: ["Brand Identity", "Logo Design", "Next.js", "Local SEO", "Google Ads / PPC", "Conversion Tracking", "Reels / Video", "On-site Filming", "Social Publishing"],
     sections: [
       {
         id: "the-brief",
@@ -88,6 +88,31 @@ Those reels went onto the website and out across social (Facebook / YouTube), gi
 We don't just build the shop window — we make the content that fills it and keeps people coming back.`,
       },
       {
+        id: "google-ads",
+        title: "Google Ads — A Comprehensive Campaign Across Every Hot Postcode",
+        content: `A great website only pays off if the right people see it at the right moment. So we built Little Joe's a full Google Ads campaign engineered to catch homeowners and landlords at the exact second they search for a tree surgeon — and to own the busiest, highest-value postcodes in the patch.
+
+**The goal.** Be top of the page for "tree surgeon near me" across all 25+ towns, turn that click into a phone call or quote request, and make every pound of budget traceable to a real lead.
+
+**The hottest locations we target.** We don't spray budget thinly across the whole county. We concentrate it where the demand and the property values are highest:
+- **Portsmouth, Southsea & Havant** — dense housing, constant demand, the core patch.
+- **Fareham, Gosport & Portchester** — strong residential mix, high search volume.
+- **Winchester, Bishop's Waltham & the villages** — premium properties, big mature trees, higher job values.
+- **Southampton, Eastleigh & Hedge End** — high population, steady stream of removals and reductions.
+- **Petersfield, Waterlooville & Horndean** — leafy commuter towns where gardens (and oaks) are big.
+
+**How the campaign is built.** It's structured so the right ad shows for the right job, every time:
+- **Search campaigns by service** — separate ad groups for tree removal, crown reduction & pruning, stump grinding, hedge cutting, and site clearance, so the ad and landing page always match what was typed.
+- **A dedicated 24/7 emergency campaign** — call-only ads that trigger for "emergency tree removal" and storm-damage searches and ring the mobile straight away, with bids pushed hard when the weather turns.
+- **Location bid adjustments** — more budget weighted to the premium postcodes above, where a single job is worth far more.
+- **Tight negative keywords** — filtering out "tree surgeon jobs", "courses", "free" and DIY searches so budget only goes on people who'll actually pay.
+- **Ad extensions that win the click** — call buttons, location, 100+ reviews, service links and "free quote" callouts, so Little Joe's takes up more of the page than any competitor.
+
+**Wired to the website and tracked properly.** Every ad points to the matching service or area page on the new site, and every call and quote form is tracked as a conversion in Google Ads and GA4. That means we can see which towns, which services and which keywords actually produce booked work — and shift budget toward the winners every week.
+
+**The point of it.** Branding makes them trusted, the website makes them findable, the reels make them credible — and Google Ads puts them in front of the customer at the precise moment of need. It turns "we exist" into "the phone rings."`,
+      },
+      {
         id: "the-result",
         title: "The Result — One Brand, One Machine",
         content: `Little Joe's went from a scattered, word-of-mouth operation to a single, coherent brand with a proper engine behind it:
@@ -95,10 +120,11 @@ We don't just build the shop window — we make the content that fills it and ke
 - A distinctive logo and identity applied consistently across every touchpoint.
 - A fast, local-SEO-tuned website covering 25+ Hampshire towns, built to convert searches into quote requests and 24/7 emergency calls.
 - A library of real on-site reels powering the site and social channels.
+- A comprehensive Google Ads campaign targeting the hottest postcodes, with every call and quote tracked back to the keyword that produced it.
 
 It's the clearest example of what the studio does: **we brand it, build it, film it and automate it** — the whole job, one team, no hand-offs.
 
-*Hard performance numbers (rankings, calls, bookings) to be added here as the data comes in.*`,
+Performance numbers — rankings, calls and bookings — are reported back monthly, so budget keeps shifting toward whatever's winning.`,
       },
       {
         id: "want-the-same",
