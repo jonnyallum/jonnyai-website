@@ -1,5 +1,5 @@
 import Link from "next/link";
-import Image from "next/image";
+import ScreenshotFrame from "@/components/ScreenshotFrame";
 import type { CaseStudy } from "@/lib/data/case-studies";
 
 interface CaseStudyCardProps {
@@ -39,30 +39,32 @@ export default function CaseStudyCard({
     <Link href={`/portfolio/case-studies/${study.slug}`} className="block group">
       <article className="h-full flex flex-col">
         {/* Image area */}
-        <div
-          className={`relative overflow-hidden rounded-xl ${isFeatured ? "h-56 md:h-72" : "h-48"}`}
-          style={{ background: gradient, border: "1px solid rgba(255,255,255,0.08)" }}
-        >
-          {hasScreenshots && (
-            <Image
+        {hasScreenshots ? (
+          <div className="transition-transform duration-500 group-hover:-translate-y-1">
+            <ScreenshotFrame
               src={study.screenshots[0]}
               alt={study.title}
-              fill
-              className="object-cover transition-transform duration-500 group-hover:scale-105"
+              label=""
+              aspect="16 / 10"
+              glow={false}
               sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
             />
-          )}
-          {!hasScreenshots && (
+          </div>
+        ) : (
+          <div
+            className={`relative overflow-hidden rounded-xl ${isFeatured ? "h-56 md:h-72" : "h-48"}`}
+            style={{ background: gradient, border: "1px solid rgba(255,255,255,0.08)" }}
+          >
             <div className="absolute inset-0 flex items-center justify-center">
               <span
                 className="text-2xl md:text-3xl font-bold opacity-10"
-                style={{ fontFamily: "var(--font-instrument-serif, serif)" }}
+                style={{ fontFamily: "'Outfit', sans-serif" }}
               >
                 {study.title}
               </span>
             </div>
-          )}
-        </div>
+          </div>
+        )}
 
         {/* Content */}
         <div className="pt-5 pb-2 flex flex-col gap-2 flex-1">
