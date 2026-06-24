@@ -35,6 +35,63 @@ const RETIRED_POST_SLUGS = new Set<string>([
 ]);
 
 const rawBlogPosts: BlogPost[] = [
+  // ── BL MOTORCYCLES CASE STUDY ────────────────────────────────────────────
+  {
+    slug: 'bl-motorcycles-full-digital-operation',
+    title: 'From £45/Month to a Full Digital Operation: B&L Motorcycles',
+    excerpt:
+      'Brett was paying £2,160 over four years for a GoDaddy website that looked dead. We brought hosting down to £220 for four years, added full e-commerce, and built a dropshipping platform, dual eBay storefronts, a QR workshop inventory system, professional invoicing, four automation workflows, and a custom eBay MCP server — before that category even existed.',
+    date: '2026-06-24',
+    category: 'Case Study',
+    readTime: 7,
+    featured: true,
+    tags: ['motorcycle parts', 'dropshipping', 'eBay automation', 'workshop management', 'NFC business card', 'MCP server', 'n8n', 'Supabase', 'Fareham', 'small business'],
+    content: `
+Brett Farley runs B&L Motorcycles Ltd out of Fareham, Hampshire. Specialist repairs, carburetor rebuilds, ultrasonic cleaning, brake restoration, full recommissioning — over 32,000 genuine parts in stock and the technical knowledge to back every one of them.
+
+The problem: none of that showed up online.
+
+## The Before
+
+A GoDaddy website that looked abandoned. £45 a month. Over four years, that's **£2,160** — for a template with a phone number on it. No e-commerce. No inventory system. No invoicing. No automation. eBay sales written manually. Workshop stock tracked in someone's head.
+
+The brief wasn't "build a website." It was: build everything a real business this size should have.
+
+## The Hosting Fix — Before Anything Else
+
+Before writing a line of code, the hosting was fixed. GoDaddy at £45/month became a proper arrangement at **£220 for four years** — a saving of **£1,940** over the same period, with full e-commerce capability included. GoDaddy never offered e-commerce at any price Brett was paying.
+
+That number usually lands first with people. The client pays less and gets incomparably more.
+
+## What Was Built
+
+**The marketing site.** GoDaddy scrapped entirely. A modern React/Vite site with six specialist service pages — repairs, restoration, carb work, ultrasonic cleaning, brake rebuilds, recommissioning — deployed to Vercel with proper SEO, Google verification, and Open Graph meta.
+
+**The hybrid dropshipping platform.** A Next.js storefront backed by Supabase/PostgreSQL with 11,834 products from two trade suppliers (Bike-It and Llexeter) and 141,839 fitment records covering make, model, CC, and year. Search by your bike, see what fits. Llexeter products enriched automatically — additional images pulled in, descriptions structured. Stripe checkout and webhook-driven order creation.
+
+**The workshop admin system.** Login-gated, code-split from the public site. Every workshop item gets a unique short code and a QR label. Scan the bin with a phone → item record opens instantly. Update stock. Mark sold. Photo, location, eBay link all in one place. Printable label sheets. Before: "where's that part?" meant walking the workshop guessing. After: scan the bin, done.
+
+**The invoice generator.** BL001, BL002, BL003 — sequential numbers assigned by a Postgres sequence, atomic so two invoices can never collide. Line-item entry with a live running total. Branded, print-to-PDF output. No VAT lines (Brett isn't VAT registered — correct, not an oversight).
+
+**The eBay operation.** Two active UK storefronts: bnlmotorcycles (2,300+ sales, 100% positive) and blmotorcycles (1,100+ sales, 100% positive). Listings generated programmatically from the product database. The integration is a **custom eBay MCP server** — built before MCP connectors existed as a standard category. OAuth handling, API mapping, tool definitions — all designed and built from scratch. A custom Google MCP and Supabase MCP run on the same dedicated VM, also built before off-the-shelf versions existed.
+
+**The automation layer.** Four n8n workflows running continuously: dispatch email fires when an order ships, overdue escalator flags stuck orders, oversell guard catches stock conflicts before they become problems, weekly summary gives Brett a performance digest every Monday. All of it without any manual intervention.
+
+**The NFC digital business card.** Brett's contact details live at kliqt.co.uk/card/bl — a bespoke card with a video banner, animated smoke effects, and gold accent design. One tap: call, WhatsApp, email, website, Google Review link, eBay shop. "Save to contacts" downloads a proper vCard. The Google Review button goes directly to his review page. Programme any NFC tag to the URL and it's a tap-to-contact experience that updates automatically when details change.
+
+## The Result
+
+Hosting: £2,160 → £220. Saving: £1,940. E-commerce included.
+
+Two eBay storefronts with 3,400+ combined sales running largely automatically. An 11,800-part catalogue with full fitment search. Workshop inventory on a phone with QR labels. Sequential, branded, collision-proof invoicing. Dispatch automation, oversell protection, weekly visibility. A business card that drives Google reviews every time someone taps it.
+
+The eBay MCP server was built before community versions existed. Brett spends his time on motorcycles.
+
+[View the live site →](https://blmotorcyclesltd.co.uk)
+[Full case study →](/portfolio/case-studies/bl-motorcycles)
+`.trim(),
+  },
+
 
   // ── PRODUCT CASE STUDY — Three Vertical SaaS Applications ─────────────────
 
