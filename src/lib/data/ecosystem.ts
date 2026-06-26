@@ -118,3 +118,18 @@ export const socials = {
 };
 
 export const hubSuiteUrl = 'https://hub-suite.co.uk';
+
+// ── Music — Jonny Allum, record producer ─────────────────────────
+// Single source of truth for the artist/producer streaming links.
+// `appleMusic` stays empty until the distribution account goes live
+// (≤72h) — the UI shows it as "coming soon" while the URL is blank.
+export const music = {
+  artistName: 'Jonny Allum',
+  spotifyArtistId: '4quVqVgSehgn2qcUalDF4S',
+  spotify: 'https://open.spotify.com/artist/4quVqVgSehgn2qcUalDF4S',
+  // Embeddable player for the artist's top tracks (theme 0 = dark).
+  spotifyEmbed:
+    'https://open.spotify.com/embed/artist/4quVqVgSehgn2qcUalDF4S?utm_source=generator&theme=0',
+  youtube: 'https://www.youtube.com/@jonny-allum',
+  appleMusic: '', // live within 72h of distribution going through
+};
