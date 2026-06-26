@@ -84,7 +84,7 @@ export default function MusicPage() {
     <main className="min-h-screen bg-black text-white overflow-x-hidden">
 
       {/* ───────────────────────── HERO ───────────────────────── */}
-      <section className="relative min-h-[100svh] flex items-center px-6 pt-28 pb-16 overflow-hidden">
+      <section className="relative min-h-[100svh] flex items-start md:items-center px-6 pt-28 pb-40 md:pb-20 overflow-hidden">
         {/* Cinematic backdrop */}
         <div
           className="absolute inset-0 pointer-events-none"
@@ -188,7 +188,7 @@ export default function MusicPage() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 1, duration: 1 }}
-          className="absolute bottom-7 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2"
+          className="hidden sm:flex absolute bottom-7 left-1/2 -translate-x-1/2 flex-col items-center gap-2"
         >
           <span className="text-[10px] tracking-[0.3em] uppercase" style={{ color: 'rgba(255,255,255,0.3)' }}>
             Press play
