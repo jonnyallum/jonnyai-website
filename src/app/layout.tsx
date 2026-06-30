@@ -76,6 +76,8 @@ const jsonLd = {
     "https://www.instagram.com/jonnyai.co.uk",
     "https://www.tiktok.com/@jonnyai",
     "https://youtube.com/@jonnyaitube",
+    "https://www.youtube.com/@jonny-allum",
+    "https://open.spotify.com/artist/4quVqVgSehgn2qcUalDF4S",
     "https://hub-suite.co.uk",
     "https://compliance-hub.co.uk",
     "https://care-hub.app",

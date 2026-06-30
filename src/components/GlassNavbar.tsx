@@ -10,6 +10,7 @@ const navLinks = [
   { label: 'HubSuite', href: '/#hubsuite' },
   { label: 'BizOS', href: '/bizos' },
   { label: 'Work', href: '/portfolio' },
+  { label: 'Music', href: '/music' },
   { label: 'About', href: '/about' },
   { label: 'Contact', href: '/brief' },
 ];

@@ -3,8 +3,9 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
-import { liveProjects, hubSuite, socials, hubSuiteUrl } from '@/lib/data/ecosystem';
+import { liveProjects, hubSuite, socials, hubSuiteUrl, music } from '@/lib/data/ecosystem';
 import AtmosphereField from '@/components/AtmosphereField';
+import { SpotifyIcon, AppleMusicIcon, YouTubeIcon, StreamingPill } from '@/components/StreamingIcons';
 
 const beliefs = [
   { t: 'You hire me, you get me', b: 'No account managers, no juniors learning on your budget, no being passed around a team. The person you brief is the person who does the work.' },
@@ -54,6 +55,53 @@ export default function AboutPage() {
           <p>So when a website doesn’t bring in calls, or admin eats the whole week, or an inspection looms — I’ve felt all of it. That’s the difference. I build the brand, the site and the automation the way I’d want them if it were my own shop. Because it usually has been.</p>
           <p>A few years ago I started building multi-agent AI systems — not chatbots, but coordinated teams of AI specialists that handle the full spread of product and marketing work. It meant one person could move at the pace of a whole agency. That’s how a single operator now delivers branding, websites, apps, content, campaigns <span className="text-white/90">and</span> production-grade software.</p>
           <p>It’s also how the <Link href="/bizos" className="underline decoration-citrus/40 hover:decoration-citrus" style={{ color: '#D97757' }}>BizOS</Link> platform and the <a href={hubSuiteUrl} target="_blank" rel="noopener noreferrer" className="underline decoration-citrus/40 hover:decoration-citrus" style={{ color: '#D97757' }}>HubSuite</a> exist — real software, live in production, built and run by one person with the right systems.</p>
+        </motion.div>
+      </section>
+
+      {/* NOW PRODUCING MUSIC */}
+      <section className="max-w-5xl mx-auto px-6 py-20" style={{ borderTop: '1px solid rgba(255,255,255,0.06)' }}>
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.7 }}
+          className="relative overflow-hidden rounded-3xl p-8 md:p-12 flex flex-col md:flex-row items-center gap-8"
+          style={{
+            background: 'linear-gradient(135deg, rgba(29,185,84,0.07) 0%, rgba(217,119,87,0.05) 100%)',
+            border: '1px solid rgba(255,255,255,0.08)',
+          }}
+        >
+          {/* Streaming icon cluster */}
+          <div className="flex items-center gap-4 shrink-0">
+            <a href={music.spotify} target="_blank" rel="noopener noreferrer" aria-label="Spotify" className="transition-transform hover:scale-110" style={{ color: '#1DB954' }}>
+              <SpotifyIcon className="w-10 h-10" />
+            </a>
+            <a href={music.youtube} target="_blank" rel="noopener noreferrer" aria-label="YouTube" className="transition-transform hover:scale-110" style={{ color: '#FF0000' }}>
+              <YouTubeIcon className="w-10 h-10" />
+            </a>
+            <span aria-label="Apple Music — coming soon" title="Apple Music — coming soon" style={{ color: 'rgba(255,255,255,0.3)' }}>
+              <AppleMusicIcon className="w-10 h-10" />
+            </span>
+          </div>
+
+          <div className="flex-1 text-center md:text-left">
+            <p className="text-xs font-bold tracking-[0.4em] uppercase mb-3" style={{ color: '#1DB954', fontFamily: 'monospace' }}>
+              New chapter · Music
+            </p>
+            <h3 className="text-2xl md:text-3xl font-extrabold mb-2" style={{ fontFamily: 'Outfit, sans-serif' }}>
+              I&apos;m also a record producer.
+            </h3>
+            <p className="text-sm md:text-base leading-relaxed" style={{ color: 'rgba(255,255,255,0.55)' }}>
+              New music streaming now on Spotify and YouTube — Apple Music lands within 72 hours.
+            </p>
+          </div>
+
+          <div className="flex flex-col sm:flex-row md:flex-col gap-3 shrink-0">
+            <StreamingPill platform="spotify" href={music.spotify} sublabel="Listen now" />
+            <Link href="/music" className="btn-citrus py-3 px-7 text-xs tracking-widest rounded-full text-center">
+              The music →
+            </Link>
+          </div>
         </motion.div>
       </section>
 
@@ -160,6 +208,8 @@ export default function AboutPage() {
             <a href={socials.github} target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">GitHub</a>
             <a href={socials.instagram} target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">Instagram</a>
             <a href={socials.youtube} target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">YouTube</a>
+            <a href={music.spotify} target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">Spotify</a>
+            <Link href="/music" className="hover:text-white transition-colors">Music</Link>
             <Link href="/card" className="hover:text-white transition-colors">Digital card</Link>
           </div>
         </motion.div>
